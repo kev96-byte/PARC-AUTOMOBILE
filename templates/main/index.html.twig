@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fr" style="font-size: 14px; overflow-x: hidden;">
+    <head>
+        <meta charset="utf-8">
+        <title>GESTION DU PARC AUTOMOBILE DU MINISTERE DE LA SANTE</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
+        {% block stylesheets %}
+            <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}">
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+            <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+            <link href="{{ asset('css/theme.css') }}" rel="stylesheet">    
+            <link href="{{ asset('css/mystyle.scss') }}" rel="stylesheet">    
+            <link href="{{ asset('css/2.3e0fb6e6.chunk.css') }}" rel="stylesheet">
+            <link href="{{ asset('css/main.985fc7ff.chunk.css') }}" rel="stylesheet">
+        {% endblock %}
+    </head>
+
+
+    <body>
+        {% include 'partiels/flash.html.twig' %}
+
+        {% block body %}
+            <div id="root">
+                <div class="p-toast p-component p-toast-top-right">
+                    <div>
+
+                    </div>
+                </div>
+                <div class="layout-wrapper layout-static layout-theme-light">
+                    <div class="layout-topbar">
+                        <a class="layout-topbar-logo" href="#/">
+                            <span>GESTION DU PARC &nbsp; </span>
+                            <i class="fa fa-car"></i>
+                        </a>
+                        <button type="button" class="p-link  layout-menu-button layout-topbar-button">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button type="button" class="p-link layout-topbar-menu-button  layout-topbar-button">
+                            <i class="fa fa-ellipsis-v"></i>
+                        </button>
+                        <ul class="layout-topbar-menu lg:flex origin-top">
+                            <li>
+                                <button class="p-button p-component p-button-rounded p-button-warning mr-2 mb-2">
+                                    <span class="p-button-label p-c">A</span>
+                                    <span class="p-ink"></span>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="p-button p-component p-button-rounded p-button-danger mr-2 mb-2 p-button-icon-only">
+                                    <span class="p-button-icon p-c fa fa-power-off"></span>
+                                    <span class="p-button-label p-c">&nbsp;</span>
+                                    <span class="p-ink"></span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="layout-sidebar">
+                        <div class="layout-menu-container">
+                            <ul class="layout-menu" role="menu">
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Accueil">Accueil</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a aria-current="page" class="p-ripple router-link-active router-link-exact-active" aria-label="Tableau de bord" role="menuitem" href="{{ path('main.index') }}">
+                                                <i class="fa fa-home"></i>
+                                                <span>Tableau de bord</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des matériels roulants">Gestion des matériels roulants</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Type matériel roulant" role="menuitem" href="{{ path('TypeVehicule.index') }}">
+                                                <i class="fa fa-list"></i>
+                                                <span>Type matériel roulant</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Matériel roulant" role="menuitem" href="{{ path('vehicule.index') }}">
+                                                <i class="fa fa-car"></i>
+                                                <span>Matériel roulant</span><span class="p-ink"></span>
+                                            </a>
+                                        </li>
+{#                                         <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Plaque" role="menuitem" href="#/plaque">
+                                                <i class="fa fa-credit-card"></i>
+                                                <span>Plaque</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Financement" role="menuitem" href="#/financement">
+                                                <i class="fa fa-money-bill"></i>
+                                                <span>Financement</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li> #}
+{#                                         <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Etat du matériel" role="menuitem" href="{{ path('vehicule.etat') }}">
+                                                <i class="fa fa-car"></i>
+                                                <span>Etat du matériel</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li> #}
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des Cva">Gestion des Cva</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Cva" role="menuitem" href="{{ path('chauffeur.index') }}">
+                                                <i class=" fa fa-users"></i>
+                                                <span>Cva</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Disponibilité en Cva" role="menuitem" href="#/disponibiliteChauffeur">
+                                                <i class="fa fa-users"></i>
+                                                <span>Disponibilité en Cva</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+{#                                         <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Etat Cva" role="menuitem" href="#/etatChauffeur">
+                                                <i class="fa fa-users"></i>
+                                                <span>Etat Cva</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li> #}
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des Tiers">Gestion des Tiers</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Type tiers" role="menuitem" href="#/typeTiers">
+                                                <i class="fa fa-list"></i>
+                                                <span>Type tiers</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Tiers" role="menuitem" href="#/tiers">
+                                                <i class="fa fa-list"></i>
+                                                <span>Tiers</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des missions">Gestion des missions</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="#/demande">
+                                                <i class="fa fa-car"></i>
+                                                <span>Demande de véhicule</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="#/traitement">
+                                                <i class="fa fa-car"></i>
+                                                <span>Traitement des demandes</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Disponibilité en véhicule" role="menuitem" href="#/disponibiliteVehicule">
+                                                <i class="fa fa-car"></i>
+                                                <span>Disponibilité en véhicule</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des assurances">Gestion des assurances</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Type assurance" role="menuitem" href="#/typeAssurance">
+                                                <i class="fa fa-list"></i>
+                                                <span>Type assurance</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Assurance" role="menuitem" href="#/assurance">
+                                                <i class="fa fa-car"></i>
+                                                <span>Assurance</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Point des assurances" role="menuitem" href="#/pointAssurance">
+                                                <i class="fa fa-list"></i>
+                                                <span>Point des assurances</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des locations">Gestion des locations</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Location" role="menuitem" href="#/location">
+                                                <i class="fa fa-car"></i>
+                                                <span>Location</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="#/traitement">
+                                                <i class="fa fa-list"></i>
+                                                <span>Traitement des demandes</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Point des locations" role="menuitem" href="#/pointLocation">
+                                                <i class="fa fa-list"></i>
+                                                <span>Point des locations</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des réparations">Gestion des réparations</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Type contrat" role="menuitem" href="#/typeContrat">
+                                                <i class="fa fa-car"></i>
+                                                <span>Type contrat</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Contrat" role="menuitem" href="#/contrat">
+                                                <i class="fa fa-car"></i>
+                                                <span>Contrat</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Déclaration maintenance" role="menuitem" href="#/declarationMaintenance">
+                                                <i class="fa fa-car"></i>
+                                                <span>Déclaration maintenance</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Type maintenance" role="menuitem" href="#/typeMaintenance">
+                                                <i class="fa fa-car"></i>
+                                                <span>Type maintenance</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Maintenance" role="menuitem" href="#/maintenance">
+                                                <i class="fa fa-car"></i>
+                                                <span>Maintenance</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Mouvement pièces" role="menuitem" href="#/mouvementPiece">
+                                                <i class="fa fa-car"></i>
+                                                <span>Mouvement pièces</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Pièces de rechange" role="menuitem" href="#/piecesRechange">
+                                                <i class="fa fa-car"></i>
+                                                <span>Pièces de rechange</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Stock pièces" role="menuitem" href="#/piecesRechangeStock">
+                                                <i class="fa fa-car"></i>
+                                                <span>Stock pièces</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label=" Autres paramètres"> Autres paramètres</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Institution" role="menuitem" href="{{ path('institution.index') }}">
+                                                <i class="fa fa-list"></i>
+                                                <span>Institution</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Lieu" role="menuitem" href="{{ path('commune.index') }}">
+                                                <i class=" fa fa-list"></i>
+                                                <span>Lieu</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Niveau" role="menuitem" href="{{ path('niveau.index') }}">
+                                                <i class="fa fa-list"></i>
+                                                <span>Niveau</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="TypeStructure" role="menuitem" href="{{ path('TypeStructure.index') }}">
+                                                <i class="fa fa-list"></i>
+                                                <span>Type Structure</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Structure" role="menuitem" href="{{ path('structure.index') }}">
+                                                <i class="fa fa-list"></i>
+                                                <span>Structure</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Administration">Administration</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Rôle" role="menuitem" href="{{ path('role.index') }}">
+                                                <i class=" fa fa-user-edit"></i>
+                                                <span>Rôle</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Utilisateur" role="menuitem" href="{{ path('utilisateur.index') }}">
+                                                <i class="fa fa-users"></i>
+                                                <span>Utilisateur</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+
+
+
+                        <div class="layout-main-container">
+                            <div class="layout-main">
+
+                                <div class="grid">
+                                    {% block mycards %}
+                                    <div class="col-12 lg:col-6 xl:col-3">
+                                        <div class="card mb-0">
+                                            <div class="flex justify-content-between mb-3"><div>
+                                                <span class="block text-500 font-medium mb-3">Nbre de Cva</span>
+                                                <div class="text-900 font-medium text-xl">152</div>
+                                            </div>
+                                            <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width: 2.5rem; height: 2.5rem;">
+                                                <i class="fa fa-shopping-cart text-blue-500 text-xl"></i>
+                                            </div>
+                                        </div>
+                                        <span class="text-green-500 font-medium">24 new </span>
+                                        <span class="text-500">since last visit</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 lg:col-6 xl:col-3">
+                                    <div class="card mb-0"><div class="flex justify-content-between mb-3">
+                                        <div>
+                                            <span class="block text-500 font-medium mb-3">Nbr de demande</span>
+                                            <div class="text-900 font-medium text-xl"></div>
+                                        </div><div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width: 2.5rem; height: 2.5rem;">
+                                            <i class="fa fa-map-marker text-orange-500 text-xl"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-green-500 font-medium">%52+ </span>
+                                    <span class="text-500">since last week</span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 lg:col-6 xl:col-3">
+                                <div class="card mb-0">
+                                    <div class="flex justify-content-between mb-3"><div>
+                                        <span class="block text-500 font-medium mb-3">Total véhicule approuvé</span>
+                                        <div class="text-900 font-medium text-xl">28441</div>
+                                    </div>
+                                    <div class="flex align-items-center justify-content-center bg-cyan-100 border-round" style="width: 2.5rem; height: 2.5rem;">
+                                        <i class="fa fa-inbox text-cyan-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <span class="text-green-500 font-medium">520  </span>
+                                <span class="text-500">newly registered</span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12 lg:col-6 xl:col-3">
+                            <div class="card mb-0">
+                                <div class="flex justify-content-between mb-3"><div>
+                                    <span class="block text-500 font-medium mb-3">Nbre de véhicule en panne</span>
+                                    <div class="text-900 font-medium text-xl">152 Unread</div>
+                                </div>
+                                <div class="flex align-items-center justify-content-center bg-purple-100 border-round" style="width: 2.5rem; height: 2.5rem;">
+                                    <i class="fa fa-comment text-purple-500 text-xl"></i>
+                                </div>
+                            </div>
+                            <span class="text-green-500 font-medium">85 </span>
+                            <span class="text-500">responded</span>
+                        </div> 
+
+                        {% endblock %}
+
+                    </div>
+                </div>
+
+            <div class="layout-content-container">
+                <div class="layout-content">                        
+                    <div class="grid">
+                        {% block mycontent %}
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="chartjs-size-monitor">
+                                        <div class="chartjs-size-monitor-expand">
+                                            <div class=""></div>
+                                        </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class=""></div>
+                                    </div>
+                                </div>
+                                    <canvas id="myAreaChart" style="display: block; height: 320px; width: 623px;" width="934" height="480" class="chartjs-render-monitor"></canvas>
+                                </div>
+                            </div>
+                        {% endblock %}
+                        </div>
+                    </div>
+
+
+
+                    <div class="layout-footer">
+                        <span class="col py-1 m-0" style="background-color: rgb(12, 98, 59);"></span>
+                        <span class="col py-1 m-0" style="background-color: rgb(254, 201, 41);"></span>
+                        <span class="col py-1 m-0" style="background-color: rgb(237, 36, 44);"></span>
+                    </div>
+
+
+                </div>
+
+        {% endblock %}
+
+
+                
+
+        <script charset="utf-8" src="{{ asset('js/3.d3d46a21.chunk.js') }}"></script> 
+                <!-- Page level plugins -->
+        <script src="vendor/chart.js/Chart.min.js"></script>
+
+        <!-- Page level custom scripts -->
+        <script src="{{ asset('js/chart-area-demo.js') }}"></script>
+    </body>
+</html>

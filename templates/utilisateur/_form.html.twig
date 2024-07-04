@@ -1,0 +1,65 @@
+{{ form_start(form) }}
+
+<div style="position: relative;">
+
+    {{ form_row(form.Institution, {
+        'label': 'Institution',
+        'label_attr': {'class': 'required'},
+        'attr': {'placeholder': 'Choisir l\'institution'}
+    }) }}
+
+    {{ form_row(form.Structure, {
+        'label': 'Institution',
+        'label_attr': {'class': 'required'},
+        'attr': {'placeholder': 'Choisir la structure'}
+    }) }}
+
+    {{ form_row(form.matriculeUtilisateur, {
+        'label': 'Matricule',
+        'label_attr': {'class': 'required'},
+        'attr': {'placeholder': 'Saisir le numéro matricule de l\'utilisateur'}
+    }) }}
+
+  
+    {{ form_row(form.nomUtilisateur, {
+        'label': 'Nom utilisateur',
+        'label_attr': {'class': 'required'},
+        'attr': {'placeholder': 'Saisir le nom du utilisateur'}
+    }) }}
+
+    {{ form_row(form.prenomUtilisateur, {
+        'label': 'Prénom utilisateur',
+        'label_attr': {'class': 'required'},
+        'attr': {'placeholder': 'Saisir le prénom du utilisateur'}
+    }) }}
+
+    {{ form_row(form.dateNaissance, {
+        'label': 'Date de naissance',
+        'label_attr': {'class': 'required'},
+        'attr': {'placeholder': 'Saisir le prénom du utilisateur'}
+    }) }}
+
+    {{ form_row(form.telephoneUtilisateur, {
+        'label': 'Téléphone',
+        'attr': {'placeholder': 'ex: +229 98 00 00 00'}
+    }) }}
+
+    {{ form_row(form.email) }}
+
+    
+    {{ form_row(form.login) }}
+
+    {{ form_row(form.password) }}
+
+    {{ form_row(form.role) }}
+
+    {{ form_row(form.etatUtilisateur) }}
+
+    <div style="position: absolute; bottom: 0; right: 0; top: 680px;">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
+    </div>
+</div>
+
+{{ form_end(form) }}
+

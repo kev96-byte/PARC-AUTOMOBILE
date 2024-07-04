@@ -1,0 +1,26 @@
+{{ form_start(form) }}
+
+<div style="position: relative;">
+
+    {{ form_row(form.Niveau, {
+        'label': 'Niveau',
+        'attr': {'placeholder': 'Saisir le niveau de l\'institution'}
+    }) }}
+
+    {{ form_row(form.libelleInstitution, {
+        'label': 'Libellé',
+        'attr': {'placeholder': 'Saisir le libellé'}
+    }) }}
+    
+    {{ form_row(form.telephoneInstitution, {
+        'label': 'Téléphone',
+        'attr': {'placeholder': 'ex: +229 98 00 00 00'}
+    }) }}
+
+    <div style="position: absolute; bottom: 0; right: 0; top: 200px;">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
+    </div>
+</div>
+
+{{ form_end(form) }}

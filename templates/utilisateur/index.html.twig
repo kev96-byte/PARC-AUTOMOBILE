@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Liste des utilisateurs</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('utilisateur.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Institution</th>
+                        <th>Structure</th>
+                        <th>Matricule</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Role</th>
+                        <th>Etat</th>
+                        <th data-sortable="false" style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for utilisateur in utilisateurs %}
+                    <tr>
+                        <td>{{ utilisateur.institution.libelleInstitution}}</td>
+                        <td>{{ utilisateur.structure.libelleStructure}}</td>
+                        <td>{{ utilisateur.matriculeUtilisateur }}</td>
+                        <td>{{ utilisateur.nomUtilisateur }}</td>
+                        <td>{{ utilisateur.prenomUtilisateur }}</td>
+                        <td>{{ utilisateur.role.libelleRole}}</td>
+                        <td>{{ utilisateur.etatUtilisateur }}</td>
+                        <td>
+                            <div class="flex justify-content-end">
+                                <a href="{{ path('utilisateur.edit', {'id': utilisateur.id}) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </a>
+
+                                <form method="post" action="{{ path('utilisateur.delete', {'id': utilisateur.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce utilisateur ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ utilisateur.id) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="10">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+    </div>
+        
+</div>
+{% endblock %}

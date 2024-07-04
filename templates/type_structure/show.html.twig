@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TypeStructure{% endblock %}
+
+{% block body %}
+    <h1>TypeStructure</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ type_structure.id }}</td>
+            </tr>
+            <tr>
+                <th>LibelleTypeStructure</th>
+                <td>{{ type_structure.libelleTypeStructure }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_type_structure_index') }}">back to list</a>
+
+    <a href="{{ path('app_type_structure_edit', {'id': type_structure.id}) }}">edit</a>
+
+    {{ include('type_structure/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,1 @@
+C:\wamp64\www\GESPARCAUTO\vendor\gedmo\doctrine-extensions\src\Mapping\Driver

@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Liste des Véhicules</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('vehicule.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Immatriculation</th>
+                        <th>Photo</th>
+                        <th>Marque</th>
+                        <th>Modèle</th>
+                        <th>Nombre de places</th>
+                        <th>Etat</th>
+                        <th>Institution</th>
+                        <th data-sortable="false" style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for vehicule in vehicules %}
+                    <tr>
+                        <td>{{ vehicule.matricule }}</td>
+                        <td>
+                            <a href="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" data-lightbox="vehicule-gallery" data-title="{{ vehicule.matricule }}">
+                                <img class="thumbnail" src="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" alt="{{ vehicule.matricule }}">
+                            </a>
+                        </td>
+                        <td>{{ vehicule.marque.libelleMarque}}</td>
+                        <td>{{ vehicule.modele }}</td>
+                        <td>{{ vehicule.nbrePlace }}</td>
+                        <td>{{ vehicule.etat }}</td>
+                        <td>{{ vehicule.institution.libelleInstitution}}</td>
+                        <td>
+                            <div class="flex justify-content-end">
+                                <a href="{{ path('vehicule.edit', {'id': vehicule.id}) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </a>
+
+                                <form method="post" action="{{ path('vehicule.delete', {'id': vehicule.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce vehicule ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ vehicule.id) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+    </div>
+        
+</div>
+{% endblock %}

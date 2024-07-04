@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+        <div class="col-12">
+            <div class="card" style="min-height: 575px;">
+                <div class="p-toolbar-group-left">
+                    <div class="my-2">
+                        <a href="{{ path('structure.index') }}">
+                            <button class="p-button p-component p-button-success mr-2">
+                                <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                                <span class="p-button-label p-c">Retour à la liste</span>
+                                <span class="p-ink"></span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <h5>Ajouter une structure</h5>
+                {{ include('structure/_form.html.twig', {'mode': 'add'}) }}
+            </div>
+        </div>
+{% endblock %}
