@@ -51,9 +51,16 @@ class Structure
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deleteAt = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'structure')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->responsable = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,6 +166,36 @@ class Structure
     public function setDeleteAt(?\DateTimeInterface $deleteAt): static
     {
         $this->deleteAt = $deleteAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getStructure() === $this) {
+                $user->setStructure(null);
+            }
+        }
 
         return $this;
     }

@@ -2,18 +2,20 @@
 
 namespace App\Controller;
 
-use App\Entity\Institution;
 use App\Entity\Structure;
+use App\Entity\Institution;
+use App\Entity\Utilisateur;
 use App\Form\StructureType;
 use App\Entity\TypeStructure;
-use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/structure')]
+#[IsGranted('ROLE_USER')]
 class StructureController extends AbstractController
 {
     #[Route('/', name: 'structure.index', methods: ['GET'])]

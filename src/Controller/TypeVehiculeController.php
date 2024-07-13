@@ -5,14 +5,16 @@ namespace App\Controller;
 use App\Entity\Vehicule;
 use App\Entity\TypeVehicule;
 use App\Form\TypeVehiculeType;
-use App\Repository\TypeVehiculeRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\TypeVehiculeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/type/vehicule')]
+#[IsGranted('ROLE_USER')]
 class TypeVehiculeController extends AbstractController
 {
     #[Route('/', name: 'TypeVehicule.index', methods: ['GET'])]

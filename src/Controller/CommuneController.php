@@ -11,10 +11,12 @@ use App\Repository\DepartementRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 #[Route('/commune')]
+#[IsGranted('ROLE_USER')]
 class CommuneController extends AbstractController
 {
     #[Route('/', name: 'commune.index', methods: ['GET'])]

@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Liste des users</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('user.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Identifiant</th>
+                        <th>matricule</th>
+                        <th>Nom</th>
+                        <th>Prénom(s)</th>
+                        <th>Structure</th>
+                        <th>Institution</th>
+                        <th>Rôle</th>
+                        <th>Statut</th>
+                        <th data-sortable="false" style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.matricule }}</td>
+                        <td>{{ user.lastName }}</td>
+                        <td>{{ user.firstName }}</td>
+                        <td>{{ user.structure.libelleStructure }}</td>
+                        <td>{{ user.institution.libelleInstitution }}</td>
+                        <td>
+                            {% for key, value in user.roles %}
+                                <span>{{ value }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ user.statutCompte }}</td>
+                        <td>
+                            <div class="flex justify-content-end">
+                                <a href="{{ path('user.edit', {'id': user.id}) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;" data-id="{{ user.id }}" data-token="{{ csrf_token('delete' ~ user.id) }}" onclick="showDeletionModal(this)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer ce niveau ?
+                <form id="modalDeleteForm" method="post">
+                    <input type="hidden" name="_token" id="modal_token" value="">
+                    <input type="hidden" name="niveau_id" id="modal_niveau_id" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary" id="confirmButton">Oui</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDeletionModal(button) {
+        var niveauId = button.getAttribute('data-id');
+        var csrfToken = button.getAttribute('data-token');
+
+        // Mettre à jour les champs cachés du formulaire dans le modal
+        document.getElementById('modal_token').value = csrfToken;
+        document.getElementById('modal_niveau_id').value = niveauId;
+
+        // Mettre à jour l'action du formulaire avec l'ID du niveau
+        document.getElementById('modalDeleteForm').action = '{{ path("niveau.delete", {"id": "__ID__"}) }}'.replace('__ID__', niveauId);
+
+        // Afficher le modal de confirmation
+        $('#confirmModal').modal('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var confirmButton = document.getElementById('confirmButton');
+
+        confirmButton.addEventListener('click', function () {
+            // Soumettre le formulaire de suppression dans le modal
+            document.getElementById('modalDeleteForm').submit();
+        });
+    });
+</script>
+
+{% endblock %}

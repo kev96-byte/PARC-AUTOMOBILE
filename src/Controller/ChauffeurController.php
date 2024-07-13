@@ -9,9 +9,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/chauffeur')]
+#[IsGranted('ROLE_USER')]
 class ChauffeurController extends AbstractController
 {
     #[Route('/', name: 'chauffeur.index', methods: ['GET'])]

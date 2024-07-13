@@ -63,6 +63,12 @@ class Institution
     #[ORM\OneToMany(targetEntity: Vehicule::class, mappedBy: 'institution')]
     private Collection $vehicules;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'institution')]
+    private Collection $users;
+
 
 
     public function __construct()
@@ -71,6 +77,7 @@ class Institution
         $this->chauffeur = new ArrayCollection();
         $this->structures = new ArrayCollection();
         $this->vehicules = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -240,6 +247,36 @@ class Institution
             // set the owning side to null (unless already changed)
             if ($vehicule->getInstitution() === $this) {
                 $vehicule->setInstitution(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->setInstitution($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            // set the owning side to null (unless already changed)
+            if ($user->getInstitution() === $this) {
+                $user->setInstitution(null);
             }
         }
 

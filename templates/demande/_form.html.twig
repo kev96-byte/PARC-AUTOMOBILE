@@ -1,4 +1,24 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+<div style="position: relative;" >
+
+    {{ form_row(form.dateDebutMission) }}
+
+    {{ form_row(form.dateFinMission) }}
+
+    {{ form_row(form.objetMission) }}
+
+    {{ form_row(form.nbreParticipants) }}
+
+    {{ form_row(form.nbreVehicules) }}
+
+    {{ form_row(form.lieuMission) }}
+    
+    <div style="position: absolute; bottom: 0; right: 0; top: 420px;">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
+    </div>
+</div>
+
 {{ form_end(form) }}
+

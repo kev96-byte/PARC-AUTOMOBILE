@@ -9,9 +9,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/niveau')]
+
 class NiveauController extends AbstractController
 {
     #[Route('/', name: 'niveau.index', methods: ['GET'])]
@@ -76,24 +78,30 @@ class NiveauController extends AbstractController
     #[Route('/{id}', name: 'niveau.delete', methods: ['POST'])]
     public function delete(Request $request, Niveau $niveau, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$niveau->getId(), $request->getPayload()->get('_token'))) {
-            // Vérifiez si l'enregistrement de niveau est associé à une institution
-            $institutionsCount = $entityManager->getRepository(Institution::class)->count(['niveau' => $niveau]);
+        $token = $request->request->get('_token');
+        if ($this->isCsrfTokenValid('delete' . $niveau->getId(), $token)) {
+            $qb = $entityManager->createQueryBuilder();
+            $institutionsCount = $qb->select('count(i.id)')
+                ->from(Institution::class, 'i')
+                ->where('i.niveau = :niveau')
+                ->andWhere('i.deleteAt IS NULL')
+                ->setParameter('niveau', $niveau)
+                ->getQuery()
+                ->getSingleScalarResult();
+    
             if ($institutionsCount > 0) {
-                // Si des institutions sont associées, renvoyez un message d'erreur
-                    $this->addFlash('error', 'Vous ne pouvez pas supprimer ce niveau car il est associé à des institutions. ');
-                // $this->addFlash('notice', 'Hello world');
+                $this->addFlash('error', 'Vous ne pouvez pas supprimer ce niveau car il est associé à des institutions.');
             } else {
-                // Sinon, supprimez l'enregistrement de niveau
-                // $entityManager->remove($niveau);
                 $niveau->setDeleteAt(new \DateTimeImmutable());
                 $entityManager->flush();
                 $this->addFlash('success', 'Suppression effectuée avec succès.');
             }
+        } else {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
         }
     
         return $this->redirectToRoute('niveau.index', [], Response::HTTP_SEE_OTHER);
     }
     
-    
+   
 }

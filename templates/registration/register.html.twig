@@ -1,0 +1,32 @@
+{{ form_start(registrationForm) }}
+
+<div style="position: relative;" >
+
+    {{ form_row(registrationForm.matricule) }}
+
+    {{ form_row(registrationForm.lastName) }}
+
+    {{ form_row(registrationForm.firstName) }}
+
+    {{ form_row(registrationForm.username) }}
+
+    {{ form_row(registrationForm.email) }}
+
+    {{ form_row(registrationForm.roles) }}
+
+    {{ form_row(registrationForm.password) }}
+
+    {{ form_row(registrationForm.Institution) }}
+
+    {{ form_row(registrationForm.Structure) }}
+
+    {{ form_row(registrationForm.statutCompte) }}
+    
+    <div style="position: absolute; bottom: 0; right: 0; top: 100px;">
+        {{ form_widget(registrationForm.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+        {{ form_widget(registrationForm.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
+    </div>
+</div>
+
+{{ form_end(registrationForm) }}
+

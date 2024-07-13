@@ -10,18 +10,19 @@
 
         {% block stylesheets %}
             <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}">            
-            <link rel="stylesheet" href="{{ asset('node_modules/lightbox2/dist/css/lightbox.min.css') }}">
+            {# <link rel="stylesheet" href="{{ asset('node_modules/lightbox2/dist/css/lightbox.min.css') }}"> #}
             <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-            <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+            <!-- CSS de Bootstrap -->
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+            {# <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> #}
+            {# <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet"> #}
             <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
             <link href="{{ asset('css/theme.css') }}" rel="stylesheet">    
             <link href="{{ asset('css/mystyle.scss') }}" rel="stylesheet">    
-            <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">    
+            {# <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">     #}
             <link href="{{ asset('css/2.3e0fb6e6.chunk.css') }}" rel="stylesheet">
             <link href="{{ asset('css/main.985fc7ff.chunk.css') }}" rel="stylesheet">
-            <!-- Custom styles for this template -->
-            <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
-            <!-- Custom styles for this page -->
+            {# <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet"> #}
             <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
 
         {% endblock %}
@@ -33,29 +34,23 @@
             <div id="root">
                 <div class="p-toast p-component p-toast-top-right">
                     <div>
-
+                        
                     </div>
                 </div>
                 <div class="layout-wrapper layout-static layout-theme-light">
+
                     <div class="layout-topbar">
                         <a class="layout-topbar-logo" href="#/">
                             <span>GESTION DU PARC &nbsp; </span>
                             <i class="fa fa-car"></i>
                         </a>
+                        
                         <button type="button" class="p-link  layout-menu-button layout-topbar-button">
                             <i class="fa fa-bars"></i>
                         </button>
                         <button type="button" class="p-link layout-topbar-menu-button  layout-topbar-button">
                             <i class="fa fa-ellipsis-v"></i>
                         </button>
-
-{#                         {% for label, messages in app.flashes %}
-                            <div class="flash-{{ label }}">
-                                {% for message in messages %}
-                                    <p>{{ message }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endfor %} #}
 
 
 
@@ -67,19 +62,7 @@
                                 </div>
                             {% endfor %}
                         {% endfor %}
-                        
 
-
-
-
-{#                         {% for notice in app.flashes('notice') %}
-                            {{ notice }}
-                        {% endfor %} #}
-
-
-{#                         {% for message in app.session.flashBag.get('notice') %}
-                            {{ message }}
-                        {% endfor %} #}
 
 
                         <ul class="layout-topbar-menu lg:flex origin-top">
@@ -113,6 +96,7 @@
                                         </li>
                                     </ul>
                                 </li>
+                            {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des matériels roulants">Gestion des matériels roulants</div>
                                     <ul role="menu">
@@ -126,30 +110,9 @@
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Matériel roulant" role="menuitem" href="{{ path('vehicule.index') }}">
                                                 <i class="fa fa-car"></i>
-                                                <span>Matériel roulant</span><span class="p-ink"></span>
+                                                <span>Véhicule</span><span class="p-ink"></span>
                                             </a>
                                         </li>
-{#                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Plaque" role="menuitem" href="#/plaque">
-                                                <i class="fa fa-credit-card"></i>
-                                                <span>Plaque</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Financement" role="menuitem" href="#/financement">
-                                                <i class="fa fa-money-bill"></i>
-                                                <span>Financement</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li> #}
-{#                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Etat du matériel" role="menuitem" href="{{ path('vehicule.etat') }}">
-                                                <i class="fa fa-car"></i>
-                                                <span>Etat du matériel</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li> #}
                                     </ul>
                                 </li>
                                 <li class="layout-menuitem-category" role="none">
@@ -169,51 +132,41 @@
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
-{#                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Etat Cva" role="menuitem" href="#/etatChauffeur">
-                                                <i class="fa fa-users"></i>
-                                                <span>Etat Cva</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li> #}
+
                                     </ul>
                                 </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des Tiers">Gestion des Tiers</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type tiers" role="menuitem" href="#/typeTiers">
-                                                <i class="fa fa-list"></i>
-                                                <span>Type tiers</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Tiers" role="menuitem" href="#/tiers">
-                                                <i class="fa fa-list"></i>
-                                                <span>Tiers</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
+                            {% endif %}
+
+
+                                {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des missions">Gestion des missions</div>
+
                                     <ul role="menu">
+
+                                {% endif %}
+                                        {% if is_granted('ROLE_POINT_FOCAL') %}
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="#/demande">
+                                            <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="{{ path('demande.index') }}">
                                                 <i class="fa fa-car"></i>
                                                 <span>Demande de véhicule</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
+                                        {% endif %}
+
+
+                                        {% if is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC')  %}                                   
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="#/traitement">
+                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="{{ path('demande.index') }}">
                                                 <i class="fa fa-car"></i>
                                                 <span>Traitement des demandes</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
+                                        {% endif %}
+
+                                        {% if is_granted('ROLE_CHEF_PARC')  %} 
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Disponibilité en véhicule" role="menuitem" href="#/disponibiliteVehicule">
                                                 <i class="fa fa-car"></i>
@@ -221,121 +174,14 @@
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
+                                        {% endif %}
+                                    {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                                     </ul>
+                                    {% endif %}
+                                
                                 </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des assurances">Gestion des assurances</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type assurance" role="menuitem" href="#/typeAssurance">
-                                                <i class="fa fa-list"></i>
-                                                <span>Type assurance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Assurance" role="menuitem" href="#/assurance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Assurance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Point des assurances" role="menuitem" href="#/pointAssurance">
-                                                <i class="fa fa-list"></i>
-                                                <span>Point des assurances</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des locations">Gestion des locations</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Location" role="menuitem" href="#/location">
-                                                <i class="fa fa-car"></i>
-                                                <span>Location</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="#/traitement">
-                                                <i class="fa fa-list"></i>
-                                                <span>Traitement des demandes</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Point des locations" role="menuitem" href="#/pointLocation">
-                                                <i class="fa fa-list"></i>
-                                                <span>Point des locations</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des réparations">Gestion des réparations</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type contrat" role="menuitem" href="#/typeContrat">
-                                                <i class="fa fa-car"></i>
-                                                <span>Type contrat</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Contrat" role="menuitem" href="#/contrat">
-                                                <i class="fa fa-car"></i>
-                                                <span>Contrat</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Déclaration maintenance" role="menuitem" href="#/declarationMaintenance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Déclaration maintenance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type maintenance" role="menuitem" href="#/typeMaintenance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Type maintenance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Maintenance" role="menuitem" href="#/maintenance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Maintenance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Mouvement pièces" role="menuitem" href="#/mouvementPiece">
-                                                <i class="fa fa-car"></i>
-                                                <span>Mouvement pièces</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Pièces de rechange" role="menuitem" href="#/piecesRechange">
-                                                <i class="fa fa-car"></i>
-                                                <span>Pièces de rechange</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Stock pièces" role="menuitem" href="#/piecesRechangeStock">
-                                                <i class="fa fa-car"></i>
-                                                <span>Stock pièces</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
+
+                            {% if is_granted('ROLE_ADMIN') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label=" Autres paramètres"> Autres paramètres</div>
                                     <ul role="menu">
@@ -380,14 +226,7 @@
                                     <div class="layout-menuitem-root-text" aria-label="Administration">Administration</div>
                                     <ul role="menu">
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Rôle" role="menuitem" href="{{ path('role.index') }}">
-                                                <i class=" fa fa-user-edit"></i>
-                                                <span>Rôle</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Utilisateur" role="menuitem" href="{{ path('utilisateur.index') }}">
+                                            <a class="p-ripple" aria-label="Utilisateur" role="menuitem" href="{{ path('user.index') }}">
                                                 <i class="fa fa-users"></i>
                                                 <span>Utilisateur</span>
                                                 <span class="p-ink"></span>
@@ -396,9 +235,9 @@
                                     </ul>
                                 </li>
                             </ul>
+                        {% endif %}
                         </div>
-
-                </div>
+                    </div>
 
             <div class="layout-main-container">
                 <div class="layout-main">                        
@@ -434,6 +273,14 @@
     
 
 
+
+
+
+
+
+
+
+
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             document.querySelectorAll('.flash-close').forEach(button => {
@@ -442,7 +289,18 @@
                 });
             });
         });
-    </script>
+    </script> 
+
+
+
+    <script>
+        $(document).ready(function() {
+            // you may need to change this code if you are not using Bootstrap Datepicker
+            $('.js-datepicker').datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+        </script>
 
     <script>
         function openImageModal(imageUrl) {
@@ -466,48 +324,31 @@
         }
     </script>
 
-    <script>
-        const thumbnail = document.querySelector('.thumbnail');
-        const eyeIcon = document.querySelector('.fa-eye');
-    
-        thumbnail.addEventListener('mouseover', () => {
-            eyeIcon.style.display = 'block';
-        });
-    
-        thumbnail.addEventListener('mouseout', () => {
-            eyeIcon.style.display = 'none';
-        });
-    
-        eyeIcon.addEventListener('click', () => {
-            // Affichez l'image en taille réelle dans une fenêtre modale (lightbox)
-            // Vous pouvez utiliser une bibliothèque comme Lightbox2 ou créer votre propre solution.
-        });
-    </script>
-
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script charset="utf-8" src="{{ asset('js/3.d3d46a21.chunk.js') }}"></script> 
-                <!-- Page level plugins -->
     <script src="vendor/chart.js/Chart.min.js"></script>
-
-        <!-- Page level custom scripts -->
     <script src="{{ asset('js/chart-area-demo.js') }}"></script>
 
-
-    <!-- Bootstrap core JavaScript-->
     <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-    <!-- Core plugin JavaScript-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
-    <!-- Custom scripts for all pages-->
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
-
-    <!-- Page level plugins -->
     <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
-
-    <!-- Page level custom scripts -->
     <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Page level plugins -->
+<script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+
+    
+
+
+
+
     {% endblock %}
     </body>
 </html>

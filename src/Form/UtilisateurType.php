@@ -94,14 +94,14 @@ class UtilisateurType extends AbstractType
             ])
 
 
-            ->add('role', EntityType::class, [
+ /*            ->add('role', EntityType::class, [
                 'required' => true,
                 'class' => Role::class,
                 'query_builder' => function (EntityRepository $er) { return $er->createQueryBuilder('n')
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleRole',
-          ])         
+          ])     */     
 
             
             ->add('etatUtilisateur', ChoiceType::class, [

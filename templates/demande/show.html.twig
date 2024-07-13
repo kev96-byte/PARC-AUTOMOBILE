@@ -1,54 +1,264 @@
 {% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Details demande</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('demande.index') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
 
-{% block title %}Demande{% endblock %}
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <th>Identifiant</th>
+                        <td>{{ demande.id }}</td>
+                    </tr>
 
-{% block body %}
-    <h1>Demande</h1>
+                    <tr>
+                        <th>Date Demande</th>
+                        <td>{{ demande.dateDemande|format_date('m/d/Y H:i:s') }}</td>
+                    </tr>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ demande.id }}</td>
-            </tr>
-            <tr>
-                <th>NumDemande</th>
-                <td>{{ demande.numDemande }}</td>
-            </tr>
-            <tr>
-                <th>DateDemande</th>
-                <td>{{ demande.dateDemande ? demande.dateDemande|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>ObjetMission</th>
-                <td>{{ demande.objetMission }}</td>
-            </tr>
-            <tr>
-                <th>DateDebutMission</th>
-                <td>{{ demande.dateDebutMission ? demande.dateDebutMission|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateFinMission</th>
-                <td>{{ demande.dateFinMission ? demande.dateFinMission|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>NbreParticipants</th>
-                <td>{{ demande.nbreParticipants }}</td>
-            </tr>
-            <tr>
-                <th>NbreVehicules</th>
-                <td>{{ demande.nbreVehicules }}</td>
-            </tr>
-            <tr>
-                <th>DeleteAt</th>
-                <td>{{ demande.deleteAt ? demande.deleteAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+                    <tr>
+                        <th>Objet mission</th>
+                        <td>{{ demande.objetMission }}</td>
+                    </tr>
 
-    <a href="{{ path('app_demande_index') }}">back to list</a>
+                    <tr>
+                        <th>Date début mission</th>
+                        <td>{{ demande.dateDebutMission|date("m/d/Y") }}</td>
+                    </tr>
 
-    <a href="{{ path('app_demande_edit', {'id': demande.id}) }}">edit</a>
+                    <tr>
+                        <th>Date fin mission</th>
+                        <td>{{ demande.dateFinMission|date("m/d/Y") }}</td>
+                    </tr>
 
-    {{ include('demande/_delete_form.html.twig') }}
+                    <tr>
+                        <th>Lieu Mission</th>
+
+                        <td>
+                            {% for key, value in demande.lieuMission %}
+                                <span>{{ value }}</span>
+                            {% endfor %}
+                        </td>
+
+                    <tr>
+                        <th>Nombre de participants</th>
+                        <td>{{ demande.nbreParticipants }}</td>
+                    </tr>
+
+
+                    <tr>
+                        <th>Nombre de véhicules</th>
+                        <td>{{ demande.nbreVehicules }}</td>
+                    </tr>
+
+
+                    <tr>
+                        <th>Demandeur</th>
+                        <td>
+                            <span class="user-lastname">{{ demande.demander.lastName }}</span>
+                            <span class="user-firstname">{{ demande.demander.firstName }}</span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Statut demande</th>
+                        <td>                            
+                            <span class="
+                                {% if demande.statut == 'Initial' %}
+                                    initial
+                                {% elseif demande.statut == 'Approuvé' %}
+                                    approved
+                                {% elseif demande.statut == 'Validé' %}
+                                    validated
+                                {% elseif demande.statut == 'Rejeté' %}
+                                    rejected
+                                {% endif %}
+                            ">
+                            {{ demande.statut }}
+                        </span>
+                        </td>
+                    </tr>
+                    {% if is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_ADMIN') and demande.statut == 'Initial' %}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center" style="margin-top: 50px;">
+                                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveModal" onclick="showApproveModal('{{ demande.id }}')">
+                                    Approuver
+                                </button>
+                                <button type="submit" name="btnRejeter" class="btn btn-danger mx-2" style="width: 100px;" onclick="showRejectionModal('{{ demande.id }}')">
+                                    Rejeter
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN')  and demande.statut == 'Approuvé'%}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center" style="margin-top: 50px;"> 
+                                <a href="{{ path('demande.edit', {'id': demande.id}) }}">
+                                    <button type="submit" name="btnValider" class="btn btn-primary mx-2" style="width: 100px;">Traiter</button>
+                                </a> 
+                                
+                                <a href="{{ path('demande.edit', {'id': demande.id}) }}">
+                                    <button type="submit" name="btnRejeter" class="btn btn-danger mx-2" style="width: 100px;">Rejeter</button>
+                                </a>                                  
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                    {% if is_granted('ROLE_POINT_FOCAL') and not is_granted('ROLE_ADMIN') and demande.statut == 'Initial' %}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center" style="margin-top: 50px;">
+                                <a href="{{ path('demande.edit', {'id': demande.id}) }}">
+                                    <button type="submit" name="" class="p-button p-component p-button-Warning mx-2" style="width: 100px; color: white; background-color: #f59e0B;">
+                                        Modifier
+                                    </button>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+    </div>        
+</div>
+
+{# ... Autre contenu de la page ... #}
+
+<!-- Modal de rejet -->
+<div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="reject-form" method="post" action="{{ path('demande.dismiss', {'id': '__ID__'}) }}" onsubmit="return false;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectionModalLabel">Raison de rejet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="_token" value="{{ csrf_token('dismiss') }}">
+                    <input type="hidden" name="demande_id" id="demande-id">
+                    <input type="hidden" name="statut" value="Rejeté">
+                    <input type="hidden" name="validateurStructure" value="{{ app.user.id }}">
+                    <div class="form-group">
+                        <label for="raisonRejetApprobation">Raison de rejet</label>
+                        <textarea name="raisonRejetApprobation" id="raisonRejetApprobation" class="form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" onclick="submitRejectionForm()">Rejeter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- Modal de confirmation d'approbation -->
+    <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="approve-form" method="post" action="{{ path('demande.approve', {'id': '__ID__'}) }}">
+                    <div class="modal-body">
+                        <input type="hidden" name="_token" value="{{ csrf_token('dismiss') }}">
+                        <input type="hidden" name="demande_id" id="demande-id">
+                        <input type="hidden" name="statut" value="Approuvé">
+                        <input type="hidden" name="validateurStructure" value="{{ app.user.id }}">
+                    </div>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="approveModalLabel">Confirmation d'approbation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Êtes-vous sûr de vouloir approuver cette demande ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                        <button type="button" class="btn btn-primary" id="confirmApproveButton">Oui</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{# ... Autre contenu de la page ... #}
+
+<script>
+    function showRejectionModal(demandeId) {
+        document.getElementById('reject-form').action = '{{ path("demande.dismiss", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
+        document.getElementById('demande-id').value = demandeId;
+        $('#rejectionModal').modal('show');
+    }
+
+    function submitRejectionForm() {
+        var form = document.getElementById('reject-form');
+        if (form.checkValidity()) {
+            form.onsubmit = function() { return true; };
+            form.submit();
+        }
+    }
+
+    function showApproveModal(demandeId) {
+        document.getElementById('approve-form').action = '{{ path("demande.approve", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
+        document.getElementById('demande-id').value = demandeId;
+        $('#approveModal').modal('show');
+    }
+
+    function submitApproveForm() {
+        var form = document.getElementById('approve-form');
+        if (form.checkValidity()) {
+            form.onsubmit = function() { return true; };
+            form.submit();
+        }
+    }
+
+
+    function showApproveModal(demandeId) {
+        // Mettre à jour l'action du formulaire avec l'ID de la demande
+        document.getElementById('approve-form').action = '{{ path("demande.approve", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
+        // Mettre à jour le champ demande_id caché avec l'ID de la demande
+        document.getElementById('demande-id').value = demandeId;
+        // Afficher le modal de confirmation
+        $('#approveModal').modal('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var confirmApproveButton = document.getElementById('confirmApproveButton');
+
+        confirmApproveButton.addEventListener('click', function () {
+            // Soumettre le formulaire d'approbation
+            document.getElementById('approve-form').submit();
+        });
+    });
+
+
+    
+</script>
+
+
+
 {% endblock %}
+

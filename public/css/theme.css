@@ -5794,5 +5794,47 @@ label.required::before {
   display: none; /* Masquez l'icône par défaut */
 }
 
+.user-lastname {
+  margin-right: 5px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table_demande {
+  width: 100%;
+  min-width: 1000px; /* Ajustez cette valeur selon vos besoins */
+  table-layout: auto;
+}
+
+.initial {
+        background-color: #B0BEC5;
+        color: black;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
+    .approved {
+        background-color: #2196F3;
+        color: black;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
+    .validated {
+        background-color: #2196F3;
+        color: black;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
+    .rejected {
+        background-color: #F44336;
+        color: black;
+        padding: 2px 5px;
+        border-radius: 3px;
+    }
+
 
   

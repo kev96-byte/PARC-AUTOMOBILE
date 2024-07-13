@@ -74,6 +74,7 @@
                                         </li>
                                     </ul>
                                 </li>
+                            {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des matériels roulants">Gestion des matériels roulants</div>
                                     <ul role="menu">
@@ -87,30 +88,9 @@
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Matériel roulant" role="menuitem" href="{{ path('vehicule.index') }}">
                                                 <i class="fa fa-car"></i>
-                                                <span>Matériel roulant</span><span class="p-ink"></span>
+                                                <span>Véhicule</span><span class="p-ink"></span>
                                             </a>
                                         </li>
-{#                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Plaque" role="menuitem" href="#/plaque">
-                                                <i class="fa fa-credit-card"></i>
-                                                <span>Plaque</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Financement" role="menuitem" href="#/financement">
-                                                <i class="fa fa-money-bill"></i>
-                                                <span>Financement</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li> #}
-{#                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Etat du matériel" role="menuitem" href="{{ path('vehicule.etat') }}">
-                                                <i class="fa fa-car"></i>
-                                                <span>Etat du matériel</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li> #}
                                     </ul>
                                 </li>
                                 <li class="layout-menuitem-category" role="none">
@@ -130,51 +110,41 @@
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
-{#                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Etat Cva" role="menuitem" href="#/etatChauffeur">
-                                                <i class="fa fa-users"></i>
-                                                <span>Etat Cva</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li> #}
+
                                     </ul>
                                 </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des Tiers">Gestion des Tiers</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type tiers" role="menuitem" href="#/typeTiers">
-                                                <i class="fa fa-list"></i>
-                                                <span>Type tiers</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Tiers" role="menuitem" href="#/tiers">
-                                                <i class="fa fa-list"></i>
-                                                <span>Tiers</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
+                            {% endif %}
+
+
+                                {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des missions">Gestion des missions</div>
+
                                     <ul role="menu">
+
+                                {% endif %}
+                                        {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CABINET')  %}
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="#/demande">
+                                            <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="{{ path('demande.index') }}">
                                                 <i class="fa fa-car"></i>
                                                 <span>Demande de véhicule</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
+                                        {% endif %}
+
+
+                                        {% if is_granted('ROLE_CHEF_PARC')  %}                                   
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="#/traitement">
+                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="{{ path('demande.index') }}">
                                                 <i class="fa fa-car"></i>
                                                 <span>Traitement des demandes</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
+                                        {% endif %}
+
+                                        {% if is_granted('ROLE_CHEF_PARC')  %} 
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Disponibilité en véhicule" role="menuitem" href="#/disponibiliteVehicule">
                                                 <i class="fa fa-car"></i>
@@ -182,121 +152,14 @@
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
+                                        {% endif %}
+                                    {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                                     </ul>
+                                    {% endif %}
+                                
                                 </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des assurances">Gestion des assurances</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type assurance" role="menuitem" href="#/typeAssurance">
-                                                <i class="fa fa-list"></i>
-                                                <span>Type assurance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Assurance" role="menuitem" href="#/assurance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Assurance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Point des assurances" role="menuitem" href="#/pointAssurance">
-                                                <i class="fa fa-list"></i>
-                                                <span>Point des assurances</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des locations">Gestion des locations</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Location" role="menuitem" href="#/location">
-                                                <i class="fa fa-car"></i>
-                                                <span>Location</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="#/traitement">
-                                                <i class="fa fa-list"></i>
-                                                <span>Traitement des demandes</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Point des locations" role="menuitem" href="#/pointLocation">
-                                                <i class="fa fa-list"></i>
-                                                <span>Point des locations</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des réparations">Gestion des réparations</div>
-                                    <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type contrat" role="menuitem" href="#/typeContrat">
-                                                <i class="fa fa-car"></i>
-                                                <span>Type contrat</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Contrat" role="menuitem" href="#/contrat">
-                                                <i class="fa fa-car"></i>
-                                                <span>Contrat</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Déclaration maintenance" role="menuitem" href="#/declarationMaintenance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Déclaration maintenance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type maintenance" role="menuitem" href="#/typeMaintenance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Type maintenance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Maintenance" role="menuitem" href="#/maintenance">
-                                                <i class="fa fa-car"></i>
-                                                <span>Maintenance</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Mouvement pièces" role="menuitem" href="#/mouvementPiece">
-                                                <i class="fa fa-car"></i>
-                                                <span>Mouvement pièces</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Pièces de rechange" role="menuitem" href="#/piecesRechange">
-                                                <i class="fa fa-car"></i>
-                                                <span>Pièces de rechange</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Stock pièces" role="menuitem" href="#/piecesRechangeStock">
-                                                <i class="fa fa-car"></i>
-                                                <span>Stock pièces</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
+
+                            {% if is_granted('ROLE_ADMIN') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label=" Autres paramètres"> Autres paramètres</div>
                                     <ul role="menu">
@@ -341,14 +204,7 @@
                                     <div class="layout-menuitem-root-text" aria-label="Administration">Administration</div>
                                     <ul role="menu">
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Rôle" role="menuitem" href="{{ path('role.index') }}">
-                                                <i class=" fa fa-user-edit"></i>
-                                                <span>Rôle</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Utilisateur" role="menuitem" href="{{ path('utilisateur.index') }}">
+                                            <a class="p-ripple" aria-label="Utilisateur" role="menuitem" href="{{ path('user.index') }}">
                                                 <i class="fa fa-users"></i>
                                                 <span>Utilisateur</span>
                                                 <span class="p-ink"></span>
@@ -357,6 +213,7 @@
                                     </ul>
                                 </li>
                             </ul>
+                        {% endif %}
                         </div>
                     </div>
 

@@ -47,8 +47,7 @@ class Utilisateur
 
     public ?string $confirm_password = null;
 
-    #[ORM\ManyToOne(inversedBy: 'utilisateur')]
-    private ?Role $role = null;
+   
 
     #[ORM\ManyToOne(inversedBy: 'responsable')]
     private ?Structure $structure = null;
@@ -179,17 +178,6 @@ class Utilisateur
         return $this;
     }
 
-    public function getRole(): ?Role
-    {
-        return $this->role;
-    }
-
-    public function setRole(?Role $role): static
-    {
-        $this->role = $role;
-
-        return $this;
-    }
 
     public function getStructure(): ?Structure
     {
@@ -259,7 +247,7 @@ class Utilisateur
         return $this->demandes;
     }
 
-    public function addDemande(Demande $demande): static
+/*     public function addDemande(Demande $demande): static
     {
         if (!$this->demandes->contains($demande)) {
             $this->demandes->add($demande);
@@ -267,7 +255,7 @@ class Utilisateur
         }
 
         return $this;
-    }
+    } */
 
     public function removeDemande(Demande $demande): static
     {
@@ -289,7 +277,7 @@ class Utilisateur
         return $this->demandesValidateurs;
     }
 
-    public function addDemandesValidateur(Demande $demandesValidateur): static
+/*     public function addDemandesValidateur(Demande $demandesValidateur): static
     {
         if (!$this->demandesValidateurs->contains($demandesValidateur)) {
             $this->demandesValidateurs->add($demandesValidateur);
@@ -297,7 +285,7 @@ class Utilisateur
         }
 
         return $this;
-    }
+    } */
 
     public function removeDemandesValidateur(Demande $demandesValidateur): static
     {
@@ -319,7 +307,7 @@ class Utilisateur
         return $this->demandesTraiteur;
     }
 
-    public function addDemandesTraiteur(Demande $demandesTraiteur): static
+/*     public function addDemandesTraiteur(Demande $demandesTraiteur): static
     {
         if (!$this->demandesTraiteur->contains($demandesTraiteur)) {
             $this->demandesTraiteur->add($demandesTraiteur);
@@ -327,7 +315,7 @@ class Utilisateur
         }
 
         return $this;
-    }
+    } */
 
     public function removeDemandesTraiteur(Demande $demandesTraiteur): static
     {

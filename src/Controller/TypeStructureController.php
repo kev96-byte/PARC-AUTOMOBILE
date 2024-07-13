@@ -5,14 +5,16 @@ namespace App\Controller;
 use App\Entity\Structure;
 use App\Entity\TypeStructure;
 use App\Form\TypeStructureType;
-use App\Repository\TypeStructureRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Repository\TypeStructureRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/type/structure')]
+#[IsGranted('ROLE_USER')]
 class TypeStructureController extends AbstractController
 {
     #[Route('/', name: 'TypeStructure.index', methods: ['GET'])]
