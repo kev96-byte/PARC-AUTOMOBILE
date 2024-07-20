@@ -2,7 +2,7 @@
 
 {% block mycontent %}
         <div class="col-12">
-            <div class="card" style="min-height: 575px;">
+            <div class="card" style="min-height: 2500px;">
                 <div class="p-toolbar-group-left">
                     <div class="my-2">
                         <a href="{{ path('vehicule.index') }}">
@@ -18,4 +18,7 @@
                 {{ include('vehicule/_form.html.twig', {'mode': 'add'}) }}
             </div>
         </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> 
 {% endblock %}

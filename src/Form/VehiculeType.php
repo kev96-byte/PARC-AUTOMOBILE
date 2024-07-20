@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
@@ -27,27 +28,12 @@ class VehiculeType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
 
-        ->add('photoVehicule', FileType::class, [
-            'label' => 'Télécharger la photo du véhicule',
-            'mapped' => false,
-            'required' => false,
-            'constraints' => [
-                new File([
-                    'maxSize' => '1024k',
-                    'mimeTypes' => [
-                        'image/jpeg',
-                        'image/png',
-                        'image/gif',
-                    ],
-                    'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG ou GIF).',
-                ]),
-            ],
-        ])
-            
+
+        $builder
+          
             ->add('TypeVehicule', EntityType::class, [
-                'label' => false,
+                'label' => 'Type véhicule',
                 'required' => true,
                 'class' => TypeVehicule::class,
                 'query_builder' => function (EntityRepository $er) { return $er->createQueryBuilder('n')
@@ -70,7 +56,7 @@ class VehiculeType extends AbstractType
             ])
 
             ->add('marque', EntityType::class, [
-                'label' => false,
+                'label' => 'Marque',
                 'required' => true,
                 'class' => Marque::class,
                 'query_builder' => function (EntityRepository $er) { return $er->createQueryBuilder('n')
@@ -80,14 +66,13 @@ class VehiculeType extends AbstractType
             ])
 
             ->add('modele', TextType::class, [
-                'label' => false,
                 'empty_data' => '',
                 'label' => 'Modèle',
                 'required' => false,
             ])
 
             ->add('nbrePlace', NumberType::class, [
-                'label' => false,
+                'label' => 'Nombre de places',
                 'required' => true,
                 'attr' => [
                     'min' => 1, // Valeur minimale (peut être ajustée)
@@ -95,25 +80,9 @@ class VehiculeType extends AbstractType
                 ],
             ])
 
-            ->add('etat', ChoiceType::class, [
-                'choices' => [
-                    'service' => 'En service',
-                    'maintenance' => 'En maintenance',
-                    'attenteaffectation' => 'En attente d’affectation',
-                    'horsservice' => 'Hors service',
-                    'findevie' => 'En fin de vie',
-                    'enstock' => 'En stock',
-                    'location' => 'En location',
-                    'reforme' => 'En réforme',
-                ],
-            ])
-
             ->add('dateAcquisition', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
-                'attr' => [
-                    'placeholder' => 'Sélectionnez une date',
-                ],
                 'required' => false,
             ])
             
@@ -151,10 +120,6 @@ class VehiculeType extends AbstractType
             ->add('dateReception', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
-                'attr' => [
-                    'placeholder' => 'Sélectionnez une date',
-                ],
-
                 'required' => false,
             ])
 
@@ -162,9 +127,6 @@ class VehiculeType extends AbstractType
             ->add('dateMiseEnCirculation', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
-                'attr' => [
-                    'placeholder' => 'Sélectionnez une date',
-                ],
                 'required' => false,
             ])
 
@@ -174,22 +136,10 @@ class VehiculeType extends AbstractType
                     'Oui' => true,
                     'Non' => false,
                 ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'placeholder' => 'Non', // Texte par défaut
                 'required' => false,
             ])
 
-/*             ->add('alimentation', ChoiceType::class, [
-                'label' => 'Alimentation du véhicule',
-                'choices' => [
-                    'Essence' => 'essence',
-                    'Diesel' => 'diesel',
-                    'Électrique' => 'electrique',
-                    'Hybride' => 'hybride',
-                    // Ajoutez d'autres options ici...
-                ],
-                'placeholder' => 'Sélectionnez une option',
-                'required' => false,
-            ]) */
 
             ->add('allumage', ChoiceType::class, [
                 'label' => 'Type d\'allumage du véhicule',
@@ -200,7 +150,7 @@ class VehiculeType extends AbstractType
                     'Allumage à bobine' => 'a_bobine',
                     // Ajoutez d'autres options ici...
                 ],
-                'placeholder' => 'Sélectionnez un type d\'allumage',
+                'placeholder' => 'Sélectionnez une option', // Texte par défaut
                 'required' => false,
             ])
 
@@ -244,37 +194,16 @@ class VehiculeType extends AbstractType
                 // Autres options de validation si nécessaire
             ])
 
-            ->add('climatiseur', ChoiceType::class, [
-                'label' => 'Climatiseur',
+            ->add('Climatiseur', ChoiceType::class, [
+                'label' => 'Climatisation',
                 'choices' => [
-                    'Oui' => 'Fonctionnel',
-                    'Non' => 'En panne',
-                    'Non' => 'Non disponible',
+                    'Fonctionnelle' => 'Fonctionnelle',
+                    'Non fonctionnel' => 'Non fonctionnel',
+                    'Absent' => 'Absent',
                 ],
                 'placeholder' => 'Sélectionnez une option', // Texte par défaut
-                'required' => false,
-            ])
-
-/*             ->add('nbreCylindre', ChoiceType::class, [
-                'label' => 'Type de moteur',
-                'choices' => [
-                    'Essence' => 'essence',
-                    'Diesel' => 'diesel',
-                    'Électrique' => 'electrique',
-                    // Ajoute d'autres choix si nécessaire
-                ],
-                'required' => false,
-                // Autres options de validation si nécessaire
-            ]) */
-
-/*             ->add('nbreCylindre', NumberType::class, [
-                'label' => 'cylindrée en cm³',
                 'required' => true,
-                'attr' => [
-                    'min' => 1, // Valeur minimale (peut être ajustée)
-                    'max' => 10000, // Valeur maximale (peut être ajustée)
-                ],
-            ]) */
+            ])
 
             ->add('numeroMoteur', NumberType::class, [
                 'label' => 'Numéro du moteur',
@@ -290,7 +219,7 @@ class VehiculeType extends AbstractType
 
             ->add('puissance', NumberType::class, [
                 'label' => 'Puissance (en chevaux)',
-                'required' => false,
+                'required' => true,
                 'attr' => [
                     'min' => 1, // Valeur minimale
                     'max' => 1000, // Valeur maximale
@@ -299,7 +228,7 @@ class VehiculeType extends AbstractType
 
             ->add('vitesse', NumberType::class, [
                 'label' => 'Vitesse (en km/h)',
-                'required' => false,
+                'required' => true,
                 'attr' => [
                     'min' => 0, // Valeur minimale (peut être ajustée)
                     'max' => 300, // Valeur maximale (peut être ajustée)
@@ -343,18 +272,6 @@ class VehiculeType extends AbstractType
                 ],
             ])
 
-/*             ->add('energie', ChoiceType::class, [
-                'label' => 'Énergie',
-                'choices' => [
-                    'Essence' => 'essence',
-                    'Diesel' => 'diesel',
-                    'Électrique' => 'electrique',
-                    // Ajoute d'autres choix si nécessaire
-                ],
-                'required' => false,
-                // Autres options de validation si nécessaire
-            ]) */
-
             ->add('freins', ChoiceType::class, [
                 'label' => 'Freins',
                 'choices' => [
@@ -364,6 +281,7 @@ class VehiculeType extends AbstractType
                     // Ajoute d'autres choix si nécessaire
                 ],
                 'required' => false,
+                'placeholder' => 'Sélectionnez une option', // Texte par défaut
                 // Autres options de validation si nécessaire
             ])
 
@@ -379,11 +297,12 @@ class VehiculeType extends AbstractType
             ->add('radio', ChoiceType::class, [
                 'label' => 'Radio',
                 'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
+                    'Fonctionnelle' => 'Fonctionnelle',
+                    'Non fonctionnel' => 'Non fonctionnel',
+                    'Absent' => 'Absent',
                 ],
                 'placeholder' => 'Sélectionnez une option', // Texte par défaut
-                'required' => false,
+                'required' => true,
             ])
 
             ->add('typeEnergie', ChoiceType::class, [
@@ -394,7 +313,8 @@ class VehiculeType extends AbstractType
                     'Électrique' => 'electrique',
                     // Ajoute d'autres choix si nécessaire
                 ],
-                'required' => false,
+                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'required' => true,
                 // Autres options de validation si nécessaire
             ])
 
@@ -405,14 +325,47 @@ class VehiculeType extends AbstractType
                     'Automatique' => 'automatique',
                     // Ajoute d'autres choix si nécessaire
                 ],
+                'required' => true,
+                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+            ])
+
+            
+            // Champ non mappé pour afficher le lien de l'ancienne photo
+            ->add('photoVehiculeUrl', HiddenType::class, [
+                'mapped' => false,
+            ])
+
+            ->add('photoVehicule', FileType::class, [
+                'label' => 'Télécharger la photo du véhicule',
+                'mapped' => false,
                 'required' => false,
-                // Autres options de validation si nécessaire
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG ou GIF).',
+                    ]),
+                ],
             ])
                        
             ->add('save', SubmitType::class)
 
             ->add('cancel', SubmitType::class)
         ;
+
+        
+        if ($options['mode'] === 'edit') {
+            $builder->add('etat', ChoiceType::class, [
+                'choices' => [
+                    'En service' => 'En service',
+                    'En panne' => 'En panne',
+                ],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -421,5 +374,8 @@ class VehiculeType extends AbstractType
             'data_class' => Vehicule::class,
             'mode' => 'add', // Par défaut, en mode création
         ]);
+
+        // Accepter uniquement les valeurs 'add' ou 'edit' pour l'option 'mode'
+        $resolver->setAllowedValues('mode', ['add', 'edit']);
     }
 }

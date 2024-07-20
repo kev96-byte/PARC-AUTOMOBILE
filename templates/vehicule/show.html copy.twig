@@ -1,0 +1,178 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vehicule{% endblock %}
+
+{% block body %}
+    <h1>Vehicule</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ vehicule.id }}</td>
+            </tr>
+            <tr>
+                <th>Matricule</th>
+                <td>{{ vehicule.matricule }}</td>
+            </tr>
+            <tr>
+                <th>NumeroChassis</th>
+                <td>{{ vehicule.numeroChassis }}</td>
+            </tr>
+            <tr>
+                <th>Marque</th>
+                <td>{{ vehicule.marque }}</td>
+            </tr>
+            <tr>
+                <th>Modele</th>
+                <td>{{ vehicule.modele }}</td>
+            </tr>
+            <tr>
+                <th>NbrePlace</th>
+                <td>{{ vehicule.nbrePlace }}</td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                <td>{{ vehicule.etat }}</td>
+            </tr>
+            <tr>
+                <th>DateAcquisition</th>
+                <td>{{ vehicule.dateAcquisition ? vehicule.dateAcquisition|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>ValeurAcquisition</th>
+                <td>{{ vehicule.valeurAcquisition }}</td>
+            </tr>
+            <tr>
+                <th>Kilometrage</th>
+                <td>{{ vehicule.Kilometrage }}</td>
+            </tr>
+            <tr>
+                <th>DateReception</th>
+                <td>{{ vehicule.dateReception ? vehicule.dateReception|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateMiseEnCirculation</th>
+                <td>{{ vehicule.dateMiseEnCirculation ? vehicule.dateMiseEnCirculation|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>MiseEnRebut</th>
+                <td>{{ vehicule.MiseEnRebut ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>DateDebutVisiteTechnique</th>
+                <td>{{ vehicule.dateDebutVisiteTechnique ? vehicule.dateDebutVisiteTechnique|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateFinVisiteTechnique</th>
+                <td>{{ vehicule.dateFinVisiteTechnique ? vehicule.dateFinVisiteTechnique|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DateEntretien</th>
+                <td>{{ vehicule.dateEntretien ? vehicule.dateEntretien|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Alimentation</th>
+                <td>{{ vehicule.alimentation }}</td>
+            </tr>
+            <tr>
+                <th>Allumage</th>
+                <td>{{ vehicule.allumage }}</td>
+            </tr>
+            <tr>
+                <th>AssistanceFreinage</th>
+                <td>{{ vehicule.assistanceFreinage }}</td>
+            </tr>
+            <tr>
+                <th>CapaciteCarburant</th>
+                <td>{{ vehicule.capaciteCarburant }}</td>
+            </tr>
+            <tr>
+                <th>Categorie</th>
+                <td>{{ vehicule.categorie }}</td>
+            </tr>
+            <tr>
+                <th>Cession</th>
+                <td>{{ vehicule.cession }}</td>
+            </tr>
+            <tr>
+                <th>ChargeUtile</th>
+                <td>{{ vehicule.chargeUtile }}</td>
+            </tr>
+            <tr>
+                <th>Climatiseur</th>
+                <td>{{ vehicule.climatiseur ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>NbreCylindre</th>
+                <td>{{ vehicule.nbreCylindre }}</td>
+            </tr>
+            <tr>
+                <th>NumeroMoteur</th>
+                <td>{{ vehicule.numeroMoteur }}</td>
+            </tr>
+            <tr>
+                <th>PMA</th>
+                <td>{{ vehicule.PMA }}</td>
+            </tr>
+            <tr>
+                <th>Puissance</th>
+                <td>{{ vehicule.puissance }}</td>
+            </tr>
+            <tr>
+                <th>Vitesse</th>
+                <td>{{ vehicule.vitesse }}</td>
+            </tr>
+            <tr>
+                <th>Cylindree</th>
+                <td>{{ vehicule.cylindree }}</td>
+            </tr>
+            <tr>
+                <th>DirectionAssistee</th>
+                <td>{{ vehicule.directionAssistee }}</td>
+            </tr>
+            <tr>
+                <th>DureeGuarantie</th>
+                <td>{{ vehicule.dureeGuarantie }}</td>
+            </tr>
+            <tr>
+                <th>DureVie</th>
+                <td>{{ vehicule.dureVie }}</td>
+            </tr>
+            <tr>
+                <th>Energie</th>
+                <td>{{ vehicule.energie }}</td>
+            </tr>
+            <tr>
+                <th>Freins</th>
+                <td>{{ vehicule.freins }}</td>
+            </tr>
+            <tr>
+                <th>PVA</th>
+                <td>{{ vehicule.PVA }}</td>
+            </tr>
+            <tr>
+                <th>Radio</th>
+                <td>{{ vehicule.radio ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>TypeEnergie</th>
+                <td>{{ vehicule.typeEnergie }}</td>
+            </tr>
+            <tr>
+                <th>TypeTransmission</th>
+                <td>{{ vehicule.typeTransmission }}</td>
+            </tr>
+            <tr>
+                <th>Disponibilite</th>
+                <td>{{ vehicule.disponibilite }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_vehicule_index') }}">back to list</a>
+
+    <a href="{{ path('app_vehicule_edit', {'id': vehicule.id}) }}">edit</a>
+
+    {{ include('vehicule/_delete_form.html.twig') }}
+{% endblock %}

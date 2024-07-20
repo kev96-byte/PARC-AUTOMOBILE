@@ -39,5 +39,14 @@ services:
         tags: ['twig.extension']
 
 
+ #   App\Twig\DateExtension:
+ #       tags: ['twig.extension']
+
     App\Twig\DateExtension:
-        tags: ['twig.extension']
+        tags:
+            - { name: twig.extension }
+
+
+ #   App\Form\DemandeType:
+  #      arguments:
+ #           $communeRepository: '@App\Repository\CommuneRepository'

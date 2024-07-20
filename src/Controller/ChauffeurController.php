@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/chauffeur')]
 #[IsGranted('ROLE_USER')]
@@ -30,9 +31,27 @@ class ChauffeurController extends AbstractController
     {
         $chauffeur = new Chauffeur();
         $form = $this->createForm(ChauffeurType::class, $chauffeur);
+        $file = $form->get('photoChauffeur')->getData();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+             /** @var UploadedFile $file */
+             if ($file) {
+                $filename = 'chauffeur_'.$chauffeur->getmatriculeChauffeur().'.'.$file->guessExtension();
+    
+                try {
+                    $file->move(
+                        $this->getParameter('kernel.project_dir').'/public/img/Chauffeurs',
+                        $filename
+                    );
+                    $chauffeur->setPhotoChauffeur($filename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+                }
+                
+             }
+            $chauffeur->setetatChauffeur('En service');
+            $chauffeur->setDisponibilite('Disponible');
             $entityManager->persist($chauffeur);
             $entityManager->flush();
             $this->addFlash('success', 'Ajout effectué avec succès.');
@@ -57,13 +76,33 @@ class ChauffeurController extends AbstractController
     #[Route('/{id}/edit', name: 'chauffeur.edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Chauffeur $chauffeur, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(ChauffeurType::class, $chauffeur);
+        $mode = $chauffeur->getId() ? 'edit' : 'add';
+
+        $form = $this->createForm(ChauffeurType::class, $chauffeur, [
+            'mode' => $mode, // Spécifiez le mode du formulaire
+        ]);
+        $form->get('photoChauffeurUrl')->setData($this->getParameter('kernel.project_dir').'/public/img/Chauffeurs/'.$chauffeur->getPhotoChauffeur());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-            $this->addFlash('success', 'Modification effectuée avec succès.');
-            return $this->redirectToRoute('chauffeur.index', [], Response::HTTP_SEE_OTHER);
+            $file = $form->get('photoChauffeur')->getData();
+            if ($file) {
+                $filename = '_chauffeur_' . $chauffeur->getMatriculeChauffeur() . '.' . $file->guessExtension();
+                dump ($filename) ;
+                try {
+                    $file->move(
+                        $this->getParameter('kernel.project_dir').'/public/img/Chauffeurs',
+                        $filename
+                    );
+                    $chauffeur->setPhotoChauffeur($filename);
+                    $entityManager->flush();
+                    $this->addFlash('success', 'Modification effectuée avec succès.');
+                    return $this->redirectToRoute('chauffeur.index', [], Response::HTTP_SEE_OTHER);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+                }
+            }
+
         }
 
         return $this->render('chauffeur/edit.html.twig', [

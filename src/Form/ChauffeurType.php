@@ -12,7 +12,10 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 class ChauffeurType extends AbstractType
 {
@@ -55,22 +58,55 @@ class ChauffeurType extends AbstractType
 
             ->add('telephoneChauffeur')
 
-
-            ->add('etatChauffeur', ChoiceType::class, [
-                'label' => 'Etat Chauffeur',
-                'choices' => [
-                    'EN SERVICE' => 'EN SERVICE',
-                    'EN CONGE' => 'EN CONGE',
-                    'EN MISSION' => 'EN MISSION',
-                ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+            // Champ non mappé pour afficher le lien de l'ancienne photo
+           ->add('photoChauffeurUrl', HiddenType::class, [
+                'mapped' => false,
+            ])
+            
+            ->add('photoChauffeur', FileType::class, [
+                'label' => 'Télécharger la photo du CVA',
+                'mapped' => false,
                 'required' => false,
+                'constraints' => [
+                    new File([
+                    'maxSize' => '1024k',
+                    'mimeTypes' => [
+                        'image/jpeg',
+                        'image/png',
+                        'image/gif',
+                    ],
+                'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG ou GIF).',
+                    ]),
+                ],
             ])
                         
             ->add('save', SubmitType::class)
 
             ->add('cancel', SubmitType::class)
         ;
+
+
+        if ($options['mode'] === 'edit') {
+            $builder->add('etatChauffeur', ChoiceType::class, [
+                'label' => 'Position du CVA',
+                'choices' => [
+                    'En service' => 'En service',
+                    'En congé' => 'En congé',
+                    'En mission' => 'En mission',
+                    'A la retraite' => 'A la retraite',
+                    'Autorisé à s\'absenter' => 'Autorisé à s\'absenter',
+                ],
+                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'required' => false,
+            ]);
+
+    }
+
+
+
+
+
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -79,5 +115,8 @@ class ChauffeurType extends AbstractType
             'data_class' => Chauffeur::class,
             'mode' => 'add', // Par défaut, en mode création
         ]);
+
+        // Accepter uniquement les valeurs 'add' ou 'edit' pour l'option 'mode'
+        $resolver->setAllowedValues('mode', ['add', 'edit']);
     }
 }

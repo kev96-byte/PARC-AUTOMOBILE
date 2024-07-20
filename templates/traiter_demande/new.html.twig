@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New TraiterDemande{% endblock %}
+
+{% block body %}
+    <h1>Create new TraiterDemande</h1>
+
+    {{ include('traiter_demande/_form.html.twig') }}
+
+    <a href="{{ path('app_traiter_demande_index') }}">back to list</a>
+{% endblock %}

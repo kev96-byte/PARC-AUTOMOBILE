@@ -22,12 +22,11 @@
                 <thead>
                     <tr>
                         <th>Immatriculation</th>
-                        <th>Photo</th>
                         <th>Marque</th>
                         <th>Modèle</th>
                         <th>Nombre de places</th>
                         <th>Etat</th>
-                        <th>Institution</th>
+                        <th>Disponibilté</th>
                         <th data-sortable="false" style="text-align: center;">Actions</th>
                     </tr>
                 </thead>
@@ -35,31 +34,45 @@
                 {% for vehicule in vehicules %}
                     <tr>
                         <td>{{ vehicule.matricule }}</td>
-                        <td>
-                            <a href="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" data-lightbox="vehicule-gallery" data-title="{{ vehicule.matricule }}">
-                                <img class="thumbnail" src="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" alt="{{ vehicule.matricule }}">
-                            </a>
-                        </td>
                         <td>{{ vehicule.marque.libelleMarque}}</td>
                         <td>{{ vehicule.modele }}</td>
                         <td>{{ vehicule.nbrePlace }}</td>
                         <td>{{ vehicule.etat }}</td>
-                        <td>{{ vehicule.institution.libelleInstitution}}</td>
+                        <td>{{ vehicule.disponibilite}}</td>
                         <td>
-                            <div class="flex justify-content-end">
-                                <a href="{{ path('vehicule.edit', {'id': vehicule.id}) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
-                                </a>
+                            <div class="button-group open">
+                                <button class="btn btn-xs btn-default dropdown-toggle" title="Cliquez ici pour effectuer une action" type="button" data-toggle="dropdown" data-toggle-position="left" aria-expanded="true">
+                                    <i class="fa fa-ellipsis-h" style="color: #777;"></i>
+                                </button>
 
-                                <form method="post" action="{{ path('vehicule.delete', {'id': vehicule.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce vehicule ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ vehicule.id) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li style="padding-left: 10px;">
+                                        <a href="{{ path('vehicule.show', {'id': vehicule.id}) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552; width: 30px; height: 30px;">
+                                                <i class="fa fa-search"></i>                                                
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Voir détails</span>
+                                        </a> 
+                                    </li>
+                                    <li style="padding-left: 10px;">
+                                        <a href="{{ path('vehicule.edit', {'id': vehicule.id}) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
+                                                <i class="fa fa-pen"></i>
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Modifier</span>
+                                        </a>    
+                                    </li>
+                                    <li style="padding-left: 10px;">
+                                        <a href="#" onclick="showDeletionModal(this);" data-id="{{ vehicule.id }}" data-token="{{ csrf_token('delete' ~ vehicule.id) }}" style="text-decoration: none;">
+                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: hsl(0, 92%, 50%);">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                            <span style="color: #777;">&nbsp; supprimer</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
+
                         </td>
                     </tr>
                 {% else %}
@@ -73,4 +86,32 @@
     </div>
         
 </div>
+
+
+<script>
+    function showDeletionModal(button) {
+        var vehiculeId = button.getAttribute('data-id');
+        var csrfToken = button.getAttribute('data-token');
+
+        // Mettre à jour les champs cachés du formulaire dans le modal
+        document.getElementById('modal_token').value = csrfToken;
+        document.getElementById('modal_vehicule_id').value = vehiculeId;
+
+        // Mettre à jour l'action du formulaire avec l'ID du niveau
+        document.getElementById('modalDeleteForm').action = '{{ path("vehicule.delete", {"id": "__ID__"}) }}'.replace('__ID__', vehiculeId);
+
+        // Afficher le modal de confirmation
+        $('#confirmModal').modal('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var confirmButton = document.getElementById('confirmButton');
+
+        confirmButton.addEventListener('click', function () {
+            // Soumettre le formulaire de suppression dans le modal
+            document.getElementById('modalDeleteForm').submit();
+        });
+    });
+</script>
+
 {% endblock %}

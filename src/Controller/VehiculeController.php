@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Marque;
 use App\Entity\Vehicule;
 use App\Form\VehiculeType;
 use App\Entity\Institution;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/vehicule')]
 #[IsGranted('ROLE_USER')]
@@ -44,47 +46,87 @@ class VehiculeController extends AbstractController
         $vehicule = new Vehicule();
         $form = $this->createForm(VehiculeType::class, $vehicule);
         $form->handleRequest($request);
-
+        $file = $form->get('photoVehicule')->getData();
         if ($form->isSubmitted() && $form->isValid()) {
              /** @var UploadedFile $file */
-            $file = $form->get('photoVehicule')->getData();
-            $filename ='vehicule_'.$vehicule->getMatricule().'.'.$file->getClientOriginalExtension();
-            $file->move($this->getParameter('kernel.project_dir').'/public/img/Vehicules', $filename);
-            $vehicule->setPhotoVehicule($filename); 
-            $entityManager->persist($vehicule);
-            $entityManager->flush();
-            $this->addFlash('success', 'Ajout effectué avec succès.');
+             if ($file) {
+                $filename = 'vehicule_'.$vehicule->getMatricule().'.'.$file->guessExtension();
+    
+                try {
+                    $file->move(
+                        $this->getParameter('kernel.project_dir').'/public/img/Vehicules',
+                        $filename
+                    );
+                    $vehicule->setPhotoVehicule($filename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+                }
+                
+             }
+             $vehicule->setEtat('En service');
+             $vehicule->setDisponibilite('Disponible');
+             $entityManager->persist($vehicule);
+             $entityManager->flush();
+             $this->addFlash('success', 'Ajout effectué avec succès.');
+ 
+             return $this->redirectToRoute('vehicule.index', [], Response::HTTP_SEE_OTHER);
 
-            return $this->redirectToRoute('vehicule.index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('vehicule/new.html.twig', [
             'vehicule' => $vehicule,
             'form' => $form,
+
         ]);
     }
 
     #[Route('/{id}', name: 'vehicule.show', methods: ['GET'])]
-    public function show(Vehicule $vehicule): Response
+    public function show(Vehicule $vehicule, EntityManagerInterface $entityManager, $id): Response
     {
+        $vehicule = $entityManager->getRepository(Vehicule::class)->find($id);
+    
+        if (!$vehicule) {
+            throw $this->createNotFoundException('Véhicule introuvable.');
+        }
         return $this->render('vehicule/show.html.twig', [
             'vehicule' => $vehicule,
+            'typesvehicules' => $entityManager->getRepository(TypeVehicule::class)->findBy(['deleteAt' => null]),
+            'Institutions' => $entityManager->getRepository(Institution::class)->findBy(['deleteAt' => null]),
+            'Marques' => $entityManager->getRepository(Marque::class)->findBy(['deleteAt' => null]),
         ]);
     }
 
     #[Route('/{id}/edit', name: 'vehicule.edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Vehicule $vehicule, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(VehiculeType::class, $vehicule);
+        $mode = $vehicule->getId() ? 'edit' : 'add';
+
+        $form = $this->createForm(VehiculeType::class, $vehicule, [
+            'mode' => $mode, // Spécifiez le mode du formulaire
+        ]);
+        $form->get('photoVehiculeUrl')->setData($this->getParameter('kernel.project_dir').'/public/img/Vehicules/'.$vehicule->getPhotoVehicule());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-             /** @var UploadedFile $file */
-             $file = $form->get('photoVehicule')->getData();
-             $filename ='vehicule_'.$vehicule->getMatricule().'.'.$file->getClientOriginalExtension();
-             $file->move($this->getParameter('kernel.project_dir').'/public/img/Vehicules', $filename);
-             $vehicule->setPhotoVehicule($filename); 
+            $file = $form->get('photoVehicule')->getData();
 
+            if ($file) {
+                $date = new \DateTime();
+                $formattedDate = $date->format('d-m-Y');
+                $filename = $formattedDate . '_vehicule_' . $vehicule->getMatricule() . '.' . $file->guessExtension();
+
+                try {
+                    $file->move(
+                        $this->getParameter('kernel.project_dir').'/public/img/Vehicules',
+                        $filename
+                    );
+                    $vehicule->setPhotoVehicule($filename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
+                }
+            }
+
+            $entityManager->persist($vehicule);
             $entityManager->flush();
             $this->addFlash('success', 'Modification effectuée avec succès.');
             return $this->redirectToRoute('vehicule.index', [], Response::HTTP_SEE_OTHER);
@@ -93,6 +135,7 @@ class VehiculeController extends AbstractController
         return $this->render('vehicule/edit.html.twig', [
             'vehicule' => $vehicule,
             'form' => $form,
+            'mode' => $mode, // Passez la variable 'mode' à votre template Twig
         ]);
     }
 

@@ -40,11 +40,6 @@
                         <td>{{ user.firstName }}</td>
                         <td>{{ user.structure.libelleStructure }}</td>
                         <td>{{ user.institution.libelleInstitution }}</td>
-                        <td>
-                            {% for key, value in user.roles %}
-                                <span>{{ value }}</span>
-                            {% endfor %}
-                        </td>
                         <td>{{ user.statutCompte }}</td>
                         <td>
                             <div class="flex justify-content-end">

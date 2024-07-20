@@ -2,7 +2,7 @@
 
 {% block mycontent %}
         <div class="col-12" >
-            <div class="card" style="min-height: 575px;">
+            <div class="card" style="min-height: 700px;">
                 <div class="p-toolbar-group-left">
                     <div class="my-2">
                         <a href="{{ path('chauffeur.index') }}">
@@ -18,6 +18,29 @@
                 {{ include('chauffeur/_form.html.twig', {'mode': 'edit'}) }}
             </div>
         </div>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var photoChauffeurUrl = document.querySelector('input[name="photoChauffeurUrl"]').value;
+                if (photoChauffeurUrl) {
+                    var link = document.getElementById('current-piece-link');
+                    link.href = "{{ asset('img/Chauffeurs/') }}" + '/' + photoChauffeurUrl;
+                    link.textContent = 'Voir la photo actuelle';
+        
+                    // Hide the "Aucun fichier choisi" text if a piece exists
+                    var noFileText = document.getElementById('no-file-text');
+                    if (noFileText) {
+                        noFileText.style.display = 'none';
+                    }
+                } else {
+                    var link = document.getElementById('current-piece-link');
+                    if (link) {
+                        link.style.display = 'none';
+                    }
+                }
+            });
+        </script>
 {% endblock %}
 
 

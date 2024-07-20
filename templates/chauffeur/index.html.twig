@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{# {% block body %}{% endblock %} #}
+
 {% block mycontent %}
 <div class="col-12 card-body">
     <div class="card" style="min-height: 475px;">
@@ -16,8 +16,10 @@
                     </a>
                 </div>
             </div>
-
         </div>
+
+        <!-- Ajout de la classe table-responsive pour le défilement horizontal -->
+        <div class="table-responsive">
             <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
@@ -25,37 +27,53 @@
                         <th>Matricule</th>
                         <th>Nom</th>
                         <th>Prenom(s)</th>
-                        <th>Télephone</th>
-                        <th>Numéro permis</th>
-                        <th>EtatChauffeur</th>
+                        <th>Statut Chauffeur</th>
+                        <th>Disponibilité</th>
                         <th data-sortable="false" style="text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for chauffeur in chauffeurs %}
                     <tr>
-                        <td>{{ chauffeur.institution.libelleInstitution}}</td>
+                        <td>{{ chauffeur.institution.libelleInstitution }}</td>
                         <td>{{ chauffeur.matriculeChauffeur }}</td>
                         <td>{{ chauffeur.nomChauffeur }}</td>
                         <td>{{ chauffeur.prenomChauffeur }}</td>
-                        <td>{{ chauffeur.telephoneChauffeur }}</td>
-                        <td>{{ chauffeur.numPermis }}</td>
                         <td>{{ chauffeur.etatChauffeur }}</td>
+                        <td>{{ chauffeur.disponibilite }}</td>
                         <td>
-                            <div class="flex justify-content-end">
-                                <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
-                                </a>
+                            <div class="button-group open">
+                                <button class="btn btn-xs btn-default dropdown-toggle" title="Cliquez ici pour effectuer une action" type="button" data-toggle="dropdown" data-toggle-position="left" aria-expanded="true">
+                                    <i class="fa fa-ellipsis-h" style="color: #777;"></i>
+                                </button>
 
-                                <form method="post" action="{{ path('chauffeur.delete', {'id': chauffeur.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce chauffeur ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ chauffeur.id) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li style="padding-left: 10px;">
+                                        <a href="{{ path('chauffeur.show', {'id': chauffeur.id}) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552; width: 30px; height: 30px;">
+                                                <i class="fa fa-search"></i>                                                
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Voir détails</span>
+                                        </a> 
+                                    </li>
+                                    <li style="padding-left: 10px;">
+                                        <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
+                                                <i class="fa fa-pen"></i>
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Modifier</span>
+                                        </a>    
+                                    </li>
+                                    <li style="padding-left: 10px;">
+                                        <a href="#" onclick="showDeletionModal(this);" data-id="{{ chauffeur.id }}" data-token="{{ csrf_token('delete' ~ chauffeur.id) }}" style="text-decoration: none;">
+                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: hsl(0, 92%, 50%);">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Supprimer</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>                        
                         </td>
                     </tr>
                 {% else %}
@@ -65,8 +83,33 @@
                 {% endfor %}
                 </tbody>
             </table>
-
+        </div>
     </div>
-        
 </div>
+
+<script>
+function showDeletionModal(button) {
+    var chauffeurId = button.getAttribute('data-id');
+    var csrfToken = button.getAttribute('data-token');
+
+    // Mettre à jour les champs cachés du formulaire dans le modal
+    document.getElementById('modal_token').value = csrfToken;
+    document.getElementById('modal_chauffeur_id').value = chauffeurId;
+
+    // Mettre à jour l'action du formulaire avec l'ID du niveau
+    document.getElementById('modalDeleteForm').action = '{{ path("chauffeur.delete", {"id": "__ID__"}) }}'.replace('__ID__', chauffeurId);
+
+    // Afficher le modal de confirmation
+    $('#confirmModal').modal('show');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var confirmButton = document.getElementById('confirmButton');
+
+    confirmButton.addEventListener('click', function () {
+        // Soumettre le formulaire de suppression dans le modal
+        document.getElementById('modalDeleteForm').submit();
+    });
+});
+</script>
 {% endblock %}

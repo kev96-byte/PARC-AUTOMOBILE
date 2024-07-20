@@ -9,8 +9,11 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\DemandeRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\DatesConstraint;
 
 #[ORM\Entity(repositoryClass: DemandeRepository::class)]
+#[DatesConstraint]
 class Demande
 {
     #[ORM\Id]
@@ -38,9 +41,11 @@ class Demande
     private ?\DateTimeInterface $dateFinMission = null; */
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\NotBlank]
     private $dateDebutMission;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\NotBlank]
     private $dateFinMission;
 
     #[ORM\ManyToMany(targetEntity: Commune::class)]
@@ -53,6 +58,10 @@ class Demande
     public function __construct()
     {
         $this->communes = new ArrayCollection();
+        $this->dateDebutMission = new \DateTime();
+        $this->dateFinMission = new \DateTime();
+        $this->traiterDemandes = new ArrayCollection();
+        $this->affecters = new ArrayCollection();
     }
 
 
@@ -86,6 +95,29 @@ class Demande
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $getRaisonRejetValidation = null;
+
+ 
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $dateApprobation = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $dateTraitement = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $observations = null;
+
+    /**
+     * @var Collection<int, TraiterDemande>
+     */
+    #[ORM\ManyToMany(targetEntity: TraiterDemande::class, mappedBy: 'demandeId')]
+    private Collection $traiterDemandes;
+
+    /**
+     * @var Collection<int, Affecter>
+     */
+    #[ORM\OneToMany(targetEntity: Affecter::class, mappedBy: 'demandeId')]
+    private Collection $affecters;
 
 
     public function getId(): ?int
@@ -370,6 +402,99 @@ public function getGetRaisonRejetValidation(): ?string
 public function setGetRaisonRejetValidation(?string $getRaisonRejetValidation): static
 {
     $this->getRaisonRejetValidation = $getRaisonRejetValidation;
+
+    return $this;
+}
+
+public function getDateApprobation(): ?\DateTimeImmutable
+{
+    return $this->dateApprobation;
+}
+
+public function setDateApprobation(?\DateTimeImmutable $dateApprobation): static
+{
+    $this->dateApprobation = $dateApprobation;
+
+    return $this;
+}
+
+public function getDateTraitement(): ?\DateTimeImmutable
+{
+    return $this->dateTraitement;
+}
+
+public function setDateTraitement(?\DateTimeImmutable $dateTraitement): static
+{
+    $this->dateTraitement = $dateTraitement;
+
+    return $this;
+}
+
+public function getObservations(): ?string
+{
+    return $this->observations;
+}
+
+public function setObservations(?string $observations): static
+{
+    $this->observations = $observations;
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, TraiterDemande>
+ */
+public function getTraiterDemandes(): Collection
+{
+    return $this->traiterDemandes;
+}
+
+public function addTraiterDemande(TraiterDemande $traiterDemande): static
+{
+    if (!$this->traiterDemandes->contains($traiterDemande)) {
+        $this->traiterDemandes->add($traiterDemande);
+        $traiterDemande->addDemandeId($this);
+    }
+
+    return $this;
+}
+
+public function removeTraiterDemande(TraiterDemande $traiterDemande): static
+{
+    if ($this->traiterDemandes->removeElement($traiterDemande)) {
+        $traiterDemande->removeDemandeId($this);
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Affecter>
+ */
+public function getAffecters(): Collection
+{
+    return $this->affecters;
+}
+
+public function addAffecter(Affecter $affecter): static
+{
+    if (!$this->affecters->contains($affecter)) {
+        $this->affecters->add($affecter);
+        $affecter->setDemandeId($this);
+    }
+
+    return $this;
+}
+
+public function removeAffecter(Affecter $affecter): static
+{
+    if ($this->affecters->removeElement($affecter)) {
+        // set the owning side to null (unless already changed)
+        if ($affecter->getDemandeId() === $this) {
+            $affecter->setDemandeId(null);
+        }
+    }
 
     return $this;
 }

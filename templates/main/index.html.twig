@@ -91,6 +91,18 @@
                                                 <span>Véhicule</span><span class="p-ink"></span>
                                             </a>
                                         </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Matériel roulant" role="menuitem" href="{{ path('assurance.index') }}">
+                                                <i class="fa fa-folder"></i>
+                                                <span>Assurance</span><span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Matériel roulant" role="menuitem" href="{{ path('visite.index') }}">
+                                                <i class="fa fa-tools"></i>
+                                                <span>visite technique</span><span class="p-ink"></span>
+                                            </a>
+                                        </li>
                                     </ul>
                                 </li>
                                 <li class="layout-menuitem-category" role="none">
@@ -116,48 +128,27 @@
                             {% endif %}
 
 
-                                {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
-                                <li class="layout-menuitem-category" role="none">
-                                    <div class="layout-menuitem-root-text" aria-label="Gestion des missions">Gestion des missions</div>
+                            <li class="layout-menuitem-category" role="none">
+                                <div class="layout-menuitem-root-text" aria-label="Gestion des missions">Gestion des missions</div>
 
-                                    <ul role="menu">
-
-                                {% endif %}
-                                        {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CABINET')  %}
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="{{ path('demande.index') }}">
-                                                <i class="fa fa-car"></i>
-                                                <span>Demande de véhicule</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        {% endif %}
-
-
-                                        {% if is_granted('ROLE_CHEF_PARC')  %}                                   
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Traitement des demandes" role="menuitem" href="{{ path('demande.index') }}">
-                                                <i class="fa fa-car"></i>
-                                                <span>Traitement des demandes</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        {% endif %}
-
-                                        {% if is_granted('ROLE_CHEF_PARC')  %} 
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Disponibilité en véhicule" role="menuitem" href="#/disponibiliteVehicule">
-                                                <i class="fa fa-car"></i>
-                                                <span>Disponibilité en véhicule</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li>
-                                        {% endif %}
-                                    {% if is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
-                                    </ul>
-                                    {% endif %}
-                                
-                                </li>
+                                <ul role="menu">
+                                    <li class="" role="none">
+                                        <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="{{ path('demande.index') }}">
+                                            <i class="fa fa-car"></i>
+                                            {% if is_granted('ROLE_POINT_FOCAL') and not is_granted('ROLE_ADMIN') %}
+                                                <span>Demander véhicules</span>
+                                            {% endif %}
+                                            {% if (is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC')) and not is_granted('ROLE_ADMIN') %}
+                                                <span>Traiter demandes</span>
+                                            {% endif %}
+                                            {% if (is_granted('ROLE_CABINET') and not is_granted('ROLE_ADMIN')) or is_granted('ROLE_ADMIN') %}
+                                                <span>Visualiser demandes</span>
+                                            {% endif %}
+                                            <span class="p-ink"></span>
+                                        </a>
+                                    </li>
+                                </ul>                                
+                            </li>
 
                             {% if is_granted('ROLE_ADMIN') %}
                                 <li class="layout-menuitem-category" role="none">

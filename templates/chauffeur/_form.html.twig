@@ -37,7 +37,28 @@
         'attr': {'placeholder': 'ex: +229 98 00 00 00'}
     }) }}
 
-    <div style="position: absolute; bottom: 0; right: 0; top: 400px;">
+    {% if mode == 'edit' %}
+        {{ form_row(form.etatChauffeur) }}
+    {% endif %}
+
+    {% block form_row %}
+    <div class="form-group">
+        {{ form_label(form.photoChauffeur) }}
+        <div class="input-group">
+            {{ form_widget(form.photoChauffeur, {'attr': {'class': 'form-control'}}) }}
+            <div class="input-group-append">
+                {% if chauffeur.photoChauffeur is defined and chauffeur.photoChauffeur is not empty %}
+                    <a id="current-piece-link" href="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" target="_blank" class="btn btn-outline-secondary">Voir la photo actuelle</a>
+                {% else %}
+                    <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
+                {% endif %}
+            </div>
+        </div>
+        {{ form_errors(form.photoChauffeur) }}
+    </div>
+    {% endblock %}
+
+    <div style="position: absolute; bottom: 0; right: 0; top: 500px;">
         {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
         {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
     </div>

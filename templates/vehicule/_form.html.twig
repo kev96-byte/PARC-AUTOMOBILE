@@ -1,35 +1,61 @@
 {{ form_start(form) }}
 
 <div style="position: relative;" >
-
+    {{ form_row(form.TypeVehicule) }}
+    {{ form_row(form.matricule) }}
+    {{ form_row(form.numeroChassis) }}
+    {{ form_row(form.marque) }}
+    {{ form_row(form.modele) }}
+    {{ form_row(form.nbrePlace) }}
+    {% if mode == 'edit' %}
+        {{ form_row(form.etat) }}
+    {% endif %}
+    {{ form_row(form.dateAcquisition) }}
+    {{ form_row(form.valeurAcquisition) }}
+    {{ form_row(form.Kilometrage) }}
+    {{ form_row(form.Institution) }}
+    {{ form_row(form.dateReception) }}
+    {{ form_row(form.dateMiseEnCirculation) }}
+    {{ form_row(form.MiseEnRebut) }}
+    {{ form_row(form.allumage) }}
+    {{ form_row(form.assistanceFreinage) }}
+    {{ form_row(form.capaciteCarburant) }}
+    {{ form_row(form.categorie) }}
+    {{ form_row(form.cession) }}
+    {{ form_row(form.chargeUtile) }}
+    {{ form_row(form.Climatiseur) }}
+    {{ form_row(form.numeroMoteur) }}
+    {{ form_row(form.pma) }}
+    {{ form_row(form.puissance) }}
+    {{ form_row(form.vitesse) }}
+    {{ form_row(form.cylindree) }}
+    {{ form_row(form.directionAssistee) }}
+    {{ form_row(form.dureeGuarantie) }}
+    {{ form_row(form.dureVie) }}
+    {{ form_row(form.freins) }}
+    {{ form_row(form.pva) }}
+    {{ form_row(form.radio) }}
+    {{ form_row(form.typeEnergie) }}
+    {{ form_row(form.typeTransmission) }}
+    {% block form_row %}
     <div class="form-group">
-        {{ form_row(form.photoVehicule, {
-            'attr': {'placeholder': 'Télécharger le fichier', 'class':'form-control form-control-user'}
-        }) }}
+        {{ form_label(form.photoVehicule) }}
+        <div class="input-group">
+            {{ form_widget(form.photoVehicule, {'attr': {'class': 'form-control'}}) }}
+            <div class="input-group-append">
+                {% if vehicule.photoVehicule is defined and vehicule.photoVehicule is not empty %}
+                    <a id="current-piece-link" href="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
+                {% else %}
+                    <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
+                {% endif %}
+            </div>
+        </div>
+        {{ form_errors(form.photoVehicule) }}
     </div>
-
-    <div class="form-group row bm-3">
-        <div class="col-md-4">
-            {{ form_row(form.Kilometrage, {
-                
-            }) }}
-        </div>
-        <div class="col-md-4">
-            {{ form_row(form.valeurAcquisition, {
-                
-            }) }}
-        </div>
-        <div class="col-md-4">
-            {{ form_row(form.matricule, {
-                
-            }) }}
-        </div>
-    </div>    
-
-
+    {% endblock %}
 
     
-    <div style="position: absolute; bottom: 0; right: 0; top: 2020px;">
+    <div style="position: absolute; bottom: 0; right: 0; top: 2300px;">
         {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
         {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
     </div>

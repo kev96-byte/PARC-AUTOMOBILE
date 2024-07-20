@@ -7,32 +7,45 @@ use DateTime;
 use App\Entity\User;
 use App\Entity\Commune;
 use App\Entity\Demande;
+use App\Entity\Affecter;
+use App\Entity\Vehicule;
+use App\Entity\Chauffeur;
 use App\Form\DemandeType;
+use App\Entity\Institution;
 use App\Entity\Utilisateur;
+use App\Entity\TraiterDemande;
+
+use App\Repository\VehiculeRepository;
+use App\Repository\ChauffeurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use function Symfony\Component\Clock\now;
 use PhpParser\Node\Scalar\MagicConst\Dir;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 #[Route('/demande')]
 class DemandeController extends AbstractController
 {
     private $entityManager;
     private $security;
+    private $serializer;
 
-    public function __construct(Security $security, EntityManagerInterface $entityManager)
+    public function __construct(Security $security, EntityManagerInterface $entityManager, SerializerInterface $serializer)
     {
         $this->security = $security;
         $this->entityManager = $entityManager;
+        $this->serializer = $serializer;
     }
+    
+
+
     
     #[Route('/', name: 'demande.index', methods: ['GET'])]
     public function index(): Response
@@ -49,7 +62,7 @@ class DemandeController extends AbstractController
             $demandes = $this->entityManager->getRepository(Demande::class)->findBy([
                 'demander' => $user,
                 'deleteAt' => null,
-            ]);       
+            ]);  
         } elseif (in_array('ROLE_RESPONSABLE_STRUCTURE', $roles)) {
             $structure = $user->getStructure();
             // Vérifier si la structure existe
@@ -100,28 +113,29 @@ class DemandeController extends AbstractController
             if (!$institution) {
                 throw $this->createNotFoundException('Cet utilisateur n\'est associé à aucune institution');
             }
-
+        
             $institutionId = $institution->getId();
-
-            $demandes = $this->entityManager->getRepository(Demande::class)->createQueryBuilder('d')
-            ->join('d.demander', 'u')
-            ->join('u.institution', 'i')
-            ->where('i.id = :institutionId')
-            ->andWhere('d.deleteAt IS NULL')
-            ->andWhere('d.statut = :statut  ')
-            ->setParameter('institutionId', $institutionId)
-            ->setParameter('statut', 'Approuvé')
-            ->getQuery()
-            ->getResult();
-
-        }
-        elseif (in_array('ROLE_ADMIN', $roles)) {
+        
+            $demandes = $this->entityManager->getRepository(Demande::class)
+                ->createQueryBuilder('d')
+                ->join('d.demander', 'u')
+                ->join('u.institution', 'i')
+                ->where('i.id = :institutionId')
+                ->andWhere('d.deleteAt IS NULL')
+                ->andWhere('(d.statut = :statutApprouve OR d.statut = :statutValide OR (d.statut = :statutRejete AND d.traitePar IS NOT NULL))')
+                ->setParameter('institutionId', $institutionId)
+                ->setParameter('statutApprouve', 'Approuvé')
+                ->setParameter('statutValide', 'Validé')
+                ->setParameter('statutRejete', 'Rejeté')
+                ->getQuery()
+                ->getResult();
+        } elseif (in_array('ROLE_ADMIN', $roles)) {
             $demandes = $this->entityManager->getRepository(Demande::class)->findBy(['deleteAt' => null,]);
         } else {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette ressource.');
         }
         
-        return $this->render('demande/index.html.twig', [            
+        return $this->render('demande/index.html.twig', [ 
             'communes' => $this->entityManager->getRepository(Commune::class)->findBy(['deleteAt' => null]),
             'users' => $this->entityManager->getRepository(User::class)->findBy(['deleteAt' => null]),
             'demandes' => $demandes,           
@@ -173,13 +187,56 @@ class DemandeController extends AbstractController
         ]);
     }
 
+
     #[Route('/{id}', name: 'demande.show', methods: ['GET'])]
-    public function show(Demande $demande): Response
+    public function show(Demande $demande, EntityManagerInterface $entityManager, $id): Response
     {
+        $demande = $entityManager->getRepository(Demande::class)->find($id);
+    
+        if (!$demande) {
+            throw $this->createNotFoundException('Demande introuvable.');
+        }
+    
+        // Vérification des conditions
+        if ($demande->getAffecters()->count() > 0 && 
+            // ($demande->getStatut() === 'Validé' || $demande->getStatut() === 'Approuvé') && 
+            ($demande->getStatut() === 'Validé') && 
+            $demande->getDateTraitement() !== null) 
+        {
+            $details = $entityManager->getRepository(Affecter::class)->findBy(['demandeId' => $demande]);
+            dump($details);
+
+            $data = [];
+            foreach ($details as $detail) {
+                $vehicule = $detail->getVehiculeId();
+                $chauffeur = $detail->getChauffeurId();           
+                if ($vehicule && $chauffeur) {
+                    $data[] = [
+                        'matricule' => $vehicule->getMatricule(),
+                        'photoVehicule' => $vehicule->getPhotoVehicule(),
+                        'nomChauffeur' => $chauffeur->getNomChauffeur(),
+                        'prenomChauffeur' => $chauffeur->getPrenomChauffeur(),
+                        'photoChauffeur' => $chauffeur->getPhotoChauffeur()
+                    ];
+                }
+            }
+
+        } else {
+            // Initialiser $data à un tableau vide si les conditions ne sont pas remplies
+            $data = [];
+        }    
         return $this->render('demande/show.html.twig', [
             'demande' => $demande,
+            'details' => $data, // Passer toujours la variable details
         ]);
     }
+    
+
+    
+    
+
+
+
 
     #[Route('/{id}/edit', name: 'demande.edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_POINT_FOCAL')]
@@ -205,10 +262,6 @@ class DemandeController extends AbstractController
         ]);
     }
 
-
-
-
-
     #[Route('/{id}/approve', name: 'demande.approve', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_RESPONSABLE_STRUCTURE')]
     public function approve(Demande $demande): Response
@@ -217,8 +270,12 @@ class DemandeController extends AbstractController
             $this->addFlash('error', 'Vous ne pouvez approuver une demande que si son statut est "Initial".');
             return $this->redirectToRoute('demande.index');
         } else {
+            // Récupère l'utilisateur connecté
+            $user = $this->getUser();
+            $demande->setStatut('Approuvé');
+            $demande->setValidateurStructure($user);
             $this->entityManager->flush();
-            $this->addFlash('success', 'Modification effectuée avec succès.');
+            $this->addFlash('success', 'Approbation réussie.');
         }
 
         return $this->redirectToRoute('demande.index');
@@ -226,30 +283,107 @@ class DemandeController extends AbstractController
 
 
     #[Route('/{id}/dismiss', name: 'demande.dismiss', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_RESPONSABLE_STRUCTURE')]
     public function dismiss(Request $request, Demande $demande): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_RESPONSABLE_STRUCTURE', null, 'Access denied.');
+        // Vérifie si l'utilisateur a l'un des rôles requis
+        if (!$this->isGranted('ROLE_RESPONSABLE_STRUCTURE') && !$this->isGranted('ROLE_CHEF_PARC')) {
+            throw new AccessDeniedException('Vous n\'êtes pas autorisé à avoir accès à cette ressource.');
+        } else {
+            if ($request->isMethod('POST')) {
+                $raisonRejetApprobation = $request->request->get('raisonRejetApprobation');
+                $useroperation = $request->request->get('useroperation');
+                $demande->setRaisonRejetApprobation($raisonRejetApprobation);
+                $demande->setStatut('Rejeté');
+                
+                // Récupère l'utilisateur connecté
+                $user = $this->getUser();
 
-        if ($request->isMethod('POST')) {
-            $raisonRejetApprobation = $request->request->get('raisonRejetApprobation');
-            $demande->setRaisonRejetApprobation($raisonRejetApprobation);
-            $demande->setStatut('Rejeté');
-            $demande->setValidateurStructure($this->getUser());
+                // Vérifie le rôle de l'utilisateur connecté et met à jour l'entité Demande en conséquence
+                if ($this->isGranted('ROLE_CHEF_PARC')) {
+                    $demande->setTraitePar($user);
+                } elseif ($this->isGranted('ROLE_RESPONSABLE_STRUCTURE')) {
+                    $demande->setValidateurStructure($user);
+                }
 
-            $this->entityManager->flush();
+                $this->entityManager->flush();
 
-            $this->addFlash('success', 'Demande rejetée avec succès.');
+                $this->addFlash('success', 'Demande rejetée avec succès.');
+            }
+
+            return $this->redirectToRoute('demande.index');
         }
-
-        return $this->redirectToRoute('demande.index');
     }
 
-
+    #[Route('/{id}/traiter', name: 'demande.traiter', methods: ['POST'])]
+    #[IsGranted('ROLE_CHEF_PARC')]
+    public function traiter(Request $request, EntityManagerInterface $em, $id): Response
+    {
+        // Récupérer l'identifiant de la demande depuis l'URL
+        $demandeId = $id;
+        
+        // Récupérer l'observation et les paires véhicule-chauffeur depuis la requête POST
+        $observation = $request->request->get('observation');
+        $pairsJson = $request->request->get('pairs');
+        $pairs = json_decode($pairsJson, true); // Convertir le JSON en tableau associatif
+        
+        // Validation des paramètres
+        if (!$demandeId || empty($pairs)) {
+            return $this->json(['success' => false, 'message' => 'Paramètres manquants ou invalides'], 400);
+        }
+        
+        // Récupérer la demande depuis la base de données
+        $demande = $em->getRepository(Demande::class)->find($demandeId);
+        if (!$demande) {
+            return $this->json(['success' => false, 'message' => 'Demande introuvable'], 404);
+        }
+    
+        if ($demande->getStatut() != 'Approuvé') {
+            return $this->json(['success' => false, 'message' => 'Vous ne pouvez traiter une demande que si son statut est "Approuvé".'], 400);
+        }
+        
+        try {
+            // Mettre à jour les champs de la demande
+            $user = $this->getUser();
+            $demande->setStatut('Validé');
+            $demande->setTraitePar($user);
+            $demande->setDateTraitement(new \DateTimeImmutable());
+            $demande->setObservations($observation);
+    
+            foreach ($pairs as $pair) {
+                $vehiculeId = $pair['vehiculeId'];
+                $chauffeurId = $pair['chauffeurId'];
+    
+                $vehicule = $em->getRepository(Vehicule::class)->find($vehiculeId);
+                $chauffeur = $em->getRepository(Chauffeur::class)->find($chauffeurId);
+    
+                if ($vehicule && $chauffeur) {
+                    // Associer le véhicule et le chauffeur à la demande traitée
+                    $traiterDemande = new Affecter();
+                    $traiterDemande->setDemandeId($demande);
+                    $traiterDemande->setVehiculeId($vehicule);
+                    $traiterDemande->setChauffeurId($chauffeur);
+    
+                    $em->persist($traiterDemande);
+                } else {
+                    return $this->json(['success' => false, 'message' => 'Véhicule ou chauffeur introuvable'], 400);
+                }
+            }
+            
+            // Enregistrer les modifications dans la base de données
+            $em->persist($demande);
+            $em->flush();
+    
+            return $this->json(['success' => true, 'message' => 'Demande traitée avec succès']);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+    
 
 
 
     #[Route('/{id}', name: 'demande.delete', methods: ['POST'])]
+    #[IsGranted('ROLE_POINT_FOCAL')]
     public function delete(Request $request, Demande $demande): Response
     {
         if ($this->isCsrfTokenValid('delete'.$demande->getId(), $request->getPayload()->get('_token'))) {
@@ -265,6 +399,71 @@ class DemandeController extends AbstractController
         return $this->redirectToRoute('demande.index', [], Response::HTTP_SEE_OTHER);
     }
 
-}
 
 
+
+    #[Route('/api/available-vehicles-and-drivers', name: 'api_available_vehicles_and_drivers', methods: ['POST'])]
+    public function availableVehiclesAndDrivers(): JsonResponse
+    {
+
+         // Récupérez l'utilisateur connecté
+         $currentUser = $this->getUser();
+
+         if (!$currentUser instanceof User) {
+             throw $this->createAccessDeniedException('L\'utilisateur n\'est pas connecté');
+         }
+ 
+         // Récupérez l'institution de l'utilisateur
+         $institution = $currentUser->getInstitution();
+ 
+         // Vérifiez si l'institution existe pour l'utilisateur connecté
+         if (!$institution) {
+             throw new \RuntimeException('L\'utilisateur n\'a pas d\'institution associée.');
+         }
+ 
+         // Récupérez l'ID de l'institution
+         $institutionId = $institution->getId();
+ 
+         // Récupérez les véhicules disponibles dans l'institution de l'utilisateur avec deleteAt non nul
+         $vehicles = $this->entityManager->getRepository(Vehicule::class)->createQueryBuilder('v')
+             ->where('v.institution = :institutionId')
+             ->andWhere('v.disponibilite = :disponibilite')
+             ->andWhere('v.deleteAt IS NULL')
+             ->setParameter('institutionId', $institutionId)
+             ->setParameter('disponibilite', 'Disponible')
+             ->getQuery()
+             ->getResult();
+ 
+         // Récupérez les chauffeurs disponibles dans l'institution de l'utilisateur avec deleteAt non nul
+         $drivers = $this->entityManager->getRepository(Chauffeur::class)->createQueryBuilder('c')
+             ->where('c.institution = :institutionId')
+             ->andWhere('c.disponibilite = :disponibilite')
+             ->andWhere('c.deleteAt IS NULL')
+             ->setParameter('institutionId', $institutionId)
+             ->setParameter('disponibilite', 'Disponible')
+             ->getQuery()
+             ->getResult();
+ 
+         // Formattez les données pour la réponse JSON
+         $formattedVehicles = array_map(function($vehicle) {
+             return [
+                 'id' => $vehicle->getId(),
+                 'matricule' => $vehicle->getMatricule()
+             ];
+         }, $vehicles);
+ 
+         $formattedDrivers = array_map(function($driver) {
+             return [
+                 'id' => $driver->getId(),
+                 'name' => $driver->getNomChauffeur() . ' ' . $driver->getPrenomChauffeur()
+             ];
+         }, $drivers);
+ 
+         // Retournez les données en JSON
+         return $this->json([
+             'vehicles' => $formattedVehicles,
+             'drivers' => $formattedDrivers,
+         ]);
+     }
+
+    }

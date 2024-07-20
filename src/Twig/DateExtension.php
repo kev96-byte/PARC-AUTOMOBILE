@@ -14,7 +14,7 @@ class DateExtension extends AbstractExtension
         ];
     }
 
-    public function formatDate($date, $format = 'm/d/Y H:i:s')
+    public function formatDate($date, $format = 'd/m/Y H:i:s')
     {
         if ($date instanceof \DateTimeInterface) {
             return $date->format($format);

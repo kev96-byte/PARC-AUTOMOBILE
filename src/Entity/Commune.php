@@ -90,22 +90,22 @@ class Commune
         return $this->demandes;
     }
 
-    public function addDemande(Demande $demande): static
-    {
-        if (!$this->demandes->contains($demande)) {
-            $this->demandes->add($demande);
-            $demande->addLieu($this);
-        }
+    // public function addDemande(Demande $demande): static
+    // {
+    //     if (!$this->demandes->contains($demande)) {
+    //         $this->demandes->add($demande);
+    //         $demande->addLieu($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeDemande(Demande $demande): static
-    {
-        if ($this->demandes->removeElement($demande)) {
-            $demande->removeLieu($this);
-        }
+    // public function removeDemande(Demande $demande): static
+    // {
+    //     if ($this->demandes->removeElement($demande)) {
+    //         $demande->removeLieu($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }

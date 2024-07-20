@@ -5,7 +5,10 @@ namespace App\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\VehiculeRepository;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -19,9 +22,17 @@ class Vehicule
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('vehicule_list')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Regex(
+        pattern: '/^[A-Z]{2} \d{4} RB$/',
+        match: true,
+        message: "Le matricule doit être sur 10 positions, avec les deux premiers caractères en lettres majuscules, suivis d'un espace, quatre chiffres, un autre espace, et les deux dernières positions doivent être 'RB'. Exemple : BV 1100 RB",
+    )]  
+    #[Groups('vehicule_list')]
     private string $matricule = '';
 
     #[ORM\Column(length: 255)]
@@ -50,6 +61,7 @@ class Vehicule
     private ?float $valeurAcquisition = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\NotBlank]
     private ?float $Kilometrage = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -92,6 +104,7 @@ class Vehicule
     private ?string $chargeUtile = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\NotBlank]
     private ?bool $climatiseur = null;
 
     #[ORM\Column(nullable: true)]
@@ -131,6 +144,7 @@ class Vehicule
     private ?string $PVA = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\NotBlank]
     private ?bool $radio = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -161,6 +175,38 @@ class Vehicule
 
     #[ORM\ManyToOne(inversedBy: 'vehicules')]
     private ?Institution $institution = null;
+
+    /**
+     * @var Collection<int, TraiterDemande>
+     */
+    #[ORM\ManyToMany(targetEntity: TraiterDemande::class, mappedBy: 'vehiculeId')]
+    private Collection $traiterDemandes;
+
+    /**
+     * @var Collection<int, Affecter>
+     */
+    #[ORM\OneToMany(targetEntity: Affecter::class, mappedBy: 'vehiculeId')]
+    private Collection $affecters;
+
+    /**
+     * @var Collection<int, Assurance>
+     */
+    #[ORM\OneToMany(targetEntity: Assurance::class, mappedBy: 'vehiculeId')]
+    private Collection $assurances;
+
+    /**
+     * @var Collection<int, Visite>
+     */
+    #[ORM\OneToMany(targetEntity: Visite::class, mappedBy: 'vehiculeId')]
+    private Collection $visites;
+
+    public function __construct()
+    {
+        $this->traiterDemandes = new ArrayCollection();
+        $this->affecters = new ArrayCollection();
+        $this->assurances = new ArrayCollection();
+        $this->visites = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -736,5 +782,122 @@ class Vehicule
                 throw new \InvalidArgumentException('La date de réception doit être antérieure ou égale à la date de mise en circulation.');
             }
         }
+    }
+
+    /**
+     * @return Collection<int, TraiterDemande>
+     */
+    public function getTraiterDemandes(): Collection
+    {
+        return $this->traiterDemandes;
+    }
+
+    public function addTraiterDemande(TraiterDemande $traiterDemande): static
+    {
+        if (!$this->traiterDemandes->contains($traiterDemande)) {
+            $this->traiterDemandes->add($traiterDemande);
+            $traiterDemande->addVehiculeId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraiterDemande(TraiterDemande $traiterDemande): static
+    {
+        if ($this->traiterDemandes->removeElement($traiterDemande)) {
+            $traiterDemande->removeVehiculeId($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Affecter>
+     */
+    public function getAffecters(): Collection
+    {
+        return $this->affecters;
+    }
+
+    public function addAffecter(Affecter $affecter): static
+    {
+        if (!$this->affecters->contains($affecter)) {
+            $this->affecters->add($affecter);
+            $affecter->setVehiculeId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffecter(Affecter $affecter): static
+    {
+        if ($this->affecters->removeElement($affecter)) {
+            // set the owning side to null (unless already changed)
+            if ($affecter->getVehiculeId() === $this) {
+                $affecter->setVehiculeId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Assurance>
+     */
+    public function getAssurances(): Collection
+    {
+        return $this->assurances;
+    }
+
+    public function addAssurance(Assurance $assurance): static
+    {
+        if (!$this->assurances->contains($assurance)) {
+            $this->assurances->add($assurance);
+            $assurance->setVehiculeId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAssurance(Assurance $assurance): static
+    {
+        if ($this->assurances->removeElement($assurance)) {
+            // set the owning side to null (unless already changed)
+            if ($assurance->getVehiculeId() === $this) {
+                $assurance->setVehiculeId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Visite>
+     */
+    public function getVisites(): Collection
+    {
+        return $this->visites;
+    }
+
+    public function addVisite(Visite $visite): static
+    {
+        if (!$this->visites->contains($visite)) {
+            $this->visites->add($visite);
+            $visite->setVehiculeId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisite(Visite $visite): static
+    {
+        if ($this->visites->removeElement($visite)) {
+            // set the owning side to null (unless already changed)
+            if ($visite->getVehiculeId() === $this) {
+                $visite->setVehiculeId(null);
+            }
+        }
+
+        return $this;
     }
 }

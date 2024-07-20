@@ -5823,18 +5823,32 @@ label.required::before {
     }
 
     .validated {
-        background-color: #2196F3;
+        background-color: #4CAF50;
         color: black;
         padding: 2px 5px;
         border-radius: 3px;
     }
 
     .rejected {
-        background-color: #F44336;
+        background-color: #B71C1C;
         color: black;
         padding: 2px 5px;
         border-radius: 3px;
     }
 
+    .rejected-special {
+      background-color: #FF5252;
+      color: black;
+      padding: 2px 5px;
+      border-radius: 3px;
+  }
 
-  
+  .table-hidden {
+    display: none;
+}
+
+.thead-hidden {
+    display: none;
+}
+
+

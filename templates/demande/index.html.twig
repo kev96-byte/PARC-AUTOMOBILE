@@ -54,10 +54,12 @@
                                     approved
                                 {% elseif demande.statut == 'Validé' %}
                                     validated
-                                {% elseif demande.statut == 'Rejeté' %}
+                                {% elseif demande.statut == 'Rejeté' and demande.traitePar is not null %}
+                                    rejected-special
+                                {% else %}
                                     rejected
                                 {% endif %}
-                            ">
+                                ">
                                 {{ demande.statut }}
                             </span>
                         </td>

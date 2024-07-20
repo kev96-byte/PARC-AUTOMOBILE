@@ -1,178 +1,185 @@
 {% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 547px;">
+        <h5>Details véhicule</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('vehicule.index') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
 
-{% block title %}Vehicule{% endblock %}
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <th>Type de véhicule</th>
+                        <td>{{ vehicule.typeVehicule.libelleTypeVehicule }}</td>
+                    </tr>
+                    <tr>
+                        <th>Matricule</th>
+                        <td>{{ vehicule.matricule }}</td>
+                    </tr>
+                    <tr>
+                        <th>Etat</th>
+                        <td>{{ vehicule.etat }}</td>
+                    </tr>
+                    <tr>
+                        <th>Disponibilité</th>
+                        <td>{{ vehicule.disponibilite }}</td>
+                    </tr>
+                    {% if vehicule.photoVehicule is not empty %}
+                    <tr>
+                        <th>Photo</th>
+                        <td>
+                            <a href="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}"  data-lightbox="vehicule-gallery" data-title="{{ vehicule.matricule }}" target="_blank">
+                                <img class="img-thumbnail" src="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" alt="{{ vehicule.matricule }}" style="width: 100px; height: auto;">
+                            </a>
+                        </td>
+                    </tr>
+                    {% endif %} 
+                    <tr>
+                        <th>Numero de chassis</th>
+                        <td>{{ vehicule.numeroChassis }}</td>
+                    </tr>
+                    <tr>
+                        <th>Marque</th>
+                        <td>{{ vehicule.marque.libelleMarque }}</td>
+                    </tr>
+                    <tr>
+                        <th>Modèle</th>
+                        <td>{{ vehicule.modele }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre de places</th>
+                        <td>{{ vehicule.nbrePlace }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date d'acquisition</th>
+                        <td>{{ vehicule.dateAcquisition ? vehicule.dateAcquisition|date('d-m-Y') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Valeur d'acquisition</th>
+                        <td>{{ vehicule.valeurAcquisition }}</td>
+                    </tr>
+                    <tr>
+                        <th>Kilométrage</th>
+                        <td>{{ vehicule.Kilometrage }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de réception</th>
+                        <td>{{ vehicule.dateReception ? vehicule.dateReception|date('d-m-Y') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de mise en circulation</th>
+                        <td>{{ vehicule.dateMiseEnCirculation ? vehicule.dateMiseEnCirculation|date('d-m-Y') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mise en rebut</th>
+                        <td>{{ vehicule.MiseEnRebut ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Allumage</th>
+                        <td>{{ vehicule.allumage }}</td>
+                    </tr>
+                    <tr>
+                        <th>Assistance Freinage</th>
+                        <td>{{ vehicule.assistanceFreinage }}</td>
+                    </tr>
+                    <tr>
+                        <th>Capacité Carburant</th>
+                        <td>{{ vehicule.capaciteCarburant }}</td>
+                    </tr>
+                    <tr>
+                        <th>Catégorie</th>
+                        <td>{{ vehicule.categorie }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cession</th>
+                        <td>{{ vehicule.cession }}</td>
+                    </tr>
+                    <tr>
+                        <th>Charge utile</th>
+                        <td>{{ vehicule.chargeUtile }}</td>
+                    </tr>
+                    <tr>
+                        <th>Climatisation</th>
+                        <td>{{ vehicule.climatiseur }}</td>
+                    </tr>
+                    <tr>
+                        <th>Numero du moteur</th>
+                        <td>{{ vehicule.numeroMoteur }}</td>
+                    </tr>
+                    <tr>
+                        <th>Poids Maximum Autorisé (en kg)</th>
+                        <td>{{ vehicule.PMA }}</td>
+                    </tr>
+                    <tr>
+                        <th>Puissance</th>
+                        <td>{{ vehicule.puissance }}</td>
+                    </tr>
+                    <tr>
+                        <th>Vitesse</th>
+                        <td>{{ vehicule.vitesse }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cylindrée</th>
+                        <td>{{ vehicule.cylindree }}</td>
+                    </tr>
+                    <tr>
+                        <th>Direction assistée</th>
+                        <td>{{ vehicule.directionAssistee }}</td>
+                    </tr>
+                    <tr>
+                        <th>Duree de guarantie</th>
+                        <td>{{ vehicule.dureeGuarantie }}</td>
+                    </tr>
+                    <tr>
+                        <th>Durée de vie</th>
+                        <td>{{ vehicule.dureVie }}</td>
+                    </tr>
+                    <tr>
+                        <th>Freins</th>
+                        <td>{{ vehicule.freins }}</td>
+                    </tr>
+                    <tr>
+                        <th>Poids à Vide Autorisé (en kg)</th>
+                        <td>{{ vehicule.PVA }}</td>
+                    </tr>
+                    <tr>
+                        <th>Radio</th>
+                        <td>{{ vehicule.radio }}</td>
+                    </tr>
+                    <tr>
+                        <th>Type d'énergie</th>
+                        <td>{{ vehicule.typeEnergie }}</td>
+                    </tr>
+                    <tr>
+                        <th>Type de transmission</th>
+                        <td>{{ vehicule.typeTransmission }}</td>
+                    </tr>
 
-{% block body %}
-    <h1>Vehicule</h1>
-
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ vehicule.id }}</td>
-            </tr>
-            <tr>
-                <th>Matricule</th>
-                <td>{{ vehicule.matricule }}</td>
-            </tr>
-            <tr>
-                <th>NumeroChassis</th>
-                <td>{{ vehicule.numeroChassis }}</td>
-            </tr>
-            <tr>
-                <th>Marque</th>
-                <td>{{ vehicule.marque }}</td>
-            </tr>
-            <tr>
-                <th>Modele</th>
-                <td>{{ vehicule.modele }}</td>
-            </tr>
-            <tr>
-                <th>NbrePlace</th>
-                <td>{{ vehicule.nbrePlace }}</td>
-            </tr>
-            <tr>
-                <th>Etat</th>
-                <td>{{ vehicule.etat }}</td>
-            </tr>
-            <tr>
-                <th>DateAcquisition</th>
-                <td>{{ vehicule.dateAcquisition ? vehicule.dateAcquisition|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>ValeurAcquisition</th>
-                <td>{{ vehicule.valeurAcquisition }}</td>
-            </tr>
-            <tr>
-                <th>Kilometrage</th>
-                <td>{{ vehicule.Kilometrage }}</td>
-            </tr>
-            <tr>
-                <th>DateReception</th>
-                <td>{{ vehicule.dateReception ? vehicule.dateReception|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateMiseEnCirculation</th>
-                <td>{{ vehicule.dateMiseEnCirculation ? vehicule.dateMiseEnCirculation|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>MiseEnRebut</th>
-                <td>{{ vehicule.MiseEnRebut ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>DateDebutVisiteTechnique</th>
-                <td>{{ vehicule.dateDebutVisiteTechnique ? vehicule.dateDebutVisiteTechnique|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateFinVisiteTechnique</th>
-                <td>{{ vehicule.dateFinVisiteTechnique ? vehicule.dateFinVisiteTechnique|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DateEntretien</th>
-                <td>{{ vehicule.dateEntretien ? vehicule.dateEntretien|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Alimentation</th>
-                <td>{{ vehicule.alimentation }}</td>
-            </tr>
-            <tr>
-                <th>Allumage</th>
-                <td>{{ vehicule.allumage }}</td>
-            </tr>
-            <tr>
-                <th>AssistanceFreinage</th>
-                <td>{{ vehicule.assistanceFreinage }}</td>
-            </tr>
-            <tr>
-                <th>CapaciteCarburant</th>
-                <td>{{ vehicule.capaciteCarburant }}</td>
-            </tr>
-            <tr>
-                <th>Categorie</th>
-                <td>{{ vehicule.categorie }}</td>
-            </tr>
-            <tr>
-                <th>Cession</th>
-                <td>{{ vehicule.cession }}</td>
-            </tr>
-            <tr>
-                <th>ChargeUtile</th>
-                <td>{{ vehicule.chargeUtile }}</td>
-            </tr>
-            <tr>
-                <th>Climatiseur</th>
-                <td>{{ vehicule.climatiseur ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>NbreCylindre</th>
-                <td>{{ vehicule.nbreCylindre }}</td>
-            </tr>
-            <tr>
-                <th>NumeroMoteur</th>
-                <td>{{ vehicule.numeroMoteur }}</td>
-            </tr>
-            <tr>
-                <th>PMA</th>
-                <td>{{ vehicule.PMA }}</td>
-            </tr>
-            <tr>
-                <th>Puissance</th>
-                <td>{{ vehicule.puissance }}</td>
-            </tr>
-            <tr>
-                <th>Vitesse</th>
-                <td>{{ vehicule.vitesse }}</td>
-            </tr>
-            <tr>
-                <th>Cylindree</th>
-                <td>{{ vehicule.cylindree }}</td>
-            </tr>
-            <tr>
-                <th>DirectionAssistee</th>
-                <td>{{ vehicule.directionAssistee }}</td>
-            </tr>
-            <tr>
-                <th>DureeGuarantie</th>
-                <td>{{ vehicule.dureeGuarantie }}</td>
-            </tr>
-            <tr>
-                <th>DureVie</th>
-                <td>{{ vehicule.dureVie }}</td>
-            </tr>
-            <tr>
-                <th>Energie</th>
-                <td>{{ vehicule.energie }}</td>
-            </tr>
-            <tr>
-                <th>Freins</th>
-                <td>{{ vehicule.freins }}</td>
-            </tr>
-            <tr>
-                <th>PVA</th>
-                <td>{{ vehicule.PVA }}</td>
-            </tr>
-            <tr>
-                <th>Radio</th>
-                <td>{{ vehicule.radio ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>TypeEnergie</th>
-                <td>{{ vehicule.typeEnergie }}</td>
-            </tr>
-            <tr>
-                <th>TypeTransmission</th>
-                <td>{{ vehicule.typeTransmission }}</td>
-            </tr>
-            <tr>
-                <th>Disponibilite</th>
-                <td>{{ vehicule.disponibilite }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_vehicule_index') }}">back to list</a>
-
-    <a href="{{ path('app_vehicule_edit', {'id': vehicule.id}) }}">edit</a>
-
-    {{ include('vehicule/_delete_form.html.twig') }}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center" style="margin-top: 50px;">
+                                <a href="{{ path('vehicule.edit', {'id': vehicule.id}) }}">
+                                    <button type="submit" name="" class="p-button p-component p-button-Warning mx-2" style="width: 100px; color: white; background-color: #f59e0B;">
+                                        Modifier
+                                    </button>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+</div>
 {% endblock %}
+

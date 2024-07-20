@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\ChauffeurRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
+use App\Repository\ChauffeurRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 #[Gedmo\SoftDeleteable(fieldName:"deleteAt", timeAware:false)]
@@ -17,14 +20,17 @@ class Chauffeur
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('chauffeur_list')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups('chauffeur_list')]
     private string $nomChauffeur = '';
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups('chauffeur_list')]
     private string $prenomChauffeur = '';
 
 
@@ -51,6 +57,30 @@ class Chauffeur
 
     #[ORM\Column(length: 255)]
     private string $matriculeChauffeur = '';
+
+    /**
+     * @var Collection<int, TraiterDemande>
+     */
+    #[ORM\ManyToMany(targetEntity: TraiterDemande::class, mappedBy: 'chauffeurId')]
+    private Collection $traiterDemandes;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $disponibilite = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photoChauffeur = null;
+
+    /**
+     * @var Collection<int, Affecter>
+     */
+    #[ORM\OneToMany(targetEntity: Affecter::class, mappedBy: 'chauffeurId')]
+    private Collection $affecters;
+
+    public function __construct()
+    {
+        $this->traiterDemandes = new ArrayCollection();
+        $this->affecters = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -149,6 +179,87 @@ class Chauffeur
     public function setMatriculeChauffeur(string $matriculeChauffeur): static
     {
         $this->matriculeChauffeur = $matriculeChauffeur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TraiterDemande>
+     */
+    public function getTraiterDemandes(): Collection
+    {
+        return $this->traiterDemandes;
+    }
+
+    public function addTraiterDemande(TraiterDemande $traiterDemande): static
+    {
+        if (!$this->traiterDemandes->contains($traiterDemande)) {
+            $this->traiterDemandes->add($traiterDemande);
+            $traiterDemande->addChauffeurId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTraiterDemande(TraiterDemande $traiterDemande): static
+    {
+        if ($this->traiterDemandes->removeElement($traiterDemande)) {
+            $traiterDemande->removeChauffeurId($this);
+        }
+
+        return $this;
+    }
+
+    public function getDisponibilite(): ?string
+    {
+        return $this->disponibilite;
+    }
+
+    public function setDisponibilite(?string $disponibilite): static
+    {
+        $this->disponibilite = $disponibilite;
+
+        return $this;
+    }
+
+    public function getPhotoChauffeur(): ?string
+    {
+        return $this->photoChauffeur;
+    }
+
+    public function setPhotoChauffeur(?string $photoChauffeur): static
+    {
+        $this->photoChauffeur = $photoChauffeur;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Affecter>
+     */
+    public function getAffecters(): Collection
+    {
+        return $this->affecters;
+    }
+
+    public function addAffecter(Affecter $affecter): static
+    {
+        if (!$this->affecters->contains($affecter)) {
+            $this->affecters->add($affecter);
+            $affecter->setChauffeurId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAffecter(Affecter $affecter): static
+    {
+        if ($this->affecters->removeElement($affecter)) {
+            // set the owning side to null (unless already changed)
+            if ($affecter->getChauffeurId() === $this) {
+                $affecter->setChauffeurId(null);
+            }
+        }
 
         return $this;
     }
