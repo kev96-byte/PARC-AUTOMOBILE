@@ -5,33 +5,32 @@
 
 {# Formulaire Symfony pour AssuranceType #}
 {{ form_start(form) }}
+<div class="form-group row mb-3">
+    <div class="col-sm-12">{{ form_row(form.vehiculeId) }}</div>
+</div>
+<div class="form-group row mb-3">
+    <div class="col-sm-6"> {{ form_row(form.dateDebutAssurance) }}</div>
+    <div class="col-sm-6">{{ form_row(form.dateFinAssurance) }}</div>
+</div>
 
-<div style="position: relative;">
-    {{ form_row(form.vehiculeId) }}
-    {{ form_row(form.dateDebutAssurance) }}
-    {{ form_row(form.dateFinAssurance) }}
-    {% block form_row %}
-    <div class="form-group">
-        {{ form_label(form.pieceAssurance) }}
-        <div class="input-group">
-            {{ form_widget(form.pieceAssurance, {'attr': {'class': 'form-control'}}) }}
-            <div class="input-group-append">
-                {% if assurance.pieceAssurance is defined and assurance.pieceAssurance is not empty %}
-                    <a id="current-piece-link" href="{{ asset('img/Assurances/' ~ assurance.pieceAssurance) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
-                {% else %}
-                    <span id="no-file-text" class="input-group-text">Aucun fichier choisi</span>
-                {% endif %}
-            </div>
+<div class="form-group">
+    {{ form_label(form.pieceAssurance) }}
+    <div class="input-group">
+        {{ form_widget(form.pieceAssurance, {'attr': {'class': 'form-control'}}) }}
+        <div class="input-group-append">
+            {% if assurance.pieceAssurance is defined and assurance.pieceAssurance is not empty %}
+                <a id="current-piece-link" href="{{ asset('img/Assurances/' ~ assurance.pieceAssurance) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
+            {% else %}
+                <span id="no-file-text" class="input-group-text">Aucun fichier choisi</span>
+            {% endif %}
         </div>
-        {{ form_errors(form.pieceAssurance) }}
     </div>
-    {% endblock %}
+    {{ form_errors(form.pieceAssurance) }}
+</div>
 
-    {# Bouton de soumission du formulaire #}
-    <div style="position: absolute; bottom: 0; right: 0; top: 300px;">
-        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
-        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
-    </div>
+{# Bouton de soumission du formulaire #}
+<div class="d-flex justify-content-end">
+    {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
 </div>
 
 {{ form_end(form) }}

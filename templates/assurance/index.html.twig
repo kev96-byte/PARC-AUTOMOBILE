@@ -2,7 +2,7 @@
 {# {% block body %}{% endblock %} #}
 {% block mycontent %}
 <div class="col-12 card-body">
-    <div class="card" style="min-height: 475px;">
+    <div class="card card-content-template">
         <h5>Assurance des véhicules</h5>
         <div class="p-toolbar p-component mb-4" role="toolbar">
             <div class="p-toolbar-group-left">
@@ -24,7 +24,6 @@
                         <th>Matricule</th>
                         <th>DateDebutAssurance</th>
                         <th>DateFinAssurance</th>
-                        <th>PieceAssurance</th>
                         <th>actions</th>
                     </tr>
                 </thead>
@@ -34,15 +33,17 @@
                         <td>{{ assurance.vehiculeId.matricule }}</td>
                         <td>{{ assurance.dateDebutAssurance ? assurance.dateDebutAssurance|date('d-m-Y') : '' }}</td>
                         <td>{{ assurance.dateFinAssurance ? assurance.dateFinAssurance|date('d-m-Y') : '' }}</td>
-                        <td> <a href="{{ asset('img/Assurances/' ~ assurance.pieceAssurance) }}"  data-lightbox="visite-gallery" data-title="{{ assurance.pieceAssurance }}" target="_blank">
-                             <img class="img-thumbnail" src="{{ asset('img/Assurances/' ~ assurance.pieceAssurance) }}" alt="{{ assurance.pieceAssurance }}" style="width: 100px; height: auto;">
-                            </a>
-                        </td>
                         <td>
                             <div class="flex justify-content-end">
                                 <a href="{{ path('assurance.edit', {'id': assurance.id}) }}">
                                     <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
                                         <i class="fa fa-pen"></i>
+                                    </button>
+                                </a>
+
+                                <a href="{{ asset('img/Assurances/' ~ assurance.pieceAssurance) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                        <i class="fa fa-download"></i>
                                     </button>
                                 </a>
 

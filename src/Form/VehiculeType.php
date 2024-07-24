@@ -8,10 +8,13 @@ use App\Entity\Institution;
 use App\Entity\TypeVehicule;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\NotEqualTo;
 use Symfony\Polyfill\Intl\Idn\Resources\unidata\Regex;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -23,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class VehiculeType extends AbstractType
 {
@@ -40,17 +44,32 @@ class VehiculeType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleTypeVehicule',
+                'attr'=>[
+                    'class'=>'form-control',
+                    'placeholder'=>'Sélectionnez le type de véhicule'
+                ]
             ])
 
             ->add('matricule', TextType::class, [
                 'label' => 'Matricule du véhicule',
-                'label_attr'=>['class' =>'col-sm-12'],     
                 'empty_data' => '',
                 'required' => true,
+                'attr'=>['placeholder'=>'Entrer le matricule du véhicule'],
+                'constraints' => [
+                    new GreaterThan([
+                        'value' => 0,
+                        'message' => 'Le matricule doit être supérieur à zéro.'
+                    ]),
+                    new NotEqualTo([
+                        'value' => 0,
+                        'message' => 'Le matricule ne peut pas être égal à zéro.'
+                    ]),
+                ],
             ])
 
             ->add('numeroChassis', TextType::class, [
                 'label' => 'Numéro du chassis',
+                'attr'=>['placeholder'=>'Entrer le numéro de chassis'],
                 'empty_data' => '',
                 'required' => false,
             ])
@@ -63,15 +82,20 @@ class VehiculeType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleMarque',
+                'attr'=>[
+                    'class'=>'form-control',
+                    'placeholder'=>'Sélectionnez la marque du véhicule'
+                ]
             ])
 
             ->add('modele', TextType::class, [
                 'empty_data' => '',
                 'label' => 'Modèle',
                 'required' => false,
+                'attr'=>['placeholder'=>'Entrer le modèle du véhicule'],
             ])
 
-            ->add('nbrePlace', NumberType::class, [
+            ->add('nbrePlace', IntegerType::class, [
                 'label' => 'Nombre de places',
                 'required' => true,
                 'attr' => [
@@ -84,20 +108,19 @@ class VehiculeType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'required' => false,
+                'attr'=>['placeholder'=>'Entrer le modèle du véhicule'],
             ])
             
             ->add('valeurAcquisition', MoneyType::class, [
                 'label' => 'Valeur d\'acquisition (en FCFA)',
-                'label_attr'=>['class' =>'col-sm-12'],
                 'currency' => 'XOF', // Code de devise pour le Franc CFA (XOF)
                 'required' => false,
+                'attr'=>['placeholder'=>'Entrer le modèle du véhicule'],
                 // Autres options...
             ])
 
-            ->add('Kilometrage', NumberType::class, [
+            ->add('Kilometrage', IntegerType::class, [
                 'label' => 'Kilométrage du véhicule',
-                'label_attr'=>['class' =>'col-sm-12'],
-                'scale' => 0, // Pas de décimales
                 'constraints' => [
                     new PositiveOrZero([
                         'message' => 'Veuillez entrer un kilométrage positif ou nul.',
@@ -114,6 +137,10 @@ class VehiculeType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleInstitution',
+                'attr'=>[
+                    'placeholder'=>'Choisissez l\'institution',
+                    'class'=>'form-control',
+                    ]
             ])
 
 
@@ -121,6 +148,9 @@ class VehiculeType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'required' => false,
+                'attr'=>[
+                    'placeholder'=>'Sélectionnez une date',
+                ]
             ])
 
 
@@ -128,6 +158,9 @@ class VehiculeType extends AbstractType
                 'widget' => 'single_text',
                 'html5' => true,
                 'required' => false,
+                'attr'=>[
+                    'placeholder'=>'Sélectionnez une date',
+                ]
             ])
 
             ->add('MiseEnRebut', ChoiceType::class, [
@@ -136,7 +169,11 @@ class VehiculeType extends AbstractType
                     'Oui' => true,
                     'Non' => false,
                 ],
-                'placeholder' => 'Non', // Texte par défaut
+                'placeholder'=>'Choisisez une option',
+                'attr'=>[
+
+                    'class'=>'form-control'
+                ],
                 'required' => false,
             ])
 
@@ -150,8 +187,11 @@ class VehiculeType extends AbstractType
                     'Allumage à bobine' => 'a_bobine',
                     // Ajoutez d'autres options ici...
                 ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'placeholder' => 'Choisissez une option', // Texte par défaut
                 'required' => false,
+                'attr'=>[
+                    'class'=>'form-control',
+                ]
             ])
 
             ->add('assistanceFreinage', ChoiceType::class, [
@@ -162,13 +202,22 @@ class VehiculeType extends AbstractType
                     'ESP (Programme électronique de stabilité)' => 'esp',
                     // Ajoutez d'autres options ici...
                 ],
-                'placeholder' => 'Sélectionnez une option',
+                'attr'=>[
+                    'class'=>'form-control',
+                ],
+                'placeholder'=>'Choisissez une option',
                 'required' => false,
             ])
 
-            ->add('capaciteCarburant', NumberType::class, [
+            ->add('capaciteCarburant', IntegerType::class, [
                 'label' => 'Capacité du réservoir (en litres)',
                 'required' => false,
+                'constraints' => [
+                    new Assert\GreaterThan([
+                        'value' => 0,
+                        'message' => 'La valeur doit être supérieure à zéro.',
+                    ]),
+                ],
                 // Autres options de validation si nécessaire
             ])
             
@@ -176,6 +225,10 @@ class VehiculeType extends AbstractType
                 'empty_data' => '',
                 'label' => 'Catégorie',
                 'required' => false,
+                'attr'=>[
+                    'placeholder'=>'Entrez la catégorie',
+                ]
+
             ])
 
             ->add('cession', ChoiceType::class, [
@@ -184,14 +237,23 @@ class VehiculeType extends AbstractType
                     'Oui' => true,
                     'Non' => false,
                 ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'attr'=>[
+                    'class'=>'form-control',
+                    'placeholder'=>'Sélectionnez une option',
+                ],
                 'required' => false,
             ])
 
-            ->add('chargeUtile', NumberType::class, [
-                'label' => 'Charge utile (en kg)',
+            ->add('chargeUtile', IntegerType::class, [
+                'label' => 'Charge utile (kg)',
                 'required' => false,
-                // Autres options de validation si nécessaire
+                'constraints' => [
+                    new Assert\GreaterThan([
+                        'value' => 0,
+                        'message' => 'La charge utile doit être supérieure à zéro.',
+                    ]),
+                ],
+                
             ])
 
             ->add('Climatiseur', ChoiceType::class, [
@@ -201,23 +263,29 @@ class VehiculeType extends AbstractType
                     'Non fonctionnel' => 'Non fonctionnel',
                     'Absent' => 'Absent',
                 ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'attr'=>[
+                    'class'=>'form-control',
+                    'placeholder'=>'Choisissez une option',
+                ],
                 'required' => true,
             ])
 
-            ->add('numeroMoteur', NumberType::class, [
+            ->add('numeroMoteur', TextType::class, [
                 'label' => 'Numéro du moteur',
-                'required' => false,
-                // Autres options de validation si nécessaire
             ])
 
-            ->add('pma', NumberType::class, [
-                'label' => 'Poids Maximum Autorisé (en kg)',
+            ->add('pma', IntegerType::class, [
+                'label' => 'Poids Maximum Autorisé (kg)',
                 'required' => false,
-                // Autres options de validation si nécessaire
+                'constraints' => [
+                    new Assert\GreaterThan([
+                        'value' => 0,
+                        'message' => 'La valeur du poids doit être supérieure à zéro.',
+                    ]),
+                ],
             ])
 
-            ->add('puissance', NumberType::class, [
+            ->add('puissance', IntegerType::class, [
                 'label' => 'Puissance (en chevaux)',
                 'required' => true,
                 'attr' => [
@@ -226,7 +294,7 @@ class VehiculeType extends AbstractType
                 ],
             ])
 
-            ->add('vitesse', NumberType::class, [
+            ->add('vitesse', IntegerType::class, [
                 'label' => 'Vitesse (en km/h)',
                 'required' => true,
                 'attr' => [
@@ -235,7 +303,7 @@ class VehiculeType extends AbstractType
                 ],
             ])
 
-            ->add('cylindree', NumberType::class, [
+            ->add('cylindree', IntegerType::class, [
                 'label' => 'Cylindrée (en cm³)',
                 'required' => false,
                 'attr' => [
@@ -250,11 +318,15 @@ class VehiculeType extends AbstractType
                     'Oui' => true,
                     'Non' => false,
                 ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'placeholder' => 'Sélectionnez une option',
+                'attr'=>[
+
+                    'class'=>'form-control',
+                ],
                 'required' => false,
             ])
 
-            ->add('dureeGuarantie', NumberType::class, [
+            ->add('dureeGuarantie', IntegerType::class, [
                 'label' => 'Durée de garantie (en mois)',
                 'required' => false,
                 'attr' => [
@@ -263,7 +335,7 @@ class VehiculeType extends AbstractType
                 ],
             ])
 
-            ->add('dureVie', NumberType::class, [
+            ->add('dureVie', IntegerType::class, [
                 'label' => 'Durée de vie (en années)',
                 'required' => false,
                 'attr' => [
@@ -274,6 +346,7 @@ class VehiculeType extends AbstractType
 
             ->add('freins', ChoiceType::class, [
                 'label' => 'Freins',
+                'placeholder' => 'Sélectionnez une option',
                 'choices' => [
                     'Freins à disque' => 'disque',
                     'Freins à tambour' => 'tambour',
@@ -281,17 +354,19 @@ class VehiculeType extends AbstractType
                     // Ajoute d'autres choix si nécessaire
                 ],
                 'required' => false,
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
-                // Autres options de validation si nécessaire
+                'attr'=>[
+                    'class'=>'form-control',
+                ],
             ])
 
-            ->add('pva', NumberType::class, [
-                'label' => 'Poids à Vide Autorisé (en kg)',
+            ->add('pva', IntegerType::class, [
+                'label' => 'Poids à Vide Autorisé (kg)',
                 'required' => false,
                 'attr' => [
                     'min' => 0, // Valeur minimale (peut être ajustée)
                     'max' => 5000, // Valeur maximale (peut être ajustée)
                 ],
+
             ])
 
             ->add('radio', ChoiceType::class, [
@@ -301,8 +376,9 @@ class VehiculeType extends AbstractType
                     'Non fonctionnel' => 'Non fonctionnel',
                     'Absent' => 'Absent',
                 ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'placeholder' => 'Choisissez une option', // Texte par défaut
                 'required' => true,
+                'attr'=>['class'=>'form-control'],
             ])
 
             ->add('typeEnergie', ChoiceType::class, [
@@ -313,8 +389,9 @@ class VehiculeType extends AbstractType
                     'Électrique' => 'electrique',
                     // Ajoute d'autres choix si nécessaire
                 ],
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'placeholder' => 'Choisissez une option', // Texte par défaut
                 'required' => true,
+                'attr'=>['class'=>'form-control'],
                 // Autres options de validation si nécessaire
             ])
 
@@ -326,7 +403,8 @@ class VehiculeType extends AbstractType
                     // Ajoute d'autres choix si nécessaire
                 ],
                 'required' => true,
-                'placeholder' => 'Sélectionnez une option', // Texte par défaut
+                'placeholder' => 'Choisissez une option', // Texte par défaut
+                'attr'=>['class'=>'form-control']
             ])
 
             
@@ -338,7 +416,8 @@ class VehiculeType extends AbstractType
             ->add('photoVehicule', FileType::class, [
                 'label' => 'Télécharger la photo du véhicule',
                 'mapped' => false,
-                'required' => false,
+                'attr'=>['class'=>'form-control'],
+                'required' => true,
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',
@@ -351,21 +430,21 @@ class VehiculeType extends AbstractType
                     ]),
                 ],
             ])
-                       
-            ->add('save', SubmitType::class)
 
-            ->add('cancel', SubmitType::class)
-        ;
-
-        
-        if ($options['mode'] === 'edit') {
-            $builder->add('etat', ChoiceType::class, [
+            ->add('etat', ChoiceType::class, [
                 'choices' => [
                     'En service' => 'En service',
                     'En panne' => 'En panne',
                 ],
-            ]);
-        }
+                'attr'=>['class'=>'form-control'],
+            ])
+                       
+            ->add('save', SubmitType::class, [
+                'attr'=>[ 'class'=>'p-component p-button p-button-success',
+                            'style'=>'font-weight: bold'
+                ],
+            ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

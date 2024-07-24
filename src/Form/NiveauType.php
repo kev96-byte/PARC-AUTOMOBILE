@@ -20,9 +20,10 @@ class NiveauType extends AbstractType
                 'label' => 'Libellé',
             ])
 
-            ->add('save', SubmitType::class)
-
-            ->add('cancel', SubmitType::class)
+            ->add('save', SubmitType::class, [
+                'attr' => ['class' => 'p-component p-button p-button-success',
+                    'style' => 'font-weight:bold;',],
+            ])
         ;
     }
 

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Assurance;
+use App\Entity\Vehicule;
 use App\Form\AssuranceType;
 use App\Repository\AssuranceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,6 +24,8 @@ class AssuranceController extends AbstractController
         ]);
     }
 
+
+
     #[Route('/new', name: 'assurance.create', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -36,7 +39,7 @@ class AssuranceController extends AbstractController
              if ($file) {
                 $vehicule = $assurance->getVehiculeId();
                 $matricule = $vehicule ? $vehicule->getMatricule() : 'unknown';
-                $filename = 'pieceAssurance_' . $matricule . '.' . $file->getClientOriginalExtension();    
+                $filename = 'pieceAssurance_' . $matricule . '.' . $file->getClientOriginalExtension();
                 try {
                     $file->move(
                         $this->getParameter('kernel.project_dir').'/public/img/Assurances', $filename);
@@ -44,12 +47,12 @@ class AssuranceController extends AbstractController
                 } catch (FileException $e) {
                     $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de la pièce.');
                 }
-                
+
              }
-           
+
             $entityManager->persist($assurance);
             $entityManager->flush();
-            
+
 
             return $this->redirectToRoute('assurance.index', [], Response::HTTP_SEE_OTHER);
         }
@@ -57,7 +60,7 @@ class AssuranceController extends AbstractController
             return $this->render('assurance/new.html.twig', [
                 'assurance' => $assurance,
                 'form' => $form,
-            ]);
+             ]);
         }
 
 
@@ -93,6 +96,7 @@ class AssuranceController extends AbstractController
         return $this->render('assurance/edit.html.twig', [
             'assurance' => $assurance,
             'form' => $form,
+
         ]);
     }
 

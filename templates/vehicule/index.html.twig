@@ -2,7 +2,7 @@
 {# {% block body %}{% endblock %} #}
 {% block mycontent %}
 <div class="col-12 card-body">
-    <div class="card" style="min-height: 475px;">
+    <div class="card card-content-template" >
         <h5>Liste des Véhicules</h5>
         <div class="p-toolbar p-component mb-4" role="toolbar">
             <div class="p-toolbar-group-left">
@@ -46,28 +46,28 @@
                                 </button>
 
                                 <ul class="dropdown-menu dropdown-menu-right">
-                                    <li style="padding-left: 10px;">
-                                        <a href="{{ path('vehicule.show', {'id': vehicule.id}) }}">
-                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552; width: 30px; height: 30px;">
-                                                <i class="fa fa-search"></i>                                                
+                                    <li class="p-2">
+                                        <a href="{{ path('vehicule.show', {'id': vehicule.id}) }}" class="text-decoration-none">
+                                            <button class="btn btn-sm btn-circle rounded-circle " style="color: white; background-color: #22C552; width: 30px; height: 30px;">
+                                                <i class="fas fa-low-vision"></i>
                                             </button>
                                             <span style="color: #777;">&nbsp; Voir détails</span>
                                         </a> 
                                     </li>
-                                    <li style="padding-left: 10px;">
-                                        <a href="{{ path('vehicule.edit', {'id': vehicule.id}) }}">
-                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
+                                    <li class="p-2">
+                                        <a href="{{ path('vehicule.edit', {'id': vehicule.id}) }}" class="text-decoration-none">
+                                            <button class="btn btn-sm btn-circle rounded-circle" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
                                                 <i class="fa fa-pen"></i>
                                             </button>
                                             <span style="color: #777;">&nbsp; Modifier</span>
                                         </a>    
                                     </li>
-                                    <li style="padding-left: 10px;">
-                                        <a href="#" onclick="showDeletionModal(this);" data-id="{{ vehicule.id }}" data-token="{{ csrf_token('delete' ~ vehicule.id) }}" style="text-decoration: none;">
-                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: hsl(0, 92%, 50%);">
+                                    <li class="p-2">
+                                        <a href="#" class="text-decoration-none" onclick="showDeletionModal(this);" data-id="{{ vehicule.id }}" data-token="{{ csrf_token('delete' ~ vehicule.id) }}" style="text-decoration: none;">
+                                            <button type="button" class="btn btn-sm btn-circle rounded-circle " style="color: white; width: 30px; height: 30px; background-color: hsl(0, 92%, 50%);">
                                                 <i class="fa fa-trash"></i>
                                             </button>
-                                            <span style="color: #777;">&nbsp; supprimer</span>
+                                            <span style="color: #777;">&nbsp; Supprimer</span>
                                         </a>
                                     </li>
                                 </ul>

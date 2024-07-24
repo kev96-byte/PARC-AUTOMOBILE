@@ -1,81 +1,69 @@
 {% extends 'base.html.twig' %}
-{# {% block body %}{% endblock %} #}
+
+{% block title %}Chauffeur{% endblock %}
+
 {% block mycontent %}
-<div class="col-12 card-body">
-    <div class="card" style="min-height: 547px;">
-        <h5>Details chauffeur</h5>
-        <div class="p-toolbar p-component mb-4" role="toolbar">
+
+    <div class="col-12">
+        <div class="card">
             <div class="p-toolbar-group-left">
                 <div class="my-2">
                     <a href="{{ path('chauffeur.index') }}">
-                        <button class="p-button p-component p-button-success mr-2">
-                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                        <button class="p-button p-component p-button-outlined mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-arrow-left"></span>
                             <span class="p-button-label p-c">Retour à la liste</span>
                             <span class="p-ink"></span>
                         </button>
                     </a>
                 </div>
             </div>
+            <div class="row d-flex">
+                <div class="col-12">
+                    <div class="card  mb-3" style="box-shadow: none !important;">
+                        <div class="row no-gutters">
+                            <div class="col-md-3">
+                                {% if chauffeur.photoChauffeur is not empty %}
+                                    <tr>
+                                        <td>
+                                            <img class="img-fluid" src="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </td>
 
-        </div>
-            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
-                <tbody>
-                    <tr>
-                        <th>Identifiant</th>
-                        <td>{{ chauffeur.id }}</td>
-                    </tr>
-                    <tr>
-                        <th>Matricule</th>
-                        <td>{{ chauffeur.matriculeChauffeur }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nom chauffeur</th>
-                        <td>{{ chauffeur.nomChauffeur }}</td>
-                    </tr>
-                    <tr>
-                        <th>Prenom(s) chauffeur</th>
-                        <td>{{ chauffeur.prenomChauffeur }}</td>
-                    </tr>
-                </tr>
-                {% if chauffeur.photoChauffeur is not empty %}
-                <tr>
-                    <th>Photo</th>
-                    <td>
-                        <a href="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}"  data-lightbox="chauffeur-gallery" data-title="{{ chauffeur.matriculeChauffeur }}" target="_blank">
-                            <img class="img-thumbnail" src="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" alt="{{ chauffeur.matriculeChauffeur }}" style="width: 100px; height: auto;">
-                        </a>
-                    </td>
-                </tr>
-                {% endif %} 
-                    <tr>
-                        <th>Telephone chauffeur</th>
-                        <td>{{ chauffeur.telephoneChauffeur }}</td>
-                    </tr>
-                    <tr>
-                        <th>Numéro permis</th>
-                        <td>{{ chauffeur.numPermis }}</td>
-                    </tr>
-                    <tr>
-                        <th>Statut</th>
-                        <td>{{ chauffeur.etatChauffeur }}</td>
-                    </tr>
-                    <tr>
-                        <th>Disponibilité</th>
-                        <td>{{ chauffeur.disponibilite }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <div class="d-flex justify-content-center" style="margin-top: 50px;">
-                                <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}">
-                                    <button type="submit" name="" class="p-button p-component p-button-Warning mx-2" style="width: 100px; color: white; background-color: #f59e0B;">
-                                        Modifier
-                                    </button>
-                                </a>
+                                    </tr>
+                                {% endif %}
                             </div>
-                        </td>
-                    </tr>
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <h5 class="card-title h1">{{ chauffeur.nomChauffeur }} {{ chauffeur.prenomChauffeur }} <span class="h6 fw-bold"> {{ chauffeur.etatChauffeur }}</span></h5>
+                                    <ul class="card-text list-unstyled " style="font-size: 1.2rem">
+                                        <li>Institution : {{ chauffeur.Institution.libelleInstitution }}</li>
+                                        <li>Matricule : {{ chauffeur.matriculeChauffeur }}</li>
+                                        <li>Numéro de télphone : {{ chauffeur.telephoneChauffeur }}</li>
+
+                                    </ul>
+
+                                    <p class="card-text d-flex fw-bold"> <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}" class="d-inline-block edited_profil" style="text-decoration: none; cursor: pointer;" >Modifier le profil du chauffeur</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <h1>Historique des missions</h1>
+            <table class="table">
+                <thead>
+                <th class="col-2">Date de début</th>
+                <th class="col-2">Date de retour</th>
+                <th class="col-5">Objet</th>
+                <th class="col-5">Véhicule utilisé</th>
+
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="8">Aucun enregistrement trouvé</td>
+                </tr>
                 </tbody>
             </table>
-</div>
+        </div>
+    </div>
 {% endblock %}
-

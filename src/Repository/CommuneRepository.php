@@ -19,6 +19,24 @@ class CommuneRepository extends ServiceEntityRepository
     //    /**
     //     * @return Commune[] Returns an array of Commune objects
     //     */
+
+    public function findActiveCommunesFormatted(): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select("CONCAT('Commune ', UPPER(c.libelleCommune)) as formattedCommune, c.libelleCommune")
+            ->where('c.deleteAt IS NULL')
+            ->orderBy('c.libelleCommune', 'ASC');
+
+        $result = $qb->getQuery()->getResult();
+
+        $communeChoices = [];
+        foreach ($result as $row) {
+            $communeChoices[$row['formattedCommune']] = $row['libelleCommune'];
+        }
+
+        return $communeChoices;
+    }
+
     //    public function findByExampleField($value): array
     //    {
     //        return $this->createQueryBuilder('c')

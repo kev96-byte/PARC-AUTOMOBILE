@@ -13,12 +13,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use App\Repository\CommuneRepository;
 
 class DemandeType extends AbstractType
 {
+    private $communeRepository;
+
+    public function __construct(CommuneRepository $communeRepository)
+    {
+        $this->communeRepository = $communeRepository;
+    }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $communeChoices = $this->communeRepository->findActiveCommunesFormatted();
         $builder
 
             ->add('dateDebutMission', DateType::class, [
@@ -68,16 +75,22 @@ class DemandeType extends AbstractType
             ])
 
             ->add('lieuMission', ChoiceType::class, [
-                'label' => 'Lieu Mission',
-                'choices' => $this->getLieuMissionChoices(),
-                'required' => false,
+                'label' => 'Lieux de Mission',
+                'choices' => $communeChoices,
                 'multiple' => true,
-                'expanded' => false, // ou true si vous voulez des checkboxes
+                'expanded' => false,
+                'attr' => [
+                    'class' => 'form-control selectpicker',
+                    'data-live-search' => true,
+                ],
             ])
-                      
-            ->add('save', SubmitType::class)
 
-            ->add('cancel', SubmitType::class)
+            ->add('save', SubmitType::class, [
+                'attr'=>['class'=>'p-component p-button p-button-success','style'=>'font-weight: bold;']
+
+            ])
+
+
         ;
     }
 
@@ -89,24 +102,5 @@ class DemandeType extends AbstractType
         ]);
     }
 
-     private function getLieuMissionChoices()
-    {
-        // Exemple de valeurs JSON qui peuvent provenir de la base de données ou d'un autre service
-        $json = '[
-            {"city": "Paris", "country": "France"},
-            {"city": "London", "country": "UK"},
-            {"city": "New York", "country": "USA"}
-        ]';
-
-        $lieuMissions = json_decode($json, true);
-        $choices = [];
-
-        foreach ($lieuMissions as $lieuMission) {
-            $label = $lieuMission['city'] . ', ' . $lieuMission['country'];
-            $choices[$label] = json_encode($lieuMission);
-        }
-
-        return $choices;
-    }
 }
 

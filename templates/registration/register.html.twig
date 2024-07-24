@@ -1,32 +1,44 @@
 {{ form_start(registrationForm) }}
-
-<div style="position: relative;" >
-
-    {{ form_row(registrationForm.matricule) }}
-
-    {{ form_row(registrationForm.lastName) }}
-
-    {{ form_row(registrationForm.firstName) }}
-
-    {{ form_row(registrationForm.username) }}
-
-    {{ form_row(registrationForm.email) }}
-
-    {{ form_row(registrationForm.roles) }}
-
-    {{ form_row(registrationForm.password) }}
-
-    {{ form_row(registrationForm.Institution) }}
-
-    {{ form_row(registrationForm.Structure) }}
-
-    {{ form_row(registrationForm.statutCompte) }}
-    
-    <div style="position: absolute; bottom: 0; right: 0; top: 100px;">
-        {{ form_widget(registrationForm.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
-        {{ form_widget(registrationForm.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
-    </div>
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(registrationForm.matricule) }}</div>
+    <div class="col-sm-4">{{ form_row(registrationForm.lastName) }}</div>
+    <div class="col-sm-4">{{ form_row(registrationForm.firstName) }}</div>
 </div>
 
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(registrationForm.Institution) }}</div>
+    <div class="col-sm-6">{{ form_row(registrationForm.Structure) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(registrationForm.username) }}</div>
+    <div class="col-sm-6">{{ form_row(registrationForm.email) }}</div>
+</div>
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(registrationForm.password.first, {'required': (mode == 'add')}) }}</div>
+    <div class="col-sm-6">{{ form_row(registrationForm.password.second, {'required': (mode == 'add')}) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6"> {{ form_row(registrationForm.statutCompte) }}</div>
+    <div class="col-sm-6">{{ form_row(registrationForm.roles) }}</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    <div class="d-flex justify-content-end">
+        {{ form_widget(registrationForm.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
 {{ form_end(registrationForm) }}
 

@@ -7,6 +7,7 @@ use App\Entity\Structure;
 use App\Entity\Institution;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class RegistrationFormType extends AbstractType
 {
@@ -27,7 +29,7 @@ class RegistrationFormType extends AbstractType
     {
         $builder
 
-            ->add('matricule', TextType::class, [
+            ->add('matricule', IntegerType::class, [
                 'empty_data' => '',
                 'required' => true,
                 'label' => 'Matricule',
@@ -55,10 +57,19 @@ class RegistrationFormType extends AbstractType
             ])
 
 
-            ->add('email', TextType::class, [
+            ->add('email', EmailType::class, [
                 'empty_data' => '',
                 'required' => true,
                 'label' => 'Adresse mail',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'L\'adresse email est obligatoire.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^[a-zA-Z0-9._%+-]+@gouv\.bj$/',
+                        'message' => 'Veuillez entrer une adresse email se terminant par @gouv.bj.',
+                    ]),
+                ],
             ])
           
             ->add('roles', ChoiceType::class, [
@@ -72,7 +83,10 @@ class RegistrationFormType extends AbstractType
                 ],
                 'required' => true,
                 'multiple' => true,
-                'expanded' => true,
+                'expanded' => false,
+                'attr'=>[
+                    'class'=>'form-control selectpicker',
+                ]
 
             ])
 
@@ -87,7 +101,7 @@ class RegistrationFormType extends AbstractType
                     'attr' => ['class' => 'form-control'],
                 ],
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
-                'required' => true,
+
             ])
 
             ->add('Institution', EntityType::class, [
@@ -97,6 +111,8 @@ class RegistrationFormType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleInstitution',
+                'attr'=>['class'=>'form-control selectpicker',
+                    'data-live-search'=>'true',]
             ])
 
             ->add('Structure', EntityType::class, [
@@ -106,6 +122,8 @@ class RegistrationFormType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleStructure',
+                'attr'=>['class'=>'form-control selectpicker',
+                    'data-live-search'=>'true',]
             ])
             
             ->add('statutCompte', ChoiceType::class, [
@@ -117,11 +135,13 @@ class RegistrationFormType extends AbstractType
                 ],
                 'placeholder' => 'Sélectionnez une option', // Texte par défaut
                 'required' => false,
+                'attr'=>['class'=>'form-control']
             ])
 
-            ->add('save', SubmitType::class)
-
-            ->add('cancel', SubmitType::class)
+            ->add('save', SubmitType::class,[
+                'attr'=>['class'=>'p-component p-button-success p-button',
+                    'style'=>'font-weight:bold'],
+            ])
 
             ;
             

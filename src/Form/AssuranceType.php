@@ -30,6 +30,7 @@ class AssuranceType extends AbstractType
           },
           'choice_label' => 'matricule',
           'label' => 'Matricule',
+            'attr'=>['class'=>'form-control selectpicker', 'data-live-search'=>'true']
         ])
 
 
@@ -60,9 +61,9 @@ class AssuranceType extends AbstractType
                 ])
             ],
         ])
-        ->add('save', SubmitType::class)
-
-        ->add('cancel', SubmitType::class)
+        ->add('save', SubmitType::class, [
+            'attr'=>['class'=>'p-component p-button p-button-success', 'style'=>'font-weight: bold']
+        ])
     ;
     }
 

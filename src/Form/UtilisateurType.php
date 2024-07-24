@@ -8,6 +8,8 @@ use App\Entity\Institution;
 use App\Entity\Utilisateur;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,6 +33,8 @@ class UtilisateurType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleInstitution',
+                'attr'=>['class'=>'form-control selectpicker',
+                    'data-live-search'=>'true',]
           ])
 
           ->add('Structure', EntityType::class, [
@@ -40,9 +44,11 @@ class UtilisateurType extends AbstractType
               ->where('n.deleteAt IS NULL');
           },
           'choice_label' => 'libelleStructure',
+              'attr'=>['class'=>'form-control selectpicker',
+                  'data-live-search'=>'true',]
       ])
 
-          ->add('matriculeUtilisateur', TextType::class, [
+          ->add('matriculeUtilisateur', IntegerType::class, [
             'empty_data' => '',
             'required' => true,
             'label' => 'Matricule',
@@ -69,13 +75,21 @@ class UtilisateurType extends AbstractType
                 'required' => false,
             ])
 
-            ->add('telephoneUtilisateur')
+            ->add('telephoneUtilisateur', TelType::class)
 
-            ->add('email', EmailType::class, [
-                'label' => 'Adresse email',
-                'required' => false, // Vous pouvez ajuster selon vos besoins
-                // Autres options ici...
-            ])
+           ->add('email', EmailType::class, [
+               'label' => 'Adresse email',
+               'required' => false, // Vous pouvez ajuster selon vos besoins
+               'constraints' => [
+                   new NotBlank([
+                       'message' => 'L\'adresse email est obligatoire.',
+                   ]),
+                   new Regex([
+                       'pattern' => '/^[a-zA-Z0-9._%+-]+@gouv\.bj$/',
+                       'message' => 'Veuillez entrer une adresse email se terminant par @gouv.bj.',
+                   ]),
+               ],
+           ])
 
             ->add('login', TextType::class, [
                 'label' => 'Login',
@@ -112,11 +126,10 @@ class UtilisateurType extends AbstractType
                 ],
                 'placeholder' => 'Sélectionnez une option', // Texte par défaut
                 'required' => false,
+                'attr'=>['class'=>'form-control']
             ])
                         
             ->add('save', SubmitType::class)
-
-            ->add('cancel', SubmitType::class)
         ;
     }
 

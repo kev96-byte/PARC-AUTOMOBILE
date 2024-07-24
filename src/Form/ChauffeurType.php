@@ -7,6 +7,9 @@ use App\Entity\Institution;
 use App\Entity\TypeChauffeur;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,11 +31,14 @@ class ChauffeurType extends AbstractType
                 'query_builder' => function (EntityRepository $er) { return $er->createQueryBuilder('n')
                   ->where('n.deleteAt IS NULL');
               },
+                'label' => 'Institution',
               'choice_label' => 'libelleInstitution',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
           ])
 
           ->add('matriculeChauffeur', TextType::class, [
-            'empty_data' => '',
             'required' => true,
             'label' => 'Matricule',
             ])
@@ -56,7 +62,11 @@ class ChauffeurType extends AbstractType
                 ])
 
 
-            ->add('telephoneChauffeur')
+            ->add('telephoneChauffeur', TelType::class, [
+                'empty_data' => '',
+                'required' => false,
+                'label'=>'Contact chauffeur'
+            ])
 
             // Champ non mappé pour afficher le lien de l'ancienne photo
            ->add('photoChauffeurUrl', HiddenType::class, [
@@ -80,9 +90,12 @@ class ChauffeurType extends AbstractType
                 ],
             ])
                         
-            ->add('save', SubmitType::class)
-
-            ->add('cancel', SubmitType::class)
+            ->add('save', SubmitType::class, [
+                'attr'=>[
+                    'class'=>'p-button p-component p-button-success',
+                    'style'=>'font-weight: bold;'
+                ]
+            ])
         ;
 
 

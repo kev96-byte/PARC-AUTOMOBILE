@@ -17,12 +17,15 @@ class TypeVehiculeType extends AbstractType
             ->add('libelleTypeVehicule', TextType::class, [
                 'empty_data' => '',
                 'required' => true,
-                'label' => 'Libellé',
+                'label' => 'Type de matériel',
             ])
 
-            ->add('save', SubmitType::class)
-
-            ->add('cancel', SubmitType::class)            
+            ->add('save', SubmitType::class, [
+                'attr'=>[
+                    'class'=>'p-component p-button p-button-success',
+                    'style'=>'font-weight:bold',
+                    ]
+            ])
         ;
     }
 

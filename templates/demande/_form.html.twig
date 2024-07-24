@@ -1,24 +1,33 @@
 {{ form_start(form) }}
 
-<div style="position: relative;" >
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.dateDebutMission) }}</div>
+    <div class="col-sm-6">{{ form_row(form.dateFinMission) }}</div>
+</div>
 
-    {{ form_row(form.dateDebutMission) }}
+<div class="form-group row mb-3">
+    <div class="col-sm-12">{{ form_row(form.objetMission) }}</div>
+</div>
 
-    {{ form_row(form.dateFinMission) }}
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.nbreParticipants) }}</div>
+    <div class="col-sm-6">{{ form_row(form.nbreVehicules) }}</div>
+</div>
 
-    {{ form_row(form.objetMission) }}
-
-    {{ form_row(form.nbreParticipants) }}
-
-    {{ form_row(form.nbreVehicules) }}
-
-    {{ form_row(form.lieuMission) }}
-    
-    <div style="position: absolute; bottom: 0; right: 0; top: 420px;">
-        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
-        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
+<div class="form-group row mb-3">
+    <div class="col-sm-12">{{ form_row(form.lieuMission) }}
     </div>
 </div>
 
+
+
+
+
+
+
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
 {{ form_end(form) }}
 

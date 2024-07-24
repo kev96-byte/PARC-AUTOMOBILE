@@ -11,15 +11,7 @@ use App\Entity\Affecter;
 use App\Entity\Vehicule;
 use App\Entity\Chauffeur;
 use App\Form\DemandeType;
-use App\Entity\Institution;
-use App\Entity\Utilisateur;
-use App\Entity\TraiterDemande;
-
-use App\Repository\VehiculeRepository;
-use App\Repository\ChauffeurRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use function Symfony\Component\Clock\now;
-use PhpParser\Node\Scalar\MagicConst\Dir;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,10 +35,10 @@ class DemandeController extends AbstractController
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
     }
-    
 
 
-    
+
+
     #[Route('/', name: 'demande.index', methods: ['GET'])]
     public function index(): Response
     {
@@ -62,7 +54,7 @@ class DemandeController extends AbstractController
             $demandes = $this->entityManager->getRepository(Demande::class)->findBy([
                 'demander' => $user,
                 'deleteAt' => null,
-            ]);  
+            ]);
         } elseif (in_array('ROLE_RESPONSABLE_STRUCTURE', $roles)) {
             $structure = $user->getStructure();
             // Vérifier si la structure existe
@@ -80,16 +72,16 @@ class DemandeController extends AbstractController
             $institutionId = $institution->getId();
 
             $demandes = $this->entityManager->getRepository(Demande::class)->createQueryBuilder('d')
-            ->join('d.demander', 'u')
-            ->join('u.structure', 's')
-            ->join('u.institution', 'i')
-            ->where('s.id = :structureId')
-            ->andWhere('i.id = :institutionId')
-            ->andWhere('d.deleteAt IS NULL')
-            ->setParameter('structureId', $structureId)
-            ->setParameter('institutionId', $institutionId)
-            ->getQuery()
-            ->getResult();
+                ->join('d.demander', 'u')
+                ->join('u.structure', 's')
+                ->join('u.institution', 'i')
+                ->where('s.id = :structureId')
+                ->andWhere('i.id = :institutionId')
+                ->andWhere('d.deleteAt IS NULL')
+                ->setParameter('structureId', $structureId)
+                ->setParameter('institutionId', $institutionId)
+                ->getQuery()
+                ->getResult();
 
         }  elseif (in_array('ROLE_CABINET', $roles)) {
             $institution = $user->getInstitution();
@@ -100,22 +92,22 @@ class DemandeController extends AbstractController
             $institutionId = $institution->getId();
 
             $demandes = $this->entityManager->getRepository(Demande::class)->createQueryBuilder('d')
-            ->join('d.demander', 'u')
-            ->join('u.institution', 'i')
-            ->where('i.id = :institutionId')
-            ->andWhere('d.deleteAt IS NULL')
-            ->setParameter('institutionId', $institutionId)
-            ->getQuery()
-            ->getResult();
+                ->join('d.demander', 'u')
+                ->join('u.institution', 'i')
+                ->where('i.id = :institutionId')
+                ->andWhere('d.deleteAt IS NULL')
+                ->setParameter('institutionId', $institutionId)
+                ->getQuery()
+                ->getResult();
 
         }elseif (in_array('ROLE_CHEF_PARC', $roles)) {
             $institution = $user->getInstitution();
             if (!$institution) {
                 throw $this->createNotFoundException('Cet utilisateur n\'est associé à aucune institution');
             }
-        
+
             $institutionId = $institution->getId();
-        
+
             $demandes = $this->entityManager->getRepository(Demande::class)
                 ->createQueryBuilder('d')
                 ->join('d.demander', 'u')
@@ -134,14 +126,145 @@ class DemandeController extends AbstractController
         } else {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette ressource.');
         }
-        
-        return $this->render('demande/index.html.twig', [ 
+
+        return $this->render('demande/index.html.twig', [
             'communes' => $this->entityManager->getRepository(Commune::class)->findBy(['deleteAt' => null]),
             'users' => $this->entityManager->getRepository(User::class)->findBy(['deleteAt' => null]),
-            'demandes' => $demandes,           
+            'demandes' => $demandes,
 
         ]);
     }
+
+    #[Route('/demandes/rejetees', name: 'demande.rejetees', methods: ['GET'])]
+    public function rejetees(): Response
+    {
+        $user = $this->getUser();
+        $roles = $user->getRoles();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('L\'utilisateur n\'est pas connecté');
+        }
+
+        if (in_array('ROLE_CHEF_PARC', $roles)) {
+            $institution = $user->getInstitution();
+            if (!$institution) {
+                throw $this->createNotFoundException('Cet utilisateur n\'est associé à aucune institution');
+            }
+
+            $institutionId = $institution->getId();
+
+            $demandes = $this->entityManager->getRepository(Demande::class)
+                ->createQueryBuilder('d')
+                ->join('d.demander', 'u')
+                ->join('u.institution', 'i')
+                ->where('i.id = :institutionId')
+                ->andWhere('d.deleteAt IS NULL')
+                ->andWhere('d.statut = :statutRejete')
+                ->setParameter('institutionId', $institutionId)
+                ->setParameter('statutRejete', 'Rejeté')
+                ->getQuery()
+                ->getResult();
+        } elseif (in_array('ROLE_ADMIN', $roles)) {
+            $demandes = $this->entityManager->getRepository(Demande::class)->findBy(['deleteAt' => null,]);
+    } else {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette ressource.');
+        }
+
+        return $this->render('demande/rejetees.html.twig', [
+            'communes' => $this->entityManager->getRepository(Commune::class)->findBy(['deleteAt' => null]),
+            'users' => $this->entityManager->getRepository(User::class)->findBy(['deleteAt' => null]),
+            'demandes' => $demandes,
+        ]);
+    }
+
+    #[Route('/approuvees', name: 'demande.approuvees', methods: ['GET'])]
+    public function approuvees(): Response
+    {
+        $user = $this->getUser();
+        $roles = $user->getRoles();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('L\'utilisateur n\'est pas connecté');
+        }
+
+        if (in_array('ROLE_CHEF_PARC', $roles)) {
+            $institution = $user->getInstitution();
+            if (!$institution) {
+                throw $this->createNotFoundException('Cet utilisateur n\'est associé à aucune institution');
+            }
+
+            $institutionId = $institution->getId();
+
+            $demandes = $this->entityManager->getRepository(Demande::class)
+                ->createQueryBuilder('d')
+                ->join('d.demander', 'u')
+                ->join('u.institution', 'i')
+                ->where('i.id = :institutionId')
+                ->andWhere('d.deleteAt IS NULL')
+                ->andWhere('d.statut = :statutApprouve')
+                ->setParameter('institutionId', $institutionId)
+                ->setParameter('statutApprouve', 'Approuvé')
+                ->getQuery()
+                ->getResult();
+        } elseif (in_array('ROLE_ADMIN', $roles)) {
+            $demandes = $this->entityManager->getRepository(Demande::class)->findBy(['deleteAt' => null,]);
+    } else {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette ressource.');
+        }
+
+        return $this->render('demande/approuvees.html.twig', [
+            'communes' => $this->entityManager->getRepository(Commune::class)->findBy(['deleteAt' => null]),
+            'users' => $this->entityManager->getRepository(User::class)->findBy(['deleteAt' => null]),
+            'demandes' => $demandes,
+            'type'=>'approuvées'
+        ]);
+    }
+
+    #[Route('/validees', name: 'demande.validees', methods: ['GET'])]
+    public function validees(): Response
+    {
+        $user = $this->getUser();
+        $roles = $user->getRoles();
+
+        if (!$user instanceof User) {
+            throw $this->createAccessDeniedException('L\'utilisateur n\'est pas connecté');
+        }
+
+        if (in_array('ROLE_CHEF_PARC', $roles) || in_array('ROLE_POINT_FOCAL', $roles) || in_array('ROLE_RESPONSABLE_STRUCTURE', $roles)) {
+            $institution = $user->getInstitution();
+            if (!$institution) {
+                throw $this->createNotFoundException('Cet utilisateur n\'est associé à aucune institution');
+            }
+
+            $institutionId = $institution->getId();
+
+            $demandes = $this->entityManager->getRepository(Demande::class)
+                ->createQueryBuilder('d')
+                ->join('d.demander', 'u')
+                ->join('u.institution', 'i')
+                ->where('i.id = :institutionId')
+                ->andWhere('d.deleteAt IS NULL')
+                ->andWhere('d.statut = :statutValide')
+                ->setParameter('institutionId', $institutionId)
+                ->setParameter('statutValide', 'Validé')
+                ->getQuery()
+                ->getResult();
+
+        } elseif (in_array('ROLE_ADMIN', $roles)) {
+            $demandes = $this->entityManager->getRepository(Demande::class)->findBy(['deleteAt' => null,]);
+    } else {
+            throw new AccessDeniedException('Vous n\'avez pas accès à cette ressource.');
+        }
+
+        return $this->render('demande/validees.html.twig', [
+            'communes' => $this->entityManager->getRepository(Commune::class)->findBy(['deleteAt' => null]),
+            'users' => $this->entityManager->getRepository(User::class)->findBy(['deleteAt' => null]),
+            'demandes' => $demandes,
+            'type' => 'validées'
+        ]);
+    }
+
+
 
     #[Route('/new', name: 'demande.create', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_POINT_FOCAL')]
@@ -166,13 +289,13 @@ class DemandeController extends AbstractController
 
             // $utilisateur = $entityManager->getRepository(Utilisateur::class)->find(2);
 
-            
+
             $communes = $this->entityManager->getRepository(Commune::class)->findBy(['id' => '2']);
             $dateDemandeStr = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
             $dateDemande = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dateDemandeStr);
             $demande->setDateDemande($dateDemande);
             $demande->setStatut('Initial');
-            $demande->setLieuMission(["PORTO-NOVO", "GRAND POPO", "OUIDAH"]);
+            // $demande->setLieuMission(["PORTO-NOVO", "GRAND POPO", "OUIDAH"]);
             $this->entityManager->persist($demande);
             $this->entityManager->flush();
             $this->addFlash('success', 'Ajout effectué avec succès.');
@@ -192,16 +315,16 @@ class DemandeController extends AbstractController
     public function show(Demande $demande, EntityManagerInterface $entityManager, $id): Response
     {
         $demande = $entityManager->getRepository(Demande::class)->find($id);
-    
+
         if (!$demande) {
             throw $this->createNotFoundException('Demande introuvable.');
         }
-    
+
         // Vérification des conditions
-        if ($demande->getAffecters()->count() > 0 && 
+        if ($demande->getAffecters()->count() > 0 &&
             // ($demande->getStatut() === 'Validé' || $demande->getStatut() === 'Approuvé') && 
-            ($demande->getStatut() === 'Validé') && 
-            $demande->getDateTraitement() !== null) 
+            ($demande->getStatut() === 'Validé') &&
+            $demande->getDateTraitement() !== null)
         {
             $details = $entityManager->getRepository(Affecter::class)->findBy(['demandeId' => $demande]);
             dump($details);
@@ -209,7 +332,7 @@ class DemandeController extends AbstractController
             $data = [];
             foreach ($details as $detail) {
                 $vehicule = $detail->getVehiculeId();
-                $chauffeur = $detail->getChauffeurId();           
+                $chauffeur = $detail->getChauffeurId();
                 if ($vehicule && $chauffeur) {
                     $data[] = [
                         'matricule' => $vehicule->getMatricule(),
@@ -224,16 +347,16 @@ class DemandeController extends AbstractController
         } else {
             // Initialiser $data à un tableau vide si les conditions ne sont pas remplies
             $data = [];
-        }    
+        }
         return $this->render('demande/show.html.twig', [
             'demande' => $demande,
             'details' => $data, // Passer toujours la variable details
         ]);
     }
-    
 
-    
-    
+
+
+
 
 
 
@@ -294,7 +417,7 @@ class DemandeController extends AbstractController
                 $useroperation = $request->request->get('useroperation');
                 $demande->setRaisonRejetApprobation($raisonRejetApprobation);
                 $demande->setStatut('Rejeté');
-                
+
                 // Récupère l'utilisateur connecté
                 $user = $this->getUser();
 
@@ -320,27 +443,27 @@ class DemandeController extends AbstractController
     {
         // Récupérer l'identifiant de la demande depuis l'URL
         $demandeId = $id;
-        
+
         // Récupérer l'observation et les paires véhicule-chauffeur depuis la requête POST
         $observation = $request->request->get('observation');
         $pairsJson = $request->request->get('pairs');
         $pairs = json_decode($pairsJson, true); // Convertir le JSON en tableau associatif
-        
+
         // Validation des paramètres
         if (!$demandeId || empty($pairs)) {
             return $this->json(['success' => false, 'message' => 'Paramètres manquants ou invalides'], 400);
         }
-        
+
         // Récupérer la demande depuis la base de données
         $demande = $em->getRepository(Demande::class)->find($demandeId);
         if (!$demande) {
             return $this->json(['success' => false, 'message' => 'Demande introuvable'], 404);
         }
-    
+
         if ($demande->getStatut() != 'Approuvé') {
             return $this->json(['success' => false, 'message' => 'Vous ne pouvez traiter une demande que si son statut est "Approuvé".'], 400);
         }
-        
+
         try {
             // Mettre à jour les champs de la demande
             $user = $this->getUser();
@@ -348,37 +471,37 @@ class DemandeController extends AbstractController
             $demande->setTraitePar($user);
             $demande->setDateTraitement(new \DateTimeImmutable());
             $demande->setObservations($observation);
-    
+
             foreach ($pairs as $pair) {
                 $vehiculeId = $pair['vehiculeId'];
                 $chauffeurId = $pair['chauffeurId'];
-    
+
                 $vehicule = $em->getRepository(Vehicule::class)->find($vehiculeId);
                 $chauffeur = $em->getRepository(Chauffeur::class)->find($chauffeurId);
-    
+
                 if ($vehicule && $chauffeur) {
                     // Associer le véhicule et le chauffeur à la demande traitée
                     $traiterDemande = new Affecter();
                     $traiterDemande->setDemandeId($demande);
                     $traiterDemande->setVehiculeId($vehicule);
                     $traiterDemande->setChauffeurId($chauffeur);
-    
+
                     $em->persist($traiterDemande);
                 } else {
                     return $this->json(['success' => false, 'message' => 'Véhicule ou chauffeur introuvable'], 400);
                 }
             }
-            
+
             // Enregistrer les modifications dans la base de données
             $em->persist($demande);
             $em->flush();
-    
+
             return $this->json(['success' => true, 'message' => 'Demande traitée avec succès']);
         } catch (\Exception $e) {
             return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-    
+
 
 
 
@@ -395,7 +518,7 @@ class DemandeController extends AbstractController
                 $this->addFlash('success', 'Suppression effectuée avec succès.');
             }
         }
-    
+
         return $this->redirectToRoute('demande.index', [], Response::HTTP_SEE_OTHER);
     }
 
@@ -406,64 +529,64 @@ class DemandeController extends AbstractController
     public function availableVehiclesAndDrivers(): JsonResponse
     {
 
-         // Récupérez l'utilisateur connecté
-         $currentUser = $this->getUser();
+        // Récupérez l'utilisateur connecté
+        $currentUser = $this->getUser();
 
-         if (!$currentUser instanceof User) {
-             throw $this->createAccessDeniedException('L\'utilisateur n\'est pas connecté');
-         }
- 
-         // Récupérez l'institution de l'utilisateur
-         $institution = $currentUser->getInstitution();
- 
-         // Vérifiez si l'institution existe pour l'utilisateur connecté
-         if (!$institution) {
-             throw new \RuntimeException('L\'utilisateur n\'a pas d\'institution associée.');
-         }
- 
-         // Récupérez l'ID de l'institution
-         $institutionId = $institution->getId();
- 
-         // Récupérez les véhicules disponibles dans l'institution de l'utilisateur avec deleteAt non nul
-         $vehicles = $this->entityManager->getRepository(Vehicule::class)->createQueryBuilder('v')
-             ->where('v.institution = :institutionId')
-             ->andWhere('v.disponibilite = :disponibilite')
-             ->andWhere('v.deleteAt IS NULL')
-             ->setParameter('institutionId', $institutionId)
-             ->setParameter('disponibilite', 'Disponible')
-             ->getQuery()
-             ->getResult();
- 
-         // Récupérez les chauffeurs disponibles dans l'institution de l'utilisateur avec deleteAt non nul
-         $drivers = $this->entityManager->getRepository(Chauffeur::class)->createQueryBuilder('c')
-             ->where('c.institution = :institutionId')
-             ->andWhere('c.disponibilite = :disponibilite')
-             ->andWhere('c.deleteAt IS NULL')
-             ->setParameter('institutionId', $institutionId)
-             ->setParameter('disponibilite', 'Disponible')
-             ->getQuery()
-             ->getResult();
- 
-         // Formattez les données pour la réponse JSON
-         $formattedVehicles = array_map(function($vehicle) {
-             return [
-                 'id' => $vehicle->getId(),
-                 'matricule' => $vehicle->getMatricule()
-             ];
-         }, $vehicles);
- 
-         $formattedDrivers = array_map(function($driver) {
-             return [
-                 'id' => $driver->getId(),
-                 'name' => $driver->getNomChauffeur() . ' ' . $driver->getPrenomChauffeur()
-             ];
-         }, $drivers);
- 
-         // Retournez les données en JSON
-         return $this->json([
-             'vehicles' => $formattedVehicles,
-             'drivers' => $formattedDrivers,
-         ]);
-     }
+        if (!$currentUser instanceof User) {
+            throw $this->createAccessDeniedException('L\'utilisateur n\'est pas connecté');
+        }
 
+        // Récupérez l'institution de l'utilisateur
+        $institution = $currentUser->getInstitution();
+
+        // Vérifiez si l'institution existe pour l'utilisateur connecté
+        if (!$institution) {
+            throw new \RuntimeException('L\'utilisateur n\'a pas d\'institution associée.');
+        }
+
+        // Récupérez l'ID de l'institution
+        $institutionId = $institution->getId();
+
+        // Récupérez les véhicules disponibles dans l'institution de l'utilisateur avec deleteAt non nul
+        $vehicles = $this->entityManager->getRepository(Vehicule::class)->createQueryBuilder('v')
+            ->where('v.institution = :institutionId')
+            ->andWhere('v.disponibilite = :disponibilite')
+            ->andWhere('v.deleteAt IS NULL')
+            ->setParameter('institutionId', $institutionId)
+            ->setParameter('disponibilite', 'Disponible')
+            ->getQuery()
+            ->getResult();
+
+        // Récupérez les chauffeurs disponibles dans l'institution de l'utilisateur avec deleteAt non nul
+        $drivers = $this->entityManager->getRepository(Chauffeur::class)->createQueryBuilder('c')
+            ->where('c.institution = :institutionId')
+            ->andWhere('c.disponibilite = :disponibilite')
+            ->andWhere('c.deleteAt IS NULL')
+            ->setParameter('institutionId', $institutionId)
+            ->setParameter('disponibilite', 'Disponible')
+            ->getQuery()
+            ->getResult();
+
+        // Formattez les données pour la réponse JSON
+        $formattedVehicles = array_map(function($vehicle) {
+            return [
+                'id' => $vehicle->getId(),
+                'matricule' => $vehicle->getMatricule()
+            ];
+        }, $vehicles);
+
+        $formattedDrivers = array_map(function($driver) {
+            return [
+                'id' => $driver->getId(),
+                'name' => $driver->getNomChauffeur() . ' ' . $driver->getPrenomChauffeur()
+            ];
+        }, $drivers);
+
+        // Retournez les données en JSON
+        return $this->json([
+            'vehicles' => $formattedVehicles,
+            'drivers' => $formattedDrivers,
+        ]);
     }
+
+}

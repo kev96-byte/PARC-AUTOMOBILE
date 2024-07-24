@@ -23,10 +23,10 @@
             <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Institution</th>
                         <th>Matricule</th>
                         <th>Nom</th>
                         <th>Prenom(s)</th>
+                        <th>Institution</th>
                         <th>Statut Chauffeur</th>
                         <th>Disponibilité</th>
                         <th data-sortable="false" style="text-align: center;">Actions</th>
@@ -35,44 +35,29 @@
                 <tbody>
                 {% for chauffeur in chauffeurs %}
                     <tr>
-                        <td>{{ chauffeur.institution.libelleInstitution }}</td>
                         <td>{{ chauffeur.matriculeChauffeur }}</td>
                         <td>{{ chauffeur.nomChauffeur }}</td>
                         <td>{{ chauffeur.prenomChauffeur }}</td>
+                        <td>{{ chauffeur.institution.libelleInstitution }}</td>
                         <td>{{ chauffeur.etatChauffeur }}</td>
                         <td>{{ chauffeur.disponibilite }}</td>
                         <td>
-                            <div class="button-group open">
-                                <button class="btn btn-xs btn-default dropdown-toggle" title="Cliquez ici pour effectuer une action" type="button" data-toggle="dropdown" data-toggle-position="left" aria-expanded="true">
-                                    <i class="fa fa-ellipsis-h" style="color: #777;"></i>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    <li style="padding-left: 10px;">
+                            <div class="d-flex">
                                         <a href="{{ path('chauffeur.show', {'id': chauffeur.id}) }}">
                                             <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552; width: 30px; height: 30px;">
-                                                <i class="fa fa-search"></i>                                                
+                                                <i class="fa fa-low-vision"></i>
                                             </button>
-                                            <span style="color: #777;">&nbsp; Voir détails</span>
-                                        </a> 
-                                    </li>
-                                    <li style="padding-left: 10px;">
+                                        </a>
                                         <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}">
                                             <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
                                                 <i class="fa fa-pen"></i>
                                             </button>
-                                            <span style="color: #777;">&nbsp; Modifier</span>
-                                        </a>    
-                                    </li>
-                                    <li style="padding-left: 10px;">
+                                        </a>
                                         <a href="#" onclick="showDeletionModal(this);" data-id="{{ chauffeur.id }}" data-token="{{ csrf_token('delete' ~ chauffeur.id) }}" style="text-decoration: none;">
-                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: hsl(0, 92%, 50%);">
+                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; width: 30px; height: 30px; background-color: hsl(0, 92%, 50%);">
                                                 <i class="fa fa-trash"></i>
                                             </button>
-                                            <span style="color: #777;">&nbsp; Supprimer</span>
                                         </a>
-                                    </li>
-                                </ul>
                             </div>                        
                         </td>
                     </tr>

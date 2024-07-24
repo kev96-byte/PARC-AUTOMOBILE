@@ -1,7 +1,5 @@
 {{ form_start(form) }}
 
-<div style="position: relative;">
-
     {{ form_row(form.Departement, {
         'label': 'Département',
         'attr': {'placeholder': 'Choisir le département'}
@@ -12,10 +10,9 @@
         'attr': {'placeholder': 'Saisir le libellé de la commune'}
     }) }}
     
-    <div style="position: absolute; bottom: 0; right: 0; top: 200px;">
+    <div class="d-flex justify-content-end">
         {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
-        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
     </div>
-</div>
+
 
 {{ form_end(form) }}

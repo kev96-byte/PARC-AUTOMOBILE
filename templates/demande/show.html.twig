@@ -1,80 +1,82 @@
 {% extends 'base.html.twig' %}
 {# {% block body %}{% endblock %} #}
 {% block mycontent %}
-<div class="col-12 card-body">
-    <div class="card" style="min-height: 475px;">
-        <h5>Details demande</h5>
-        <div class="p-toolbar p-component mb-4" role="toolbar">
-            <div class="p-toolbar-group-left">
-                <div class="my-2">
-                    <a href="{{ path('demande.index') }}">
-                        <button class="p-button p-component p-button-success mr-2">
-                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
-                            <span class="p-button-label p-c">Retour à la liste</span>
-                            <span class="p-ink"></span>
-                        </button>
-                    </a>
+    <div class="col-12 card-body">
+        <div class="card" style="min-height: 475px;">
+            <h5>Details demande</h5>
+            <div class="p-toolbar p-component mb-4" role="toolbar">
+                <div class="p-toolbar-group-left">
+                    <div class="my-2">
+                        <a href="{{ path('demande.index') }}">
+                            <button class="p-button p-component p-button-success mr-2">
+                                <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                                <span class="p-button-label p-c">Retour à la liste</span>
+                                <span class="p-ink"></span>
+                            </button>
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
             <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
                 <tbody>
-                    <tr>
-                        <th>Identifiant</th>
-                        <td>{{ demande.id }}</td>
-                    </tr>
+                <tr>
+                    <th>Identifiant</th>
+                    <td>{{ demande.id }}</td>
+                </tr>
 
-                    <tr>
-                        <th>Date Demande</th>
-                        <td>{{ demande.dateDemande|format_date('m/d/Y H:i:s') }}</td>
-                    </tr>
+                <tr>
+                    <th>Date Demande</th>
+                    <td>{{ demande.dateDemande|format_date('m/d/Y H:i:s') }}</td>
+                </tr>
 
-                    <tr>
-                        <th>Objet mission</th>
-                        <td>{{ demande.objetMission }}</td>
-                    </tr>
+                <tr>
+                    <th>Objet mission</th>
+                    <td>{{ demande.objetMission }}</td>
+                </tr>
 
-                    <tr>
-                        <th>Date début mission</th>
-                        <td>{{ demande.dateDebutMission|date("m/d/Y") }}</td>
-                    </tr>
+                <tr>
+                    <th>Date début mission</th>
+                    <td>{{ demande.dateDebutMission|date("m/d/Y") }}</td>
+                </tr>
 
-                    <tr>
-                        <th>Date fin mission</th>
-                        <td>{{ demande.dateFinMission|date("m/d/Y") }}</td>
-                    </tr>
+                <tr>
+                    <th>Date fin mission</th>
+                    <td>{{ demande.dateFinMission|date("m/d/Y") }}</td>
+                </tr>
 
-                    <tr>
-                        <th>Lieu Mission</th>
-
-                        <td>
-                            {% for key, value in demande.lieuMission %}
-                                <span>{{ value }}</span>
+                <tr>
+                    <th>Lieu Mission</th>
+                    <td>
+                        <ul>
+                            {% for value in demande.lieuMission %}
+                                <li>{{ value|upper }}</li>
                             {% endfor %}
-                        </td>
+                        </ul>
+                    </td>
+                </tr>
 
-                    <tr>
-                        <th>Nombre de participants</th>
-                        <td>{{ demande.nbreParticipants }}</td>
-                    </tr>
-
-
-                    <tr>
-                        <th>Nombre de véhicules</th>
-                        <td>{{ demande.nbreVehicules }}</td>
-                    </tr>
+                <tr>
+                    <th>Nombre de participants</th>
+                    <td>{{ demande.nbreParticipants }}</td>
+                </tr>
 
 
-                    <tr>
-                        <th>Point focal (Demandeur)</th>
-                        <td>
-                            <span class="user-lastname">{{ demande.demander.lastName }}</span>
-                            <span class="user-firstname">{{ demande.demander.firstName }}</span>
-                        </td>
-                    </tr>
+                <tr>
+                    <th>Nombre de véhicules</th>
+                    <td>{{ demande.nbreVehicules }}</td>
+                </tr>
 
-                    {% if demande.statut == 'Approuvé' or demande.statut == 'Validé' or (demande.statut == 'Rejeté' and demande.validateurStructure is not empty) %}
+
+                <tr>
+                    <th>Point focal (Demandeur)</th>
+                    <td>
+                        <span class="user-lastname">{{ demande.demander.lastName }}</span>
+                        <span class="user-firstname">{{ demande.demander.firstName }}</span>
+                    </td>
+                </tr>
+
+                {% if demande.statut == 'Approuvé' or demande.statut == 'Validé' or (demande.statut == 'Rejeté' and demande.validateurStructure is not empty) %}
                     <tr>
                         <th>Responsable structure (Approbateur)</th>
                         <td>
@@ -82,9 +84,9 @@
                             <span class="user-rs-firstname">{{ demande.validateurStructure.firstName }}</span>
                         </td>
                     </tr>
-                    {% endif %} 
+                {% endif %}
 
-                    {% if demande.traitePar is not empty %}
+                {% if demande.traitePar is not empty %}
                     <tr>
                         <th>Chef parc (Validateur)</th>
                         <td>
@@ -92,11 +94,11 @@
                             <span class="user-rs-firstname">{{ demande.traitePar.firstName }}</span>
                         </td>
                     </tr>
-                    {% endif %} 
+                {% endif %}
 
-                    <tr>
-                        <th>Statut demande</th>
-                        <td>                            
+                <tr>
+                    <th>Statut demande</th>
+                    <td>
                             <span class="
                             {% if demande.statut == 'Initial' %}
                                 initial
@@ -112,28 +114,28 @@
                         ">
                             {{ demande.statut }}
                         </span>
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
 
-                    {% if demande.statut == 'Rejeté' %} 
+                {% if demande.statut == 'Rejeté' %}
                     <tr>
                         <th>Raison rejet</th>
                         <td>
                             <span class="raison-rejet">{{ demande.raisonRejetApprobation }}</span>
                         </td>
                     </tr>
-                    {% endif %}
+                {% endif %}
 
-                    {% if demande.observations is not empty %} 
+                {% if demande.observations is not empty %}
                     <tr>
                         <th>observation(s)</th>
                         <td>
                             <span class="observations">{{ demande.observations }}</span>
                         </td>
                     </tr>
-                    {% endif %}
+                {% endif %}
 
-                    {% if is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_ADMIN') and demande.statut == 'Initial' %}
+                {% if is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_ADMIN') and demande.statut == 'Initial' %}
                     <tr>
                         <td colspan="2">
                             <div class="d-flex justify-content-center" style="margin-top: 50px;">
@@ -146,26 +148,26 @@
                             </div>
                         </td>
                     </tr>
-                    {% endif %}
+                {% endif %}
 
-                    {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') and demande.statut == 'Approuvé'%}
+                {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') and demande.statut == 'Approuvé'%}
                     {# {% if is_granted('ROLE_CHEF_PARC') and demande.statut == 'Approuvé'%} #}
                     <tr>
                         <td colspan="2">
-                            <div class="d-flex justify-content-center" style="margin-top: 50px;"> 
+                            <div class="d-flex justify-content-center" style="margin-top: 50px;">
                                 <button type="button" name="btnTraiter" class="btn btn-primary mx-2" style="width: 100px;" onclick="TraiterDemande('{{ demande.id }}')">
                                     Traiter
                                 </button>
-                                
+
                                 <button type="submit" name="btnRejeter" class="btn btn-danger mx-2" style="width: 100px;" onclick="showRejectionModal('{{ demande.id }}')">
                                     Rejeter
-                                </button>                                  
+                                </button>
                             </div>
                         </td>
                     </tr>
-                    {% endif %}
+                {% endif %}
 
-                    {% if is_granted('ROLE_POINT_FOCAL') and not is_granted('ROLE_ADMIN') and demande.statut == 'Initial' %}
+                {% if is_granted('ROLE_POINT_FOCAL') and not is_granted('ROLE_ADMIN') and demande.statut == 'Initial' %}
                     <tr>
                         <td colspan="2">
                             <div class="d-flex justify-content-center" style="margin-top: 50px;">
@@ -177,79 +179,79 @@
                             </div>
                         </td>
                     </tr>
-                    {% endif %}
+                {% endif %}
                 </tbody>
             </table>
 
-{# Ici affichage du tableau détails affectation de véhicules et chauffeurs pour une demande #}
-            {% if demande.statut == 'Validé' and details is not empty %} 
+            {# Ici affichage du tableau détails affectation de véhicules et chauffeurs pour une demande #}
+            {% if demande.statut == 'Validé' and details is not empty %}
             <div class="shadow-sm p-3 mb-5 bg-white rounded">
                 <hr class="my-4 border-primary">
-              </div>
+            </div>
             <div class="table-responsive">
                 <h5><b>Véhicule (s) et chauffeur(s) affecté(s)</b></h5>
                 <table class="table table-bordered table-striped " id="dataTable" cellspacing="0">
                     <thead>
-                        <tr>
-                            <th>Matricule</th>
-                            <th>Photo du Véhicule</th>
-                            <th>Nom et prénom chauffeur</th>
-                            <th>Photo du chauffeur</th>
-                        </tr>
+                    <tr>
+                        <th>Matricule</th>
+                        <th>Photo du Véhicule</th>
+                        <th>Nom et prénom chauffeur</th>
+                        <th>Photo du chauffeur</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {% for detail in details %}
+                    {% for detail in details %}
 
-                            <tr>
-                                <td>{{ detail.matricule }}</td>
-                                <td><img src="{{ asset('uploads/vehicules/' ~ detail.photoVehicule) }}" alt="Photo du véhicule" width="100"></td>
-                                <td>{{ detail.nomChauffeur }} {{ detail.prenomChauffeur }}</td>
-                                <td><img src="{{ asset('uploads/chauffeurs/' ~ detail.photoChauffeur) }}" alt="Photo du chauffeur" width="100"></td>
-                            </tr>
-                        {% endfor %}
+                        <tr>
+                            <td>{{ detail.matricule }}</td>
+                            <td><img src="{{ asset('uploads/vehicules/' ~ detail.photoVehicule) }}" alt="Photo du véhicule" width="100"></td>
+                            <td>{{ detail.nomChauffeur }} {{ detail.prenomChauffeur }}</td>
+                            <td><img src="{{ asset('uploads/chauffeurs/' ~ detail.photoChauffeur) }}" alt="Photo du chauffeur" width="100"></td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
-    </div>    
-    {% endif %}
-{# Fin affichage du tableau détails affectation de véhicules et chauffeurs pour une demande #}
+        </div>
+        {% endif %}
+        {# Fin affichage du tableau détails affectation de véhicules et chauffeurs pour une demande #}
 
 
 
 
 
-</div>
+    </div>
 
 
-<!-- Modal de rejet -->
-<div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="reject-form" method="post" action="{{ path('demande.dismiss', {'id': '__ID__'}) }}" onsubmit="return false;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="rejectionModalLabel">Raison de rejet</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="_token" value="{{ csrf_token('dismiss') }}">
-                    <input type="hidden" name="demande_id" id="demande-id">
-                    {# <input type="hidden" name="statut" value="Rejeté">
-                    <input type="hidden" name="validateurStructure" value="{{ app.user.id }}"> #}
-                    <div class="form-group">
-                        <label for="raisonRejetApprobation">Raison de rejet</label>
-                        <textarea name="raisonRejetApprobation" id="raisonRejetApprobation" class="form-control" required></textarea>
+    <!-- Modal de rejet -->
+    <div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="reject-form" method="post" action="{{ path('demande.dismiss', {'id': '__ID__'}) }}" onsubmit="return false;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectionModalLabel">Raison de rejet</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                    <button type="button" class="btn btn-danger" onclick="submitRejectionForm()">Rejeter</button>
-                </div>
-            </form>
+                    <div class="modal-body">
+                        <input type="hidden" name="_token" value="{{ csrf_token('dismiss') }}">
+                        <input type="hidden" name="demande_id" id="demande-id">
+                        {# <input type="hidden" name="statut" value="Rejeté">
+                    <input type="hidden" name="validateurStructure" value="{{ app.user.id }}"> #}
+                        <div class="form-group">
+                            <label for="raisonRejetApprobation">Raison de rejet</label>
+                            <textarea name="raisonRejetApprobation" id="raisonRejetApprobation" class="form-control" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        <button type="button" class="btn btn-danger" onclick="submitRejectionForm()">Rejeter</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 
 
@@ -279,7 +281,7 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 
 
 
@@ -316,14 +318,14 @@
                         <div class="form-group">
                             <table class="table table-hidden" id="datagrid">
                                 <thead class="thead-hidden">
-                                    <tr>
-                                        <th>Numéro</th>
-                                        <th>Matricule</th>
-                                        <th>Chauffeur</th>
-                                    </tr>
+                                <tr>
+                                    <th>Numéro</th>
+                                    <th>Matricule</th>
+                                    <th>Chauffeur</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Rows will be dynamically populated -->
+                                <!-- Rows will be dynamically populated -->
                                 </tbody>
                             </table>
                         </div>
@@ -340,188 +342,188 @@
 
 
 
-{# ... Début Script de rejet ... #}
-<script>
-    function showRejectionModal(demandeId) {
-        document.getElementById('reject-form').action = '{{ path("demande.dismiss", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
-        document.getElementById('demande-id').value = demandeId;
-        $('#rejectionModal').modal('show');
-    }
-
-    function submitRejectionForm() {
-        var form = document.getElementById('reject-form');
-        if (form.checkValidity()) {
-            form.onsubmit = function() { return true; };
-            form.submit();
+    {# ... Début Script de rejet ... #}
+    <script>
+        function showRejectionModal(demandeId) {
+            document.getElementById('reject-form').action = '{{ path("demande.dismiss", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
+            document.getElementById('demande-id').value = demandeId;
+            $('#rejectionModal').modal('show');
         }
-    }
 
-//... Fin script de rejet ...
-
-
-// ... Début script d'approbation ... 
-    function showApproveModal(demandeId) {
-        document.getElementById('approve-form').action = '{{ path("demande.approve", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
-        document.getElementById('demande-id').value = demandeId;
-        $('#approveModal').modal('show');
-    }
-
-    function submitApproveForm() {
-        var form = document.getElementById('approve-form');
-        if (form.checkValidity()) {
-            form.onsubmit = function() { return true; };
-            form.submit();
+        function submitRejectionForm() {
+            var form = document.getElementById('reject-form');
+            if (form.checkValidity()) {
+                form.onsubmit = function() { return true; };
+                form.submit();
+            }
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        var confirmApproveButton = document.getElementById('confirmApproveButton');
+        //... Fin script de rejet ...
 
-        confirmApproveButton.addEventListener('click', function () {
-            // Soumettre le formulaire d'approbation
-            document.getElementById('approve-form').submit();
+
+        // ... Début script d'approbation ...
+        function showApproveModal(demandeId) {
+            document.getElementById('approve-form').action = '{{ path("demande.approve", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
+            document.getElementById('demande-id').value = demandeId;
+            $('#approveModal').modal('show');
+        }
+
+        function submitApproveForm() {
+            var form = document.getElementById('approve-form');
+            if (form.checkValidity()) {
+                form.onsubmit = function() { return true; };
+                form.submit();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var confirmApproveButton = document.getElementById('confirmApproveButton');
+
+            confirmApproveButton.addEventListener('click', function () {
+                // Soumettre le formulaire d'approbation
+                document.getElementById('approve-form').submit();
+            });
         });
-    });
-//... Fin script de rejet ...    
-    
+        //... Fin script de rejet ...
 
-// ... Début script de traitement ...     
-// Fonction pour ouvrir le modal et remplir les options
-function TraiterDemande(demandeId) {
-    document.getElementById('demande-id').value = demandeId;
 
-    fetch("{{ path('api_available_vehicles_and_drivers') }}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+        // ... Début script de traitement ...
+        // Fonction pour ouvrir le modal et remplir les options
+        function TraiterDemande(demandeId) {
+            document.getElementById('demande-id').value = demandeId;
+
+            fetch("{{ path('api_available_vehicles_and_drivers') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let vehiculeSelect = document.getElementById('vehicule');
+                    vehiculeSelect.innerHTML = '<option value="">Select Vehicle</option>';
+                    data.vehicles.forEach(vehicle => {
+                        let option = document.createElement('option');
+                        option.value = vehicle.id;
+                        option.textContent = vehicle.matricule;
+                        vehiculeSelect.appendChild(option);
+                    });
+
+                    let chauffeurSelect = document.getElementById('chauffeur');
+                    chauffeurSelect.innerHTML = '<option value="">Select Driver</option>';
+                    data.drivers.forEach(driver => {
+                        let option = document.createElement('option');
+                        option.value = driver.id;
+                        option.textContent = driver.name;
+                        chauffeurSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching available vehicles and drivers:', error));
+
+            $('#modalForm').modal('show');
         }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        let vehiculeSelect = document.getElementById('vehicule');
-        vehiculeSelect.innerHTML = '<option value="">Select Vehicle</option>';
-        data.vehicles.forEach(vehicle => {
-            let option = document.createElement('option');
-            option.value = vehicle.id;
-            option.textContent = vehicle.matricule;
-            vehiculeSelect.appendChild(option);
+
+        let pairCounter = 0;
+
+        document.getElementById('addPair').addEventListener('click', function() {
+            let vehiculeSelect = document.getElementById('vehicule');
+            let chauffeurSelect = document.getElementById('chauffeur');
+
+            let vehiculeId = vehiculeSelect.value;
+            let vehiculeText = vehiculeSelect.options[vehiculeSelect.selectedIndex].text;
+            let chauffeurId = chauffeurSelect.value;
+            let chauffeurText = chauffeurSelect.options[chauffeurSelect.selectedIndex].text;
+
+            if (vehiculeId && chauffeurId) {
+                pairCounter++;
+                let datagrid = document.getElementById('datagrid').getElementsByTagName('tbody')[0];
+                let newRow = datagrid.insertRow();
+                newRow.insertCell(0).innerText = pairCounter;
+                newRow.insertCell(1).innerText = vehiculeText;
+                newRow.insertCell(2).innerText = chauffeurText;
+
+                // Store IDs for later use
+                newRow.cells[1].setAttribute('data-vehicule-id', vehiculeId);
+                newRow.cells[2].setAttribute('data-chauffeur-id', chauffeurId);
+
+                // Remove the selected options from the dropdowns
+                vehiculeSelect.remove(vehiculeSelect.selectedIndex);
+                chauffeurSelect.remove(chauffeurSelect.selectedIndex);
+
+                if (datagrid.rows.length > 0) {
+                    document.getElementById('datagrid').classList.remove('table-hidden');
+                    document.querySelector('#datagrid thead').classList.remove('thead-hidden');
+                    document.getElementById('observation-group').style.display = 'block';
+                }
+            }
         });
 
-        let chauffeurSelect = document.getElementById('chauffeur');
-        chauffeurSelect.innerHTML = '<option value="">Select Driver</option>';
-        data.drivers.forEach(driver => {
-            let option = document.createElement('option');
-            option.value = driver.id;
-            option.textContent = driver.name;
-            chauffeurSelect.appendChild(option);
+        //JavaScript pour gérer la soumission du formulaire de traitement
+        document.getElementById('submitForm').addEventListener('click', function() {
+            if (pairCounter === 0) return;
+
+            // Collect pairs data
+            let pairs = [];
+            let rows = document.getElementById('datagrid').getElementsByTagName('tbody')[0].rows;
+            for (let i = 0; i < rows.length; i++) {
+                let cells = rows[i].cells;
+                pairs.push({
+                    vehiculeId: cells[1].getAttribute('data-vehicule-id'),
+                    chauffeurId: cells[2].getAttribute('data-chauffeur-id')
+                });
+            }
+
+            // Prepare data for submission
+            let formData = new FormData();
+            formData.append('_token', document.querySelector('input[name="_token"]').value);
+            formData.append('demande_id', document.getElementById('demande-id').value);
+            formData.append('observation', document.getElementById('observation').value);
+            formData.append('pairs', JSON.stringify(pairs));
+
+            // Build the URL dynamically
+            let demandeId = document.getElementById('demande-id').value;
+            let url = "{{ path('demande.traiter', {'id': 'ID_PLACEHOLDER'}) }}".replace('ID_PLACEHOLDER', demandeId);
+
+            // Submit the form via fetch
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Traiter ici la réponse réussie (par exemple, afficher un message de succès)
+                        console.log('Demande traitée avec succès:', data.message);
+                        // Réinitialiser le formulaire ou fermer le modal, etc.
+                        $('#modalForm').modal('hide');
+                    } else {
+                        // Traiter ici le cas où la demande n'a pas été traitée avec succès
+                        console.error('Erreur lors du traitement de la demande:', data.message);
+                        // Afficher un message d'erreur ou autre
+                    }
+                })
+                .catch(error => {
+                    console.error('Error handling request:', error);
+                    // Traiter ici les erreurs réseau ou autres erreurs
+                });
         });
-    })
-    .catch(error => console.error('Error fetching available vehicles and drivers:', error));
-
-    $('#modalForm').modal('show');
-}
-
-let pairCounter = 0;
-
-document.getElementById('addPair').addEventListener('click', function() {
-    let vehiculeSelect = document.getElementById('vehicule');
-    let chauffeurSelect = document.getElementById('chauffeur');
-
-    let vehiculeId = vehiculeSelect.value;
-    let vehiculeText = vehiculeSelect.options[vehiculeSelect.selectedIndex].text;
-    let chauffeurId = chauffeurSelect.value;
-    let chauffeurText = chauffeurSelect.options[chauffeurSelect.selectedIndex].text;
-
-    if (vehiculeId && chauffeurId) {
-        pairCounter++;
-        let datagrid = document.getElementById('datagrid').getElementsByTagName('tbody')[0];
-        let newRow = datagrid.insertRow();
-        newRow.insertCell(0).innerText = pairCounter;
-        newRow.insertCell(1).innerText = vehiculeText;
-        newRow.insertCell(2).innerText = chauffeurText;
-
-        // Store IDs for later use
-        newRow.cells[1].setAttribute('data-vehicule-id', vehiculeId);
-        newRow.cells[2].setAttribute('data-chauffeur-id', chauffeurId);
-
-        // Remove the selected options from the dropdowns
-        vehiculeSelect.remove(vehiculeSelect.selectedIndex);
-        chauffeurSelect.remove(chauffeurSelect.selectedIndex);
-
-        if (datagrid.rows.length > 0) {
-            document.getElementById('datagrid').classList.remove('table-hidden');
-            document.querySelector('#datagrid thead').classList.remove('thead-hidden');
-            document.getElementById('observation-group').style.display = 'block';
-        }
-    }
-});
-
-//JavaScript pour gérer la soumission du formulaire de traitement
-document.getElementById('submitForm').addEventListener('click', function() {
-    if (pairCounter === 0) return;
-
-    // Collect pairs data
-    let pairs = [];
-    let rows = document.getElementById('datagrid').getElementsByTagName('tbody')[0].rows;
-    for (let i = 0; i < rows.length; i++) {
-        let cells = rows[i].cells;
-        pairs.push({
-            vehiculeId: cells[1].getAttribute('data-vehicule-id'),
-            chauffeurId: cells[2].getAttribute('data-chauffeur-id')
-        });
-    }
-
-    // Prepare data for submission
-    let formData = new FormData();
-    formData.append('_token', document.querySelector('input[name="_token"]').value);
-    formData.append('demande_id', document.getElementById('demande-id').value);
-    formData.append('observation', document.getElementById('observation').value);
-    formData.append('pairs', JSON.stringify(pairs));
-
-    // Build the URL dynamically
-    let demandeId = document.getElementById('demande-id').value;
-    let url = "{{ path('demande.traiter', {'id': 'ID_PLACEHOLDER'}) }}".replace('ID_PLACEHOLDER', demandeId);
-
-    // Submit the form via fetch
-    fetch(url, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            // Traiter ici la réponse réussie (par exemple, afficher un message de succès)
-            console.log('Demande traitée avec succès:', data.message);
-            // Réinitialiser le formulaire ou fermer le modal, etc.
-            $('#modalForm').modal('hide');
-        } else {
-            // Traiter ici le cas où la demande n'a pas été traitée avec succès
-            console.error('Erreur lors du traitement de la demande:', data.message);
-            // Afficher un message d'erreur ou autre
-        }
-    })
-    .catch(error => {
-        console.error('Error handling request:', error);
-        // Traiter ici les erreurs réseau ou autres erreurs
-    });
-});
 
 
 
 
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
 
 
 

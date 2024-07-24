@@ -6,6 +6,7 @@ use App\Entity\Niveau;
 use App\Entity\Institution;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -21,9 +22,14 @@ class InstitutionType extends AbstractType
                 'empty_data' => '',
                 'required' => true,
                 'label' => 'Libellé',
+                'attr'=>[
+                    'class'=>'form-control',
+                ]
             ])
             
-            ->add('telephoneInstitution')
+            ->add('telephoneInstitution', TelType::class, [
+                'empty_data' => '',
+            ])
 
             ->add('Niveau', EntityType::class, [
                   'class' => Niveau::class,
@@ -31,10 +37,14 @@ class InstitutionType extends AbstractType
                     ->where('n.deleteAt IS NULL');
                 },
                 'choice_label' => 'libelleNiveau',
+                'attr'=>['class'=>'form-control selectpicker',
+                    'data-live-search'=>'true',],
             ])
-            ->add('save', SubmitType::class)
+            ->add('save', SubmitType::class, [
+                'attr'=>['class'=>'p-component p-button p-button-success',
+                    'style'=>'font-weight:bold'],
+            ])
 
-            ->add('cancel', SubmitType::class)
         ;
     }
 

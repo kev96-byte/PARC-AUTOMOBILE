@@ -46,6 +46,10 @@ services:
         tags:
             - { name: twig.extension }
 
+    App\Twig\UserExtension:
+        arguments: ['@security.token_storage']
+        tags: ['twig.extension']
+
 
  #   App\Form\DemandeType:
   #      arguments:

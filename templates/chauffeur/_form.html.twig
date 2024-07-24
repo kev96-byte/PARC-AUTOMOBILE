@@ -1,68 +1,43 @@
 {{ form_start(form) }}
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.Institution) }}</div>
+    <div class="col-sm-6">{{ form_row(form.matriculeChauffeur) }}</div>
+</div>
 
-<div style="position: relative;">
+<div class="form-group row form mb-3">
+    <div class="col-sm-4">{{ form_row(form.nomChauffeur) }}</div>
+    <div class="col-sm-4">{{ form_row(form.prenomChauffeur) }}</div>
+    <div class="col-sm-4">{{ form_row(form.telephoneChauffeur) }}</div>
+</div>
 
-    {{ form_row(form.Institution, {
-        'label': 'Institution',
-        'label_attr': {'class': 'required'},
-        'attr': {'placeholder': 'Choisir l\'institution'}
-    }) }}
+<div class="form-group row form mb-3">
+    <div class="col-sm-3">{{ form_row(form.numPermis) }}</div>
+    <div class="col-sm-9"> <div class="form-group">
+            {{ form_label(form.photoChauffeur) }}
+            <div class="input-group">
+                {{ form_widget(form.photoChauffeur, {'attr': {'class': 'form-control'}}) }}
+                <div class="input-group-append">
+                    {% if chauffeur.photoChauffeur is defined and chauffeur.photoChauffeur is not empty %}
+                        <a id="current-piece-link" href="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" target="_blank" class="btn btn-outline-secondary">Voir la photo actuelle</a>
+                    {% else %}
+                        <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
+                    {% endif %}
+                </div>
+            </div>
+            {{ form_errors(form.photoChauffeur) }}
+        </div></div>
+</div>
 
-    {{ form_row(form.matriculeChauffeur, {
-        'label': 'Matricule',
-        'label_attr': {'class': 'required'},
-        'attr': {'placeholder': 'Saisir le numéro matricule du chauffeur'}
-    }) }}
 
-    {{ form_row(form.numPermis, {
-        'label': 'Numéro permis',
-        'label_attr': {'class': 'required'},
-        'attr': {'placeholder': 'Saisir le numéro du permis du chauffeur'}
-    }) }}
-    
-    {{ form_row(form.nomChauffeur, {
-        'label': 'Nom chauffeur',
-        'label_attr': {'class': 'required'},
-        'attr': {'placeholder': 'Saisir le nom du chauffeur'}
-    }) }}
-
-    {{ form_row(form.prenomChauffeur, {
-        'label': 'Prénom chauffeur',
-        'label_attr': {'class': 'required'},
-        'attr': {'placeholder': 'Saisir le prénom du chauffeur'}
-    }) }}
-
-    {{ form_row(form.telephoneChauffeur, {
-        'label': 'Téléphone',
-        'attr': {'placeholder': 'ex: +229 98 00 00 00'}
-    }) }}
 
     {% if mode == 'edit' %}
         {{ form_row(form.etatChauffeur) }}
     {% endif %}
 
-    {% block form_row %}
-    <div class="form-group">
-        {{ form_label(form.photoChauffeur) }}
-        <div class="input-group">
-            {{ form_widget(form.photoChauffeur, {'attr': {'class': 'form-control'}}) }}
-            <div class="input-group-append">
-                {% if chauffeur.photoChauffeur is defined and chauffeur.photoChauffeur is not empty %}
-                    <a id="current-piece-link" href="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" target="_blank" class="btn btn-outline-secondary">Voir la photo actuelle</a>
-                {% else %}
-                    <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
-                {% endif %}
-            </div>
-        </div>
-        {{ form_errors(form.photoChauffeur) }}
-    </div>
-    {% endblock %}
 
-    <div style="position: absolute; bottom: 0; right: 0; top: 500px;">
+    <div class="d-flex justify-content-end">
         {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
-        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
     </div>
-</div>
 
 {{ form_end(form) }}
 

@@ -183,6 +183,19 @@
   * {
     box-sizing: border-box;
   }
+
+  /* code perso*/
+
+    .fw-bold{
+        font-weight: bold;
+    }
+
+    .card-content-template{
+      height: calc(100vh - 9rem);
+        overflow-y: auto;
+    }
+
+/* fin code perso*/
   
   .p-component {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -2006,13 +2019,13 @@
   
   .p-button.p-button-success, .p-buttonset.p-button-success > .p-button, .p-splitbutton.p-button-success > .p-button, .p-fileupload-choose.p-button-success {
     color: #ffffff;
-    background: #22C55E;
-    border: 1px solid #22C55E;
+    background: #00a65a;
+    border: 1px solid #00a65a;
   }
   .p-button.p-button-success:enabled:hover, .p-button.p-button-success:not(button):not(a):not(.p-disabled):hover, .p-buttonset.p-button-success > .p-button:enabled:hover, .p-buttonset.p-button-success > .p-button:not(button):not(a):not(.p-disabled):hover, .p-splitbutton.p-button-success > .p-button:enabled:hover, .p-splitbutton.p-button-success > .p-button:not(button):not(a):not(.p-disabled):hover, .p-fileupload-choose.p-button-success:enabled:hover, .p-fileupload-choose.p-button-success:not(button):not(a):not(.p-disabled):hover {
-    background: #16A34A;
+    background: #00a65a;
     color: #ffffff;
-    border-color: #16A34A;
+    border-color: #00a65a;
   }
   .p-button.p-button-success:enabled:focus, .p-button.p-button-success:not(button):not(a):not(.p-disabled):focus, .p-buttonset.p-button-success > .p-button:enabled:focus, .p-buttonset.p-button-success > .p-button:not(button):not(a):not(.p-disabled):focus, .p-splitbutton.p-button-success > .p-button:enabled:focus, .p-splitbutton.p-button-success > .p-button:not(button):not(a):not(.p-disabled):focus, .p-fileupload-choose.p-button-success:enabled:focus, .p-fileupload-choose.p-button-success:not(button):not(a):not(.p-disabled):focus {
     box-shadow: 0 0 0 0.2rem #BBF7D0;
@@ -5809,24 +5822,29 @@ label.required::before {
 }
 
 .initial {
-        background-color: #B0BEC5;
-        color: black;
+        background-color: #3c8dbc;
+        color: white;
         padding: 2px 5px;
         border-radius: 3px;
+        font-weight:bold;
+        font-size:0.75rem;
     }
 
     .approved {
-        background-color: #2196F3;
-        color: black;
+        background-color: #F59E0B;
+        color: white;
         padding: 2px 5px;
         border-radius: 3px;
+        font-size:0.75rem;
     }
 
     .validated {
-        background-color: #4CAF50;
-        color: black;
+        background-color: #00a65a;
+        color: white;
         padding: 2px 5px;
         border-radius: 3px;
+        font-size:0.75rem;
+        font-weight:bold;
     }
 
     .rejected {

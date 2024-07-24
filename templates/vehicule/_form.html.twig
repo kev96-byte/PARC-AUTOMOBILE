@@ -1,65 +1,95 @@
 {{ form_start(form) }}
 
-<div style="position: relative;" >
-    {{ form_row(form.TypeVehicule) }}
-    {{ form_row(form.matricule) }}
-    {{ form_row(form.numeroChassis) }}
-    {{ form_row(form.marque) }}
-    {{ form_row(form.modele) }}
-    {{ form_row(form.nbrePlace) }}
-    {% if mode == 'edit' %}
-        {{ form_row(form.etat) }}
-    {% endif %}
-    {{ form_row(form.dateAcquisition) }}
-    {{ form_row(form.valeurAcquisition) }}
-    {{ form_row(form.Kilometrage) }}
-    {{ form_row(form.Institution) }}
-    {{ form_row(form.dateReception) }}
-    {{ form_row(form.dateMiseEnCirculation) }}
-    {{ form_row(form.MiseEnRebut) }}
-    {{ form_row(form.allumage) }}
-    {{ form_row(form.assistanceFreinage) }}
-    {{ form_row(form.capaciteCarburant) }}
-    {{ form_row(form.categorie) }}
-    {{ form_row(form.cession) }}
-    {{ form_row(form.chargeUtile) }}
-    {{ form_row(form.Climatiseur) }}
-    {{ form_row(form.numeroMoteur) }}
-    {{ form_row(form.pma) }}
-    {{ form_row(form.puissance) }}
-    {{ form_row(form.vitesse) }}
-    {{ form_row(form.cylindree) }}
-    {{ form_row(form.directionAssistee) }}
-    {{ form_row(form.dureeGuarantie) }}
-    {{ form_row(form.dureVie) }}
-    {{ form_row(form.freins) }}
-    {{ form_row(form.pva) }}
-    {{ form_row(form.radio) }}
-    {{ form_row(form.typeEnergie) }}
-    {{ form_row(form.typeTransmission) }}
-    {% block form_row %}
-    <div class="form-group">
-        {{ form_label(form.photoVehicule) }}
-        <div class="input-group">
-            {{ form_widget(form.photoVehicule, {'attr': {'class': 'form-control'}}) }}
-            <div class="input-group-append">
-                {% if vehicule.photoVehicule is defined and vehicule.photoVehicule is not empty %}
-                    <a id="current-piece-link" href="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
-                {% else %}
-                    <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
-                {% endif %}
-            </div>
-        </div>
-        {{ form_errors(form.photoVehicule) }}
-    </div>
-    {% endblock %}
-
-    
-    <div style="position: absolute; bottom: 0; right: 0; top: 2300px;">
-        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
-        {{ form_widget(form.cancel, {'attr': {'class': 'btn btn-primary', 'onclick': 'resetFormFields()'}}) }}
-    </div>
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.Institution) }}</div>
+    <div class="col-sm-6">{{ form_row(form.MiseEnRebut) }}</div>
 </div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-3">{{ form_row(form.TypeVehicule) }}</div>
+    <div class="col-sm-3">{{ form_row(form.marque) }}</div>
+    <div class="col-sm-3">{{ form_row(form.modele) }}</div>
+    <div class="col-sm-3">{{ form_row(form.matricule) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4"> {{ form_row(form.numeroMoteur) }}</div>
+    <div class="col-sm-4">{{ form_row(form.numeroChassis) }}</div>
+    <div class="col-sm-4">{{ form_row(form.puissance) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.Kilometrage) }}</div>
+    <div class="col-sm-4">{{ form_row(form.vitesse) }}</div>
+    <div class="col-sm-4">{{ form_row(form.cylindree) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.typeEnergie) }}</div>
+    <div class="col-sm-4">{{ form_row(form.typeTransmission) }}</div>
+    <div class="col-sm-4">{{ form_row(form.capaciteCarburant) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.allumage) }}</div>
+    <div class="col-sm-4">{{ form_row(form.categorie) }}</div>
+    <div class="col-sm-4">{{ form_row(form.cession) }}</div>
+</div>
+
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.directionAssistee) }}</div>
+    <div class="col-sm-4">{{ form_row(form.freins) }}</div>
+    <div class="col-sm-4">{{ form_row(form.assistanceFreinage) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-2">{{ form_row(form.chargeUtile) }}</div>
+    <div class="col-sm-3">{{ form_row(form.pva) }}</div>
+    <div class="col-sm-4">{{ form_row(form.pma) }}</div>
+    <div class="col-sm-3">{{ form_row(form.nbrePlace) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.dateAcquisition) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dateReception) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dateMiseEnCirculation) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.valeurAcquisition) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dureeGuarantie) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dureVie) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.Climatiseur) }}</div>
+    <div class="col-sm-6">{{ form_row(form.radio) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="{{ mode!='edit'?'d-none' : 'col-sm-6'}}">{{ form_row(form.etat) }}</div>
+    <div class="{{ mode!='edit'?'col-sm-12' : 'col-sm-6'}}"><div class="form-group">
+            {{ form_label(form.photoVehicule) }}
+            <div class="input-group">
+                {{ form_widget(form.photoVehicule, {'attr': {'class': 'form-control'}}) }}
+                <div class="input-group-append">
+                    {% if vehicule.photoVehicule is defined and vehicule.photoVehicule is not empty %}
+                        <a id="current-piece-link" href="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
+                    {% else %}
+                        <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
+                    {% endif %}
+                </div>
+            </div>
+            {{ form_errors(form.photoVehicule) }}
+        </div></div>
+</div>
+
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+
 
 {{ form_end(form) }}
 
