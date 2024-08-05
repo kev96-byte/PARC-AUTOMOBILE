@@ -1,0 +1,10 @@
+{{ form_start(form) }}
+    {{ form_row(form.libelleTypeVehicule, {
+        'attr': {'placeholder': 'Saisir le libellé'}
+    }) }}
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+{{ form_end(form) }}
+

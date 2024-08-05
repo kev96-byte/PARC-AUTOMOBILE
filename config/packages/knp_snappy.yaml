@@ -1,0 +1,17 @@
+# config/packages/knp_snappy.yaml
+knp_snappy:
+    pdf:
+        binary: 'C:\wamp64\www\PARC-AUTOMOBILE\vendor\h4cc\wkhtmltopdf\bin\wkhtmltopdf.exe'
+        options:
+            margin-left: 10mm
+            margin-right: 10mm
+            margin-top: 10mm
+            margin-bottom: 10mm
+            no-outline: true
+            no-stop-slow-scripts: true
+            enable-local-file-access: true
+    image:
+        binary: 'C:\wamp64\www\PARC-AUTOMOBILE\vendor\h4cc\wkhtmltopdf\bin\wkhtmltoimage.exe'
+        options:
+            no-outline: true
+            enable-local-file-access: true

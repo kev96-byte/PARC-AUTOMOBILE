@@ -1,0 +1,47 @@
+{# vidange/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
+
+{% block mycontent %}
+    <div class="col-12">
+        <div class="card card-content-template">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('vidange.index') }}">
+                        <button class="p-button p-component p-button-outlined mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-arrow-left"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <h5>Enregistrer une vidange</h5>
+            {{ form_start(form) }}
+                {{ form_row(form.vehicule) }}
+                {{ form_row(form.dateVidange) }}
+                <div class="form-group">
+                    {{ form_label(form.pieceVidange) }}
+                    <div class="input-group">
+                        {{ form_widget(form.pieceVidange, {'attr': {'class': 'form-control'}}) }}
+                        <div class="input-group-append">
+                            {% if vidange.pieceVidange is defined and vidange.pieceVidange is not empty %}
+                                <a id="current-piece-link" href="{{ asset('img/Vidanges/' ~ vidange.pieceVidange) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
+                            {% else %}
+                                <span id="no-file-text" class="input-group-text">Aucun fichier choisi</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {{ form_errors(form.pieceVidange) }}
+                </div>
+                <div class="d-flex justify-content-end">
+                    {{ form_widget(form.save, {'label': 'Ajouter'}) }}
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

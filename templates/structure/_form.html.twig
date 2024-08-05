@@ -1,0 +1,55 @@
+{{ form_start(form) }}
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">
+        {{ form_row(form.TypeStructure, {
+            'label': 'Type Structure',
+            'label_attr': {'class': 'required'},
+            'attr': {'placeholder': 'Choisir le type de la structure'}
+        }) }}
+    </div>
+
+    <div class="col-sm-6">
+        {{ form_row(form.libelleStructure, {
+            'label': 'Libellé structure',
+            'label_attr': {'class': 'required'},
+            'attr': {'placeholder': 'ex: Direction des Systèmes d\'Information (DSI)'}
+        }) }}
+    </div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">
+        {{ form_row(form.telephoneStructure, {
+            'label': 'Téléphone',
+            'attr': {'placeholder': 'ex: +229 98 00 00 00'}
+        }) }}
+    </div>
+
+    <div class="col-sm-6">
+        {{ form_row(form.Institution, {
+            'label': 'Institution',
+            'label_attr': {'class': 'required'},
+            'attr': {'placeholder': 'Choisir l\'institution'}
+        }) }}
+    </div>
+
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">
+        {{ form_row(form.responsableStructure) }}
+    </div>
+
+    <div class="col-sm-6">
+        {{ form_row(form.Parc) }}
+    </div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-12 text-right">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+</div>
+
+{{ form_end(form) }}

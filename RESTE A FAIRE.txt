@@ -1,0 +1,24 @@
+Formulaire Demande
+Prévoir un numéro de demande
+Prévoir un champ pour saisir la référence de la note de service
+Le bouton Approuvé à la couleur Orange
+
+Approuvé (En attente de traitement)
+Afficher la date de validation de la demande
+
+
+
+Sur le formulaire d'affectation centrer les boutons Ajouter 
+
+
+
+HISTORIQUE DES MISSIONS D'UN CHAUFFEUR
+
+Prévoir pour le point focal la liste des demandes approuvées mais pas validés
+Prévoir pour le point focal la liste des demandes rejetées par le responsable structure
+Prévoir pour le point focal la liste des demandes approuvés par le chef parc
+Prévoir pour le point focal la liste des demandes traitées
+Prévoir pour le point focal la liste des demandes finalisées
+
+
+

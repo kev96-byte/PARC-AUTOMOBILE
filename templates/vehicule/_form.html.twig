@@ -1,0 +1,108 @@
+{{ form_start(form) }}
+
+<div class="form-group row mb-3">
+    <div class="col-sm-3">{{ form_row(form.TypeVehicule) }}</div>
+    <div class="col-sm-3">{{ form_row(form.Parc) }}</div>
+    <div class="col-sm-3">{{ form_row(form.porteeVehicule) }}</div>
+    <div class="col-sm-3">{{ form_row(form.Institution) }}</div>
+
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.matricule) }}</div>
+    <div class="col-sm-4">{{ form_row(form.marque) }}</div>
+    <div class="col-sm-4">{{ form_row(form.modele) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4"> {{ form_row(form.numeroMoteur) }}</div>
+    <div class="col-sm-4">{{ form_row(form.numeroChassis) }}</div>
+    <div class="col-sm-4">{{ form_row(form.puissance) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.kilometrageInitial) }}</div>
+    <div class="col-sm-4">{{ form_row(form.nbreKmPourRenouvellerVidange) }}</div>
+    <div class="col-sm-4">{{ form_row(form.kilometrageCourant) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.vitesse) }}</div>
+    <div class="col-sm-4">{{ form_row(form.cylindree) }}</div>
+    <div class="col-sm-4">{{ form_row(form.typeEnergie) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.allumage) }}</div>
+    <div class="col-sm-4">{{ form_row(form.typeTransmission) }}</div>
+    <div class="col-sm-4">{{ form_row(form.capaciteCarburant) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-3">{{ form_row(form.directionAssistee) }}</div>
+    <div class="col-sm-3">{{ form_row(form.categorie) }}</div>
+    <div class="col-sm-3">{{ form_row(form.cession) }}</div>
+    <div class="col-sm-3">{{ form_row(form.MiseEnRebut) }}</div>
+
+</div>
+
+
+<div class="form-group row mb-3">
+    <div class="col-sm-2">{{ form_row(form.chargeUtile) }}</div>
+    <div class="col-sm-4">{{ form_row(form.freins) }}</div>
+    <div class="col-sm-4">{{ form_row(form.assistanceFreinage) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-3">{{ form_row(form.pva) }}</div>
+    <div class="col-sm-4">{{ form_row(form.pma) }}</div>
+    <div class="col-sm-3">{{ form_row(form.nbrePlace) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.dateAcquisition) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dateReception) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dateMiseEnCirculation) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-4">{{ form_row(form.valeurAcquisition) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dureeGuarantie) }}</div>
+    <div class="col-sm-4">{{ form_row(form.dureVie) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.Climatiseur) }}</div>
+    <div class="col-sm-6">{{ form_row(form.radio) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="{{ mode!='edit'?'d-none' : 'col-sm-6'}}">{{ form_row(form.etat) }}</div>
+    <div class="{{ mode!='edit'?'col-sm-12' : 'col-sm-6'}}"><div class="form-group">
+            {{ form_label(form.photoVehicule) }}
+            <div class="input-group">
+                {{ form_widget(form.photoVehicule, {'attr': {'class': 'form-control'}}) }}
+                <div class="input-group-append">
+                    {% if vehicule.photoVehicule is defined and vehicule.photoVehicule is not empty %}
+                        <a id="current-piece-link" href="{{ asset('img/Vehicules/' ~ vehicule.photoVehicule) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
+                    {% else %}
+                        <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
+                    {% endif %}
+                </div>
+            </div>
+            {{ form_errors(form.photoVehicule) }}
+        </div></div>
+</div>
+
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+
+
+{{ form_end(form) }}
+

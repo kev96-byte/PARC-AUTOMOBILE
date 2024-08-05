@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+        <div class="col-12">
+            <div class="card" style="min-height: 600px;">
+                <div class="p-toolbar-group-left">
+                    <div class="my-2">
+                        <a href="{{ path('demande.index') }}">
+                            <button class="p-button p-component p-button-outlined mr-2">
+                                <span class="p-button-icon p-c p-button-icon-left fa fa-arrow-left"></span>
+                                <span class="p-button-label p-c">Retour à la liste</span>
+                                <span class="p-ink"></span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <h5>Ajouter une demande</h5>
+                {{ include('demande/_form.html.twig', {'mode': 'add'}) }}
+            </div>
+        </div>
+{% endblock %}
+
+{# {% block javascripts %}
+{{ parent() }}
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            tags: true,
+            tokenSeparators: [',', ' ']
+        });
+    });
+</script>
+{% endblock %} #}

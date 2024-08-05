@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card card-content-template" >
+        <h5>Liste des institution</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('institution.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Libellé</th>
+                        <th>Niveau</th>
+                        <th>Téléphone</th>
+                        <th data-sortable="false" style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for institution in institutions %}
+                    <tr>
+                        <td>{{ institution.libelleInstitution }}</td>
+                        <td>{{ institution.niveau.libelleNiveau}}</td>
+                        <td>{{ institution.telephoneInstitution }}</td>
+                        <td>
+                            <div class="button-group open">
+                                <button class="btn btn-xs btn-default dropdown-toggle" title="Cliquez ici pour effectuer une action" type="button" data-toggle="dropdown" data-toggle-position="left" aria-expanded="true">
+                                    <i class="fa fa-ellipsis-h" style="color: #777;"></i>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="p-2">
+                                        <a href="{{ path('institution.show', {'id': institution.id}) }}" class="text-decoration-none">
+                                            <button class="btn btn-sm btn-circle rounded-circle " style="color: white; background-color: #22C552; width: 30px; height: 30px;">
+                                                <i class="fas fa-low-vision"></i>
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Voir détails</span>
+                                        </a> 
+                                    </li>
+{#                                     <li class="p-2">
+                                        <a href="{{ asset('img/Logos/' ~ institution.logoInstitution) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: var(--primary-color);">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                        </a> 
+                                        <span style="color: #777;">&nbsp; Voir logo</span>
+                                    </li> #}
+
+                                    <li class="p-2">
+                                        <a href="{{ path('institution.edit', {'id': institution.id}) }}" class="text-decoration-none">
+                                            <button class="btn btn-sm btn-circle rounded-circle" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
+                                                <i class="fa fa-pen"></i>
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Modifier</span>
+                                        </a>    
+                                    </li>
+
+                                    <li class="p-2">
+                                        <a href="#" class="text-decoration-none" onclick="showDeletionModal(this);" data-id="{{ institution.id }}" data-token="{{ csrf_token('delete' ~ institution.id) }}" style="text-decoration: none;">
+                                            <button type="button" class="btn btn-sm btn-circle rounded-circle " style="color: white; width: 30px; height: 30px; background-color: hsl(0, 92%, 50%);">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                            <span style="color: #777;">&nbsp; Supprimer</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </td>
+
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+    </div>
+        
+</div>
+{% endblock %}
+
+

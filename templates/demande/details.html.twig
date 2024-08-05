@@ -1,0 +1,232 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+    <div class="col-12">
+        <div class="card" style="min-height: 475px;">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('demandes.expirees') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <div class="containerdetails">
+                <div class="column">
+                    <H4>Liste des véhicules affectés à la Demande N° : {{ demande.numDemande }}</H4>
+                    <p>Objet mission : {{ demande.objetMission }}</p>
+                    <p>Date début mission : {{ demande.dateDebutMission|date("m/d/Y") }}</p>
+                    <p>Date fin mission : {{ demande.dateFinMission|date("m/d/Y") }}</p>
+                    <p>Lieu Mission :
+                        {% for value in demande.lieuMission %}
+                            <strong>{{ value | upper }}</strong>
+                            {% if not loop.last %}
+                                &mdash;
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+
+        <hr>
+
+            {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+                <form id="updateKilometrageForm" method="POST" action="{{ path('demande.update_kilometrage') }}">
+                    <h6> Mise à jour du kilométrage des véhicules </h6>
+                    <div class="form-group">
+                        <label for="matricule">Matricule</label>
+                        <input type="text" id="matricule" name="matricule" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="kilometrage">Kilométrage</label>
+                        <input type="number" id="kilometrage" name="kilometrage" class="form-control" onchange="checkKilometrage()">
+                        <div id="kilometrageError" class="error-message"></div>
+                    </div>
+                    <input type="hidden" id="oldKilometrage" name="oldKilometrage">
+                    <input type="hidden" name="id" value="{{ demande.id }}">
+                    <!-- Le bouton est là mais il est désactivé et masqué -->
+                    <button type="submit" class="btn btn-primary d-block mx-auto" id="updateButton" style="display: none;">Modifier</button>
+                </form>
+            {% endif %}
+            <table class="table mt-4">
+                <thead>
+                    <tr>
+                        <th>Matricule</th>
+                        <th>Kilométrage</th>
+                        <th>Nom et Prénom(s) Chauffeur</th>
+                        {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+                            <th>Action</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody id="tamponTableBody">
+                    {% for item in tamponAffecterData %}
+                        <tr>
+                            <td>{{ item.tamponMatricule }}</td>
+                            <td class="tampon-kilometrage">{{ item.tamponKilometrage }}</td>
+                            <td>{{ item.tamponNomChauffeur }} {{ item.tamponPrenomChauffeur }}</td>
+                            {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+                                <td>
+                                    <button type="button" class="btn btn-secondary"
+                                            data-matricule="{{ item.tamponMatricule|e('html_attr') }}"
+                                            data-kilometrage="{{ item.tamponKilometrage }}"
+                                            onclick="populateForm(this)">Changer kilométrage</button>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+                <button type="button" class="btn btn-success d-block mx-auto mt-4" id="finalizeButton" onclick="showFinalizeModal()">Valider</button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="finalizeModal" tabindex="-1" role="dialog" aria-labelledby="finalizeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="finalizeModalLabel">Valider retour mission</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="finalizeForm" method="POST" action="{{ path('demande.finalize') }}">
+                        <div class="form-group">
+                            <label for="dateEffectiveFinMission">Date Effective de Fin de Mission</label>
+                            <input type="date" id="dateEffectiveFinMission" name="dateEffectiveFinMission" class="form-control" value="{{ "now"|date("Y-m-d") }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="commentaire">Commentaires</label>
+                            <textarea id="commentaire" name="commentaire" class="form-control" placeholder="Ajouter des commentaires (facultatif)"></textarea>
+                        </div>
+                        <input type="hidden" name="id" value="{{ demande.id }}">
+                    </form>
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="submitFinalizeForm()">Valider</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const kilometrageInput = document.getElementById('kilometrage');
+            const oldKilometrageInput = document.getElementById('oldKilometrage');
+            const updateButton = document.getElementById('updateButton');
+            const updateForm = document.getElementById('updateKilometrageForm');
+
+            kilometrageInput.addEventListener('input', function () {
+                const newKilometrage = parseInt(kilometrageInput.value) || 0;
+                const oldKilometrage = parseInt(oldKilometrageInput.value) || 0;
+
+                updateButton.disabled = newKilometrage <= oldKilometrage || isNaN(newKilometrage);
+            });
+
+            updateForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Empêche l'envoi du formulaire par défaut
+
+                const formData = new FormData(updateForm);
+
+                fetch(updateForm.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Mettre à jour le tableau avec les nouvelles données
+                    updateTable(data);
+                })
+                .catch(error => console.error('Erreur:', error));
+            });
+        });
+
+        function populateForm(button) {
+            const matricule = button.getAttribute('data-matricule');
+            const kilometrage = button.getAttribute('data-kilometrage');
+
+            document.getElementById('matricule').value = matricule;
+            document.getElementById('oldKilometrage').value = kilometrage;
+            document.getElementById('kilometrage').value = '';
+            document.getElementById('updateButton').disabled = true;
+        }
+
+        function updateTable(data) {
+            const tableBody = document.getElementById('tamponTableBody');
+            tableBody.innerHTML = ''; // Effacer le contenu du tableau
+
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.tamponMatricule}</td>
+                    <td class="tampon-kilometrage">${item.tamponKilometrage}</td>
+                    <td>${item.tamponNomChauffeur} ${item.tamponPrenomChauffeur}</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary"
+                                data-matricule="${item.tamponMatricule}"
+                                data-kilometrage="${item.tamponKilometrage}"
+                                onclick="populateForm(this)">Changer kilométrage</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function showFinalizeModal() {
+            $('#finalizeModal').modal('show');
+        }
+
+        function submitFinalizeForm() {
+            const form = document.getElementById('finalizeForm');
+            const formData = new FormData(form);
+            const url = "{{ path('demande.finalize') }}";
+
+            if (!formData.get('dateEffectiveFinMission')) {
+                alert('Le champ de date ne doit pas être vide.');
+                return;
+            }
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    window.location.href = "{{ path('demandes.expirees') }}";
+                }
+            })
+            .catch(error => console.error('Erreur:', error));
+        }
+
+        function checkKilometrage() {
+            const kilometrage = parseFloat(document.getElementById('kilometrage').value);
+            const oldKilometrage = parseFloat(document.getElementById('oldKilometrage').value);
+            const errorDiv = document.getElementById('kilometrageError');
+            const updateButton = document.getElementById('updateButton');
+        
+            if (kilometrage <= oldKilometrage) {
+                // Afficher le message d'erreur
+                errorDiv.textContent = "Le nouveau kilométrage doit être strictement supérieur à l'ancien.";
+                updateButton.disabled = true;
+            } else {
+                // Effacer le message d'erreur
+                errorDiv.textContent = "";
+                // Activer le bouton de soumission et soumettre le formulaire
+                updateButton.disabled = false;
+                updateButton.click();  // Soumettre le formulaire
+            }
+        }
+    </script>
+{% endblock %}

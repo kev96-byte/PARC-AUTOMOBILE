@@ -1,0 +1,43 @@
+{# templates/visite/visite_form.html.twig #}
+
+{# Inclusion du fichier JavaScript de validation #}
+<script src="{{ asset('js/validation.js') }}"></script>
+
+{# Formulaire Symfony pour VisiteType #}
+{{ form_start(form) }}
+
+<div class="form-group row mb-3">
+    <div class="col-sm-12">
+        {{ form_row(form.vehicule) }}
+    </div>
+</div>
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.dateDebutVisite) }}</div>
+    <div class="col-sm-6">{{ form_row(form.dateFinVisite) }}</div>
+</div>
+
+
+    {% block form_row %}
+    <div class="form-group">
+        {{ form_label(form.pieceVisite) }}
+        <div class="input-group">
+            {{ form_widget(form.pieceVisite, {'attr': {'class': 'form-control'}}) }}
+            <div class="input-group-append">
+                {% if visite.pieceVisite is defined and visite.pieceVisite is not empty %}
+                    <a id="current-piece-link" href="{{ asset('img/Visites/' ~ visite.pieceVisite) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
+                {% else %}
+                    <span id="no-file-text" class="input-group-text">Aucun fichier choisi</span>
+                {% endif %}
+            </div>
+        </div>
+        {{ form_errors(form.pieceVisite) }}
+    </div>
+    {% endblock %}
+
+    {# Bouton de soumission du formulaire #}
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+
+{{ form_end(form) }}
+

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Affecter{% endblock %}
+
+{% block body %}
+    <h1>Create new Affecter</h1>
+
+    {{ include('affecter/_form.html.twig') }}
+
+    <a href="{{ path('app_affecter_index') }}">back to list</a>
+{% endblock %}

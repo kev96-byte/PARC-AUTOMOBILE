@@ -1,0 +1,62 @@
+vich_uploader:
+    db_driver: orm
+    mappings:
+        photoVehicule:
+            uri_prefix: /img/Vehicules
+            upload_destination: '%kernel.project_dir%/public/img/Vehicules'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+        photoChauffeur:
+            uri_prefix: /img/Chauffeurs
+            upload_destination: '%kernel.project_dir%/public/uploads/assurances'
+            namer:
+                service: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\PropertyDirectoryNamer
+                options:
+                    property: 'id'
+
+        assurances:
+            uri_prefix: /img/Assurances
+            upload_destination: '%kernel.project_dir%/public/uploads/assurances'
+            namer:
+                service: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\PropertyDirectoryNamer
+                options:
+                    property: 'id'
+
+        chauffeurs:
+            uri_prefix: /img/Chauffeurs
+            upload_destination: '%kernel.project_dir%/public/uploads/chauffeurs'
+            namer:
+                service: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\PropertyDirectoryNamer
+                options:
+                    property: 'id'
+
+        vidanges:
+            uri_prefix: /img/Vidanges
+            upload_destination: '%kernel.project_dir%/public/uploads/vidanges'
+            namer:
+                service: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\PropertyDirectoryNamer
+                options:
+                    property: 'id'
+
+
+        logos:
+            uri_prefix: /img/Logos
+            upload_destination: '%kernel.project_dir%/public/uploads/logos'
+            namer:
+                service: Vich\UploaderBundle\Naming\UniqidNamer
+            directory_namer:
+                service: Vich\UploaderBundle\Naming\PropertyDirectoryNamer
+                options:
+                    property: 'id'
+
+
+
+                    

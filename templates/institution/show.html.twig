@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 547px;">
+        <h5>Details Institution</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('institution.index') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ institution.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Libellé</th>
+                        <td>{{ institution.libelleInstitution }}</td>
+                    </tr>
+                    <tr>
+                        <th>TelephoneInstitution</th>
+                        <td>{{ institution.telephoneInstitution }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Boite postale</th>
+                        <td>{{ institution.adressePostaleInstitution }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Adresse Mail</th>
+                        <td>{{ institution.adresseMailInstitution }}</td>
+                    </tr>
+                    <tr>
+                        <th>Site web</th>
+                        <td>{{ institution.lienSiteWebInstitution }}</td>
+                    </tr>
+                    {% if institution.logoInstitution is not empty %}
+                    <tr>
+                        <th>Logo</th>
+                        <td>
+                            <a href="{{ asset('img/Logos/' ~ institution.logoInstitution) }}"  data-lightbox="vehicule-gallery" data-title="{{ institution.libelleInstitution }}" target="_blank">
+                                <img class="img-thumbnail" src="{{ asset('img/Logos/' ~ institution.logoInstitution) }}" alt="{{ institution.logoInstitution }}" style="width: 100px; height: auto;">
+                            </a>
+                        </td>
+
+                        
+                    </tr>
+                    {% endif %} 
+                </tbody>
+            </table>
+</div>
+{% endblock %}

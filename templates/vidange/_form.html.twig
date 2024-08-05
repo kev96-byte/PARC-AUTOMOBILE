@@ -1,0 +1,29 @@
+{# Formulaire Symfony pour VidangeType #}
+{{ form_start(form) }}
+    {{ form_row(form.vehicule) }}
+    <div id="kilometrage-container">
+        Kilométrage courant : <span id="kilometrageCourant"></span>
+    </div>
+    {{ form_row(form.valeurCompteurKilometrage) }}
+    {{ form_row(form.dateVidange) }}
+    <div class="form-group">
+        {{ form_label(form.pieceVidange) }}
+        <div class="input-group">
+            {{ form_widget(form.pieceVidange, {'attr': {'class': 'form-control'}}) }}
+            <div class="input-group-append">
+                {% if vidange.pieceVidange is defined and vidange.pieceVidange is not empty %}
+                    <a id="current-piece-link" href="{{ asset('img/Vidanges/' ~ vidange.pieceVidange) }}" target="_blank" class="btn btn-outline-secondary">Voir la pièce actuelle</a>
+                {% else %}
+                    <span id="no-file-text" class="input-group-text">Aucun fichier choisi</span>
+                {% endif %}
+            </div>
+        </div>
+        {{ form_errors(form.pieceVidange) }}
+    </div>
+
+    {# Bouton de soumission du formulaire #}
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+
+{{ form_end(form) }}

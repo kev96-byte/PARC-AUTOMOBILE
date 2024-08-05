@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+    <div class="col-12">
+        <div class="card card-content-template">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('parc.index') }}">
+                        <button class="p-button p-component p-button-outlined mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-arrow-left"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+            <h5>Ajouter un parc</h5>
+            {{ include('parc/_form.html.twig', {'mode': 'add'}) }}
+        </div>
+    </div>
+{% endblock %}

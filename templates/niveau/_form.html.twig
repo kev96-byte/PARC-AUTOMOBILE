@@ -1,0 +1,13 @@
+{{ form_start(form) }}
+    {{ form_row(form.libelleNiveau, {
+        'label': 'Libellé',
+        'label_attr': {'class': 'required'},
+        'attr': {'placeholder': 'Saisir le libellé'}
+    }) }}
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+
+{{ form_end(form) }}
+

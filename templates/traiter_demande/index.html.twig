@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body tablestyle">
+    <div class="card card-content-template" >
+        <h5>Liste des demandes</h5>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped " id="dataTable" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Référence</th>
+                        <th>Date début</th>
+                        <th>Date fin</th>
+                        <th>Lieu</th>
+                        <th>Statut</th>
+                        <th>action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for demande in demandes %}
+                    <tr>
+                        <td>{{ demande.id }}</td>                       
+                        <td>{{ demande.dateDebutMission|date("m/d/Y") }}</td>
+                        <td>{{ demande.dateFinMission|date("m/d/Y") }}</td>
+                        <td>
+                            {% for key, value in demande.lieuMission %}
+                                <span>{{ value }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <span class="
+                                {% if demande.statut == 'Initial' %}
+                                    initial
+                                {% elseif demande.statut == 'Approuvé' %}
+                                    approved
+                                {% elseif demande.statut == 'Validé' %}
+                                    validated
+                                {% elseif demande.statut == 'Rejeté' and demande.traitePar is not null %}
+                                    rejected-special
+                                {% else %}
+                                    rejected
+                                {% endif %}
+                                ">
+                                {{ demande.statut }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ path('traiterdemande.show', {'id': demande.id}) }}" class="btn btn-info btn-sm">
+                                Voir détails
+                            </a> 
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="10">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+Aide moi à réaliser un état qui affichera pour une demande données les paires vehicules et chauffeurs affectés
+
+Tu prendra dans l'entité Institution les champs : libelleInstitution, telephoneInstitution, logoInstitution, adressePostaleInstitution, adresseMailInstitution, lienSiteWebInstitution de l'utilisateur connecté
+
+Tu prendra dans l'entité demande les champs : id, referenceNoteDeService, dateSignatureNoteDeService, dateDebutMission, dataFinMissionn, objetMission, lieuMission
+
+
+
+En entête de l'état tu affichera
+A gauche, le logoInstitution et tu mettra en bas du logo libelleInstitution
+ avec en bas du logo le lebelleInstitution de l'utilisateur connecté
+A droite, le telephoneInstitution, en bas du telephoneInstitution tu afficheras adressePostaleInstitution, en bas de adressePostaleInstitution tu afficheras adresseMailInstitution en bas de adresseMailInstitution tu afficheras lienSiteWebInstitution
+
+En bas le l'entête commencera la page disposée comme ceci
+Sur la première ligne tu afficheras à droite "AKPAKPA LITTORAL, le ................"
+Sur la deuxième ligne tu afficheras "LISTE DES VEHICULES ET CHAUFFEURS AFFECTES A LA DEMANDE N°" id (id représente le champ id de l'entité demande sélectionné)
+Sur la troisième ligne tu "Référence document d'autorisation : ....
+" referenceNoteDeService "...Du..." dateSignatureNoteDeService
+Sur la quatrième ligne tu afficheras à gauche "Date début mission : " dateDebutMission "................" à droite "Date fin mission : " dateFinMission
+Sur la cinquième ligne tu afficheras à gauche "Objet Mission : " objetMission "................" à droite "Lieu mission : " lieuMission (n'oublie pas que tu dois formater l'affichage de lieuMission
+Sur la sixième ligne tu afficheras  à gauche "Objet Mission : " objetMission "................" à droite "Lieu mission : " lieuMission
+Sur la septième ligne commencera le tableau qui affichera la liste des véhicules et chauffeurs affectés à une demande.  
+Tu prendra les champs demande, vehicule et chauffeur de l'entité Affecter qui sont liées à l'id de la demande pour laquelle l'état est affichée.
+Pour chaque vehicule concerné tu utilisera les champs nbre_km_pour_renouveller_vidange, kilometrage_initial et kilometrage_courant qui sont dans l'entité Vehicule pour calculer nbrekmrestant. Tu feras nbrekmrestant = nbre_km_pour_renouveller_vidange - (kilometrage_courant - kilometrage_initial)
+Tu affichera dans le tableau le matricule, nbrekmrestant, porteeVevicule, nom espace prenomChauffeur
+
+En bas du tableau tu mettras
+"VU,"
+
+"Chef Parc"                                                        "Responsable structure"                                                      
+
+
+Ici tu afficheras à gauche le nom et prenom de l'utilisateur qui a le role ROLE_CHEF_PARC dans la même institution  que l'utilisateur connecté et à droite le mom et prenom de l'utilisateur qui a le rôle ROLE_RESPONSABLE_STRUCTURE dans la même institution que l'utilisateur connecté      
+
+
+
+
+
+
+
+
+
+
+vehicule_id IN (
+SELECT date_fin_assurance
+FROM `assurance`
+where vehicule_id = 11
+order by date_fin_assurance DESC
+LIMIT 1
+
+
+
+
+
+
+En bas à droite de l'entête nous aurons 
+AKPAKPA LITTORAL, le -----------------
+
+En bas de cette ligne nous aurons le titre de l'état : "VEHICULES ET CHAUFFEURS AFFECTES POUR LA DEMANDE N° (Afficher le champ id de la demande)
+
+La ligne qui suit l'entêtre sera : "Référence document d'autorisation :" (Afficher le champ referenceNoteDeService)
+
+

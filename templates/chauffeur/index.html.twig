@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Liste des chauffeurs</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('chauffeur.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ajout de la classe table-responsive pour le défilement horizontal -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Matricule</th>
+                        <th>Nom</th>
+                        <th>Prenom(s)</th>
+                        <th>Institution</th>
+                        <th>Statut Chauffeur</th>
+                        <th>Disponibilité</th>
+                        <th data-sortable="false" style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for chauffeur in chauffeurs %}
+                    <tr>
+                        <td>{{ chauffeur.matriculeChauffeur }}</td>
+                        <td>{{ chauffeur.nomChauffeur }}</td>
+                        <td>{{ chauffeur.prenomChauffeur }}</td>
+                        <td>{{ chauffeur.institution.libelleInstitution }}</td>
+                        <td>{{ chauffeur.etatChauffeur }}</td>
+                        <td>{{ chauffeur.disponibilite }}</td>
+                        <td>
+                            <div class="d-flex">
+                                        <a href="{{ path('chauffeur.show', {'id': chauffeur.id}) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552; width: 30px; height: 30px;">
+                                                <i class="fa fa-low-vision"></i>
+                                            </button>
+                                        </a>
+                                        <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
+                                                <i class="fa fa-pen"></i>
+                                            </button>
+                                        </a>
+                                        <a href="#" onclick="showDeletionModal(this);" data-id="{{ chauffeur.id }}" data-token="{{ csrf_token('delete' ~ chauffeur.id) }}" style="text-decoration: none;">
+                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; width: 30px; height: 30px; background-color: hsl(0, 92%, 50%);">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </a>
+                            </div>                        
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function showDeletionModal(button) {
+    var chauffeurId = button.getAttribute('data-id');
+    var csrfToken = button.getAttribute('data-token');
+
+    // Mettre à jour les champs cachés du formulaire dans le modal
+    document.getElementById('modal_token').value = csrfToken;
+    document.getElementById('modal_chauffeur_id').value = chauffeurId;
+
+    // Mettre à jour l'action du formulaire avec l'ID du niveau
+    document.getElementById('modalDeleteForm').action = '{{ path("chauffeur.delete", {"id": "__ID__"}) }}'.replace('__ID__', chauffeurId);
+
+    // Afficher le modal de confirmation
+    $('#confirmModal').modal('show');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var confirmButton = document.getElementById('confirmButton');
+
+    confirmButton.addEventListener('click', function () {
+        // Soumettre le formulaire de suppression dans le modal
+        document.getElementById('modalDeleteForm').submit();
+    });
+});
+</script>
+{% endblock %}

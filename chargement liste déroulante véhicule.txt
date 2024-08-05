@@ -1,0 +1,150 @@
+Nous allons revoir l'API
+<?php
+// src/Controller/ApiController.php
+
+namespace App\Controller;
+
+use App\Entity\TamponVehicules;
+use App\Repository\VehiculeRepository;
+use App\Repository\ChauffeurRepository;
+use App\Repository\DemandeRepository;
+use App\Repository\TamponVehiculesRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+class ApiController extends AbstractController
+{
+    private $security;
+    private $entityManager;
+
+    public function __construct(Security $security, EntityManagerInterface $entityManager)
+    {
+        $this->security = $security;
+        $this->entityManager = $entityManager;
+    }
+
+    #[Route('/api/available-vehicles-and-drivers', name: 'api_available_vehicles_and_drivers', methods: ['POST'])]
+    public function getAvailableVehiclesAndDrivers(
+        VehiculeRepository $vehiculeRepo,
+        ChauffeurRepository $chauffeurRepo,
+        DemandeRepository $demandeRepo,
+        TamponVehiculesRepository $tamponVehiculesRepo,
+        \Symfony\Component\HttpFoundation\Request $request
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        $demandeId = $data['demandeId'];
+        $demande = $demandeRepo->find($demandeId);
+        $dateFinMission = $demande->getDateFinMission();
+
+        $user = $this->security->getUser();
+        $institutionId = $this->$user->getInstitution();
+
+        $vehicles = $vehiculeRepo->findBy([
+            'institutionId' => $institutionId,
+            'disponibilite' => 'Disponible',
+            'deleteAt' => null
+        ]);
+
+        // Clear TamponVehicules table
+        $tamponVehiculesRepo->clearTable();
+
+        foreach ($vehicles as $vehicle) {
+            // Retrieve latest assurance and visite records
+            $latestAssurance = $vehicle->getAssurances()->filter(function($assurance) {
+                return $assurance->getDateFinAssurance() > new \DateTime();
+            })->first();
+
+            $latestVisite = $vehicle->getVisites()->filter(function($visite) {
+                return $visite->getDateFinVisite() > new \DateTime();
+            })->first();
+
+            // Determine assurance and visite status
+            $assuranceStatus = $latestAssurance && $latestAssurance->getDateFinAssurance() > $dateFinMission ? 'OK' : 'KO';
+            $visiteStatus = $latestVisite && $latestVisite->getDateFinVisite() > $dateFinMission ? 'OK' : 'KO';
+
+            // Calculate remaining kilometers for vidange
+            $kilometreRestant = $vehicle->getNbreKmPourRenouvellerVidange() - ($vehicle->getKilometrageCourant() - $vehicle->getKilometrageInitial());
+            $vidangeStatus = $kilometreRestant > 0 ? 'OK' : 'KO';
+
+            // Log the vehicle status
+            error_log("Vehicle: " . $vehicle->getMatricule() . " - Assurance: $assuranceStatus - Visite: $visiteStatus - Vidange: $vidangeStatus - Kilometre restant: $kilometreRestant");
+
+            // Add to TamponVehicules
+            $tamponVehicule = new TamponVehicules();
+            $tamponVehicule->setMatricule($vehicle->getMatricule());
+            $tamponVehicule->setKilometreRestant($kilometreRestant);
+            $tamponVehicule->setCheckAssurance($assuranceStatus);
+            $tamponVehicule->setCheckVisite($visiteStatus);
+            $tamponVehicule->setCheckVidange($vidangeStatus);
+            $tamponVehicule->setPorteeVehicule($vehicle->getPorteeVehicule());
+
+            dump($tamponVehicule);
+
+            $this->entityManager->persist($tamponVehicule);
+        }
+
+        $this->entityManager->flush();
+
+        // Retrieve valid vehicles from TamponVehicules
+        $validVehicles = $tamponVehiculesRepo->findBy([
+            'checkAssurance' => 'OK',
+            'checkVisite' => 'OK',
+            'checkVidange' => 'OK'
+        ]);
+
+        // Log the number of valid vehicles
+        error_log("Number of valid vehicles: " . count($validVehicles));
+
+        $vehiclesData = array_map(function($vehicle) {
+            return [
+                'id' => $vehicle->getId(),
+                'matricule' => $vehicle->getMatricule(),
+                'porte' => $vehicle->getPorteeVehicule(),
+                'kilometre' => $vehicle->getKilometreRestant()
+            ];
+        }, $validVehicles);
+
+        $drivers = $chauffeurRepo->findBy([
+            'institutionId' => $institutionId,
+            'disponibilite' => 'Disponible',
+            'deleteAt' => null
+        ]);
+
+        $driversData = array_map(function($driver) {
+            return [
+                'id' => $driver->getId(),
+                'name' => $driver->getLastName() . ' ' . $driver->getFirstName()
+            ];
+        }, $drivers);
+
+        return new JsonResponse(['vehicles' => $vehiclesData, 'drivers' => $driversData]);
+    }
+}
+
+
+L'entité Vehicule avait les champs matricule, kilometrageInitial, kilometrageCourant, nbreKmPourRenouvellerVidange, porteeVehicule, deleteAt et disponibilite
+
+Pour se passer des entités Assurance et Visite J'ai ajouté dans l'entité Vehicule les champs dateFinAssurance, dateFinVisiteTechnique
+
+Te rappelle tu que pour appeler l'API, l'identifiant de la demande est passé en paramètre à l'API de la façon ci-dessous
+            fetch("{{ path('api_available_vehicles_and_drivers') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                },
+                body: JSON.stringify({ demandeId: demandeId }) // Ajout du demandeId dans le body de la requête
+            })
+
+Je veux que tu revoie l'API pour qu'elle
+Recherche dans l'entité Demande, la dateFinMission associée à l'Id qui lui est passé en paramètre
+
+Recherche les véhicule dont dateFinAssurance > à dateFinMission ET dateFinVisite > dateFinMission ET CalculKmRestant > 0 ET disponibilite = "Disponible" ET deleteAt = Null 
+
+CalculKmRestant = [nbreKmPourRenouvellerVidange -(kilometrageCourant - kilometrageInitial)]  , nbreKmPourRenouvellerVidange
+
+
+Je veux désormais la liste des véhicules 

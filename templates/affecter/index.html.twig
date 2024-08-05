@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Liste des véhicules affectés à la demande N° : {{ numdemande }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3">
+                <a href="{{ path('affecter.create', {'demandeId': demandeId}) }}" class="btn btn-success">
+                    <i class="fa fa-plus"></i> Ajouter
+                </a>
+            </div>
+
+            <table class="table table-bordered table-striped" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Matricule du Véhicule</th>
+                        <th>Chauffeur</th>
+                        {# <th>Actions</th> #}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for affecter in affecters %}
+                    <tr>
+                        <td>{{ affecter.vehicule.matricule }}</td>
+                        <td>{{ affecter.chauffeur.nomChauffeur }} {{ affecter.chauffeur.prenomChauffeur }}</td>
+{#                         <td>
+                            <div class="flex justify-content-end">
+                                <a href="{{ path('affecter.edit', {'id': affecter.id}) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </a>
+
+                                <form method="post" action="{{ path('affecter.delete', {'id': affecter.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette parc ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ affecter.id) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td> #}
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center">Aucun enregistrement trouvé</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cette affectation ?
+                <form id="modalDeleteForm" method="post">
+                    <input type="hidden" name="_token" id="modal_token" value="">
+                    <input type="hidden" name="affecter" id="modal_affecter_id" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary" id="confirmButton">Oui</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDeletionModal(button) {
+        var affecterId = button.getAttribute('data-id');
+        var csrfToken = button.getAttribute('data-token');
+
+        // Mettre à jour les champs cachés du formulaire dans le modal
+        document.getElementById('modal_token').value = csrfToken;
+        document.getElementById('modal_affecter_id').value = affecterId;
+
+        // Mettre à jour l'action du formulaire avec l'ID du affecter
+        document.getElementById('modalDeleteForm').action = '{{ path("affecter.delete", {"id": "__ID__"}) }}'.replace('__ID__', affecterId);
+
+        // Afficher le modal de confirmation
+        $('#confirmModal').modal('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var confirmButton = document.getElementById('confirmButton');
+
+        confirmButton.addEventListener('click', function () {
+            // Soumettre le formulaire de suppression dans le modal
+            document.getElementById('modalDeleteForm').submit();
+        });
+    });
+</script>
+{% endblock %}

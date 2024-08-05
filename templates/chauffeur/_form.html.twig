@@ -1,0 +1,43 @@
+{{ form_start(form) }}
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.Institution) }}</div>
+    <div class="col-sm-6">{{ form_row(form.matriculeChauffeur) }}</div>
+</div>
+
+<div class="form-group row form mb-3">
+    <div class="col-sm-4">{{ form_row(form.nomChauffeur) }}</div>
+    <div class="col-sm-4">{{ form_row(form.prenomChauffeur) }}</div>
+    <div class="col-sm-4">{{ form_row(form.telephoneChauffeur) }}</div>
+</div>
+
+<div class="form-group row form mb-3">
+    <div class="col-sm-3">{{ form_row(form.numPermis) }}</div>
+    <div class="col-sm-9"> <div class="form-group">
+            {{ form_label(form.photoChauffeur) }}
+            <div class="input-group">
+                {{ form_widget(form.photoChauffeur, {'attr': {'class': 'form-control'}}) }}
+                <div class="input-group-append">
+                    {% if chauffeur.photoChauffeur is defined and chauffeur.photoChauffeur is not empty %}
+                        <a id="current-piece-link" href="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" target="_blank" class="btn btn-outline-secondary">Voir la photo actuelle</a>
+                    {% else %}
+                        <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
+                    {% endif %}
+                </div>
+            </div>
+            {{ form_errors(form.photoChauffeur) }}
+        </div></div>
+</div>
+
+
+
+    {% if mode == 'edit' %}
+        {{ form_row(form.etatChauffeur) }}
+    {% endif %}
+
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+
+{{ form_end(form) }}
+

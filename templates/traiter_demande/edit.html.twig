@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit TraiterDemande{% endblock %}
+
+{% block body %}
+    <h1>Edit TraiterDemande</h1>
+
+    {{ include('traiter_demande/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_traiter_demande_index') }}">back to list</a>
+
+    {{ include('traiter_demande/_delete_form.html.twig') }}
+{% endblock %}

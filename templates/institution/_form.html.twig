@@ -1,0 +1,45 @@
+{{ form_start(form) }}
+
+    {{ form_row(form.Niveau, {
+        'label': 'Niveau',
+        'attr': {'placeholder': 'Saisir le niveau de l\'institution'}
+    }) }}
+
+    {{ form_row(form.libelleInstitution, {
+        'label': 'Libellé',
+        'attr': {'placeholder': 'Saisir le libellé'}
+    }) }}
+
+    {{ form_row(form.adressePostaleInstitution) }}
+    {{ form_row(form.adresseMailInstitution) }}
+    {{ form_row(form.lienSiteWebInstitution) }}
+    
+    {{ form_row(form.telephoneInstitution, {
+        'label': 'Téléphone',
+        'attr': {'placeholder': 'ex: +229 98 00 00 00'}
+    }) }}
+
+    <div class="form-group row form mb-3">
+        <div class="col-sm-9"> <div class="form-group">
+                {{ form_label(form.logoInstitution) }}
+                <div class="input-group">
+                    {{ form_widget(form.logoInstitution, {'attr': {'class': 'form-control'}}) }}
+                    <div class="input-group-append">
+                        {% if chauffeur.logoInstitution is defined and chauffeur.logoInstitution is not empty %}
+                            <a id="current-piece-link" href="{{ asset('img/Logos/' ~ chauffeur.logoInstitution) }}" target="_blank" class="btn btn-outline-secondary">Voir le logo actuelle</a>
+                        {% else %}
+                            <span id="no-file-text" class="input-group-text">Aucune photo choisi</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {{ form_errors(form.logoInstitution) }}
+            </div></div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+
+    </div>
+
+
+{{ form_end(form) }}

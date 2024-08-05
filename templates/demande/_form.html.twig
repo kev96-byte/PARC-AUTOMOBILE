@@ -1,0 +1,34 @@
+{{ form_start(form) }}
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.dateDebutMission) }}</div>
+    <div class="col-sm-6">{{ form_row(form.dateFinMission) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.objetMission) }}</div>
+    <div class="col-sm-6">{{ form_row(form.referenceNoteDeService) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.nbreParticipants) }}</div>
+    <div class="col-sm-6">{{ form_row(form.nbreVehicules) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-12">{{ form_row(form.lieuMission) }}
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+{{ form_end(form) }}
+

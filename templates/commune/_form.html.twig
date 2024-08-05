@@ -1,0 +1,18 @@
+{{ form_start(form) }}
+
+    {{ form_row(form.Departement, {
+        'label': 'Département',
+        'attr': {'placeholder': 'Choisir le département'}
+    }) }}
+
+    {{ form_row(form.libelleCommune, {
+        'label': 'Libellé',
+        'attr': {'placeholder': 'Saisir le libellé de la commune'}
+    }) }}
+    
+    <div class="d-flex justify-content-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+    </div>
+
+
+{{ form_end(form) }}

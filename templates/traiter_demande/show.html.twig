@@ -1,0 +1,341 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Details demande</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('traiterdemande.index') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <tbody>
+                    <tr>
+                        <th>Identifiant</th>
+                        <td>{{ demande.id }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Date Demande</th>
+                        <td>{{ demande.dateDemande|format_date('m/d/Y H:i:s') }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Objet mission</th>
+                        <td>{{ demande.objetMission }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Date début mission</th>
+                        <td>{{ demande.dateDebutMission|date("m/d/Y") }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Date fin mission</th>
+                        <td>{{ demande.dateFinMission|date("m/d/Y") }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Lieu Mission</th>
+
+                        <td>
+                            {% for key, value in demande.lieuMission %}
+                                <span>{{ value }}</span>
+                            {% endfor %}
+                        </td>
+
+                    <tr>
+                        <th>Nombre de participants</th>
+                        <td>{{ demande.nbreParticipants }}</td>
+                    </tr>
+
+
+                    <tr>
+                        <th>Nombre de véhicules</th>
+                        <td>{{ demande.nbreVehicules }}</td>
+                    </tr>
+
+
+                    <tr>
+                        <th>Point focal</th>
+                        <td>
+                            <span class="user-lastname">{{ demande.demander.lastName }}</span>
+                            <span class="user-firstname">{{ demande.demander.firstName }}</span>
+                        </td>
+                    </tr>
+
+                    {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN')%}
+                    <tr>
+                        <th>Responsable structure</th>
+                        <td>
+                            <span class="user-rs-lastname">{{ demande.validateurStructure.lastName }}</span>
+                            <span class="user-rs-firstname">{{ demande.validateurStructure.firstName }}</span>
+                        </td>
+                    </tr>
+                    {% endif %} 
+
+                    {% if is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_ADMIN') and demande.traitePar is not null %}
+                    <tr>
+                        <th>Chef parc</th>
+                        <td>
+                            <span class="user-rs-lastname">{{ demande.traitePar.lastName }}</span>
+                            <span class="user-rs-firstname">{{ demande.traitePar.firstName }}</span>
+                        </td>
+                    </tr>
+                    {% endif %} 
+
+                    <tr>
+                        <th>Statut demande</th>
+                        <td>                            
+                            <span class="
+                            {% if demande.statut == 'Initial' %}
+                                initial
+                            {% elseif demande.statut == 'Approuvé' %}
+                                approved
+                            {% elseif demande.statut == 'Validé' %}
+                                validated
+                            {% elseif demande.statut == 'Rejeté' and demande.traitePar is not null %}
+                                rejected-special
+                            {% else %}
+                                rejected
+                            {% endif %}
+                        ">
+                            {{ demande.statut }}
+                        </span>
+                        </td>
+                    </tr>
+
+                    {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN')  and demande.statut == 'Approuvé'%}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center" style="margin-top: 50px;"> 
+                                <button type="button" name="btnTraiter" class="btn btn-primary mx-2" style="width: 100px;" onclick="handleRequest('{{ demande.id }}')">
+                                    Traiter
+                                </button>
+                                
+                                <button type="submit" name="btnRejeter" class="btn btn-danger mx-2" style="width: 100px;" onclick="showRejectionModal('{{ demande.id }}')">
+                                    Rejeter
+                                </button>                                  
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                </tbody>
+            </table>
+    </div>        
+</div>
+
+
+<!-- Modal de rejet -->
+<div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="reject-form" method="post" action="{{ path('demande.dismiss', {'id': '__ID__'}) }}" onsubmit="return false;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectionModalLabel">Raison de rejet</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="_token" value="{{ csrf_token('dismiss') }}">
+                    <input type="hidden" name="demande_id" id="demande-id">
+                    {# <input type="hidden" name="statut" value="Rejeté">
+                    <input type="hidden" name="validateurStructure" value="{{ app.user.id }}"> #}
+                    <div class="form-group">
+                        <label for="raisonRejetApprobation">Raison de rejet</label>
+                        <textarea name="raisonRejetApprobation" id="raisonRejetApprobation" class="form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" onclick="submitRejectionForm()">Rejeter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <!-- Modal de traitement -->
+
+    <div class="modal fade" id="traiterModal" tabindex="-1" aria-labelledby="traiterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="traiterModalLabel">Traiter la Demande</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="traiterForm" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="_token" value="{{ csrf_token('traiter') }}">
+                        <input type="hidden" name="demande_id" id="demande-id">
+                        <input type="hidden" name="statut" value="Traité">
+                        <input type="hidden" name="traitePar" value="{{ app.user.id }}">
+                        
+                        <div class="form-group mb-3">
+                            <label for="nbVehicules" class="form-label">Nombre de véhicules à affecter</label>
+                            <input type="number" class="form-control" id="nbVehicules" min="1" required>
+                        </div>
+    
+                        <div id="dynamicFields"></div>
+    
+                        <div class="form-group mb-3" id="observationsGroup" style="display: none;">
+                            <label for="observations" class="form-label">Observations</label>
+                            <textarea class="form-control" name="observations" id="observations" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="button" class="btn btn-primary" id="btnAjouterVehicules">Continuer</button>
+                        <button type="submit" class="btn btn-success" id="terminerTraitement" style="display: none;">Terminer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+
+
+{# ... Script de rejet ... #}
+
+<script>
+    function showRejectionModal(demandeId) {
+        document.getElementById('reject-form').action = '{{ path("demande.dismiss", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
+        document.getElementById('demande-id').value = demandeId;
+        $('#rejectionModal').modal('show');
+    }
+
+    function submitRejectionForm() {
+        var form = document.getElementById('reject-form');
+        if (form.checkValidity()) {
+            form.onsubmit = function() { return true; };
+            form.submit();
+        }
+    }
+
+
+
+// ... Script de traitement ...     
+    function handleRequest(demandeId) {
+        // Mettre à jour les champs cachés
+        document.getElementById('demande-id').value = demandeId;
+        
+        // Afficher le modal
+        var traiterModal = new bootstrap.Modal(document.getElementById('traiterModal'));
+        traiterModal.show();
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        var form = document.getElementById('traiterForm');
+        var formData = new FormData(form);
+
+        fetch("{{ path('traiterdemande.traiter', {'id': demande.id}) }}", {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (data.repeat) {
+                    var traiterModal = new bootstrap.Modal(document.getElementById('traiterModal'));
+                    traiterModal.show();
+                } else {
+                    document.getElementById('finish-button').style.display = 'block';
+                }
+            }
+        });
+    }
+    
+
+    function finishProcess() {
+        location.reload();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('traiterForm');
+        form.addEventListener('submit', handleSubmit);
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var nbVehiculesInput = document.getElementById('nbVehicules');
+        var dynamicFieldsDiv = document.getElementById('dynamicFields');
+        var observationsGroup = document.getElementById('observationsGroup');
+        var terminerButton = document.getElementById('terminerTraitement');
+        var btnAjouterVehicules = document.getElementById('btnAjouterVehicules');
+    
+        btnAjouterVehicules.addEventListener('click', function () {
+            var nbVehicules = parseInt(nbVehiculesInput.value);
+    
+            if (nbVehicules > 0) {
+                // Afficher les champs dynamiques pour les véhicules et chauffeurs
+                dynamicFieldsDiv.innerHTML = ''; // Réinitialisation des champs dynamiques
+    
+                for (var i = 1; i <= nbVehicules; i++) {
+                    var newDiv = document.createElement('div');
+                    newDiv.classList.add('form-group', 'mb-3');
+                    newDiv.innerHTML = `
+                        <label for="vehicule${i}" class="form-label">Véhicule ${i}</label>
+                        <select class="form-control vehicule-select" name="vehicules[]" id="vehicule${i}" required>
+                            {% if vehicules is not empty %}
+                                {% for vehicule in vehicules %}
+                                    <option value="{{ vehicule.id }}">{{ vehicule.matricule }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option disabled selected>Aucun véhicule disponible</option>
+                            {% endif %}
+                        </select>
+                        <label for="chauffeur${i}" class="form-label">Chauffeur ${i}</label>
+                        <select class="form-control chauffeur-select" name="chauffeurs[]" id="chauffeur${i}" required>
+                            {% if chauffeurs is not empty %}
+                                {% for chauffeur in chauffeurs %}
+                                    {% if chauffeur.institution == app.user.institution %}
+                                        <option value="{{ chauffeur.id }}">{{ chauffeur.nomChauffeur }} {{ chauffeur.prenomChauffeur }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <option disabled selected>Aucun chauffeur disponible</option>
+                            {% endif %}
+                        </select>
+                    `;
+                    dynamicFieldsDiv.appendChild(newDiv);
+                }
+    
+                // Afficher le champ d'observations
+                observationsGroup.style.display = 'block';
+    
+                // Cacher le bouton "Continuer" et afficher le bouton "Terminer"
+                btnAjouterVehicules.style.display = 'none';
+                terminerButton.style.display = 'block';
+            } else {
+                alert("Veuillez entrer un nombre valide de véhicules à affecter.");
+            }
+        });
+    
+        terminerButton.addEventListener('click', function () {
+            // Validation supplémentaire si nécessaire avant de soumettre le formulaire
+            document.getElementById('traiterForm').submit();
+        });
+    });
+
+
+    
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+
+
+
+{% endblock %}
+

@@ -1,0 +1,45 @@
+{{ form_start(form) }}
+
+<div class="form-group row mb-3">
+    <div class="col-sm-12">    
+        {{ form_row(form.nomParc, {
+            'label': 'Nom du parc automobile',
+            'label_attr': {'class': 'required'}
+        }) }}
+    </div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">
+        {{ form_row(form.telephoneParc, {
+            'label': 'Téléphone',
+            'attr': {'placeholder': 'ex: +229 98 00 00 00'}
+        }) }}
+    </div>
+
+    <div class="col-sm-6">
+        {{ form_row(form.emailParc) }}
+    </div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">
+        {{ form_row(form.Institution, {
+            'label': 'Institution',
+            'label_attr': {'class': 'required'},
+            'attr': {'placeholder': 'Choisir l\'institution'}
+        }) }}
+    </div>
+
+    <div class="col-sm-6">
+        {{ form_row(form.chefParc) }}
+    </div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-12 text-end">
+        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier'), 'attr': {'class': 'btn btn-primary'}}) }}
+    </div>
+</div>
+
+{{ form_end(form) }}

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+        <div class="col-12">
+            <div class="card card-content-template">
+                <div class="p-toolbar-group-left">
+                    <div class="my-2">
+                        <a href="{{ path('affecter.index', {'demandeId': demandeId}) }}">
+                            <button class="p-button p-component p-button-outlined mr-2">
+                                <span class="p-button-icon p-c p-button-icon-left fa fa-arrow-left"></span>
+                                <span class="p-button-label p-c">Retour à la liste</span>
+                                <span class="p-ink"></span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                <h5>{{ isEdit ? 'Modifier' : 'Ajouter' }} des véhicules et chauffeurs à la demande N°: {{ numdemande }}</h5>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Enregistrer</button>
+    {{ form_end(form) }}
+
+</div>
+</div>
+{% endblock %}

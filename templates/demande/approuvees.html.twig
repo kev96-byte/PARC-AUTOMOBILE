@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+    <div class="col-12 card-body tablestyle">
+        <div class="card" style="min-height: 475px;">
+            <h5>Liste des demandes approuvées</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="dataTable" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Numéro demande</th>
+                        <th>Date de demande</th>
+                        <th>Date début</th>
+                        <th>Date fin</th>
+                        <th>Lieu</th>
+                        <th>Statut</th>
+                        {% if is_granted('ROLE_POINT_FOCAL') %}
+                            <th>actions</th>
+                        {% else %}
+                            <th>action</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set initialDemandes = demandes|filter(d => d.statut == 'Approuvé') %}
+                    {% if initialDemandes is empty %}
+                        <tr>
+                            <td colspan="7">Aucun enregistrement trouvé</td>
+                        </tr>
+                    {% else %}
+                        {% for demande in initialDemandes %}
+                            <tr>
+                                <td>{{ demande.numDemande }}</td>
+                                <td>{{ demande.dateDemande|date("d/m/Y") }}</td>
+                                <td>{{ demande.dateDebutMission|date("d/m/Y") }}</td>
+                                <td>{{ demande.dateFinMission|date("d/m/Y") }}</td>
+                                <td>
+                                    <ul class="list-unstyled m-0">
+                                        {% for value in demande.lieuMission %}
+                                            <li>{{ value|upper }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>
+                                    <span class="approved">{{ demande.statut }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ path('demande.show', {'id': demande.id}) }}" class="btn btn-info btn-sm">
+                                        Voir détails
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Modal de confirmation -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer cette demande ?
+                    <form id="modalDeleteForm" method="post">
+                        <input type="hidden" name="_token" id="modal_token" value="">
+                        <input type="hidden" name="demande_id" id="modal_demande_id" value="">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                    <button type="button" class="btn btn-primary" id="confirmButton">Oui</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function showDeletionModal(button) {
+            var demandeId = button.getAttribute('data-id');
+            var csrfToken = button.getAttribute('data-token');
+
+            // Mettre à jour les champs cachés du formulaire dans le modal
+            document.getElementById('modal_token').value = csrfToken;
+            document.getElementById('modal_demande_id').value = demandeId;
+
+            // Mettre à jour l'action du formulaire avec l'ID du niveau
+            document.getElementById('modalDeleteForm').action = '{{ path("demande.delete", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
+
+            // Afficher le modal de confirmation
+            $('#confirmModal').modal('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var confirmButton = document.getElementById('confirmButton');
+
+            confirmButton.addEventListener('click', function () {
+                // Soumettre le formulaire de suppression dans le modal
+                document.getElementById('modalDeleteForm').submit();
+            });
+        });
+    </script>
+
+
+
+{% endblock %}

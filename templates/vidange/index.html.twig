@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card card-content-template" >
+        <h5>Vidange des véhicules</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('vidange.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Matricule</th>
+                        <th>Date Vidange</th>
+                        <th>Valeur compteur Kilométrique</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vidange in vidanges %}
+                    <tr>
+                        <td>{{ vidange.vehicule.matricule }}</td>
+                        <td>{{ vidange.dateVidange ? vidange.dateVidange|date('d-m-Y') : '' }}</td>
+                        <td>{{ vidange.valeurCompteurKilometrage }}</td>
+                        <td>
+                            <div class="flex justify-content-end">
+                                <a href="{{ path('vidange.edit', {'id': vidange.id}) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </a>
+
+                                <a href="{{ asset('img/Vidanges/' ~ vidange.pieceVidange) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: var(--primary-color);">
+                                        <i class="fa fa-download"></i>
+                                    </button>
+                                </a>
+
+                                <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #EF4444;" data-id="{{ vidange.id }}" data-token="{{ csrf_token('delete' ~ vidange.id) }}" onclick="showDeletionModal(this)">
+                                    <i class="fa fa-trash"></i>
+                                </button>      
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+    </div>
+        
+</div>
+
+
+
+
+
+<!-- Modal de confirmation -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cette vidange ?
+                <form id="modalDeleteForm" method="post">
+                    <input type="hidden" name="_token" id="modal_token" value="">
+                    <input type="hidden" name="vidange" id="modal_vidange_id" value="">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <button type="button" class="btn btn-primary" id="confirmButton">Oui</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function showDeletionModal(button) {
+        var vidangeId = button.getAttribute('data-id');
+        var csrfToken = button.getAttribute('data-token');
+
+        // Mettre à jour les champs cachés du formulaire dans le modal
+        document.getElementById('modal_token').value = csrfToken;
+        document.getElementById('modal_vidange_id').value = vidangeId;
+
+        // Mettre à jour l'action du formulaire avec l'ID du vidange
+        document.getElementById('modalDeleteForm').action = '{{ path("vidange.delete", {"id": "__ID__"}) }}'.replace('__ID__', vidangeId);
+
+        // Afficher le modal de confirmation
+        $('#confirmModal').modal('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var confirmButton = document.getElementById('confirmButton');
+
+        confirmButton.addEventListener('click', function () {
+            // Soumettre le formulaire de suppression dans le modal
+            document.getElementById('modalDeleteForm').submit();
+        });
+    });
+</script>
+
+
+
+
+
+{% endblock %}

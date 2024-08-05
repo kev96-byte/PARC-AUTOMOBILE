@@ -1,0 +1,8 @@
+https://grafikart.fr/tutoriels/installation-symfony-2180#autoplay
+
+composer create-project symfony/skeleton:"7.0.*"
+php -S localhost:8000 -t public
+
+npm n'est pas reconnu en tant que commande interne ouexterne
+
+https://www.google.com/search?q=npm+n%27est+pas+reconnu+en+tant+que+commande+interne+ouexterne&sca_esv=51c64e6aec99bdf3&sca_upv=1&sxsrf=ADLYWILTDJSi_b7wg05VgsKbi11JGknf9g%3A1715741611180&ei=qyNEZrPYCpKkhbIPpMqkEA&udm=&ved=0ahUKEwjz2YrK046GAxUSUkEAHSQlCQIQ4dUDCA8&uact=5&oq=npm+n%27est+pas+reconnu+en+tant+que+commande+interne+ouexterne&gs_lp=Egxnd3Mtd2l6LXNlcnAiPG5wbSBuJ2VzdCBwYXMgcmVjb25udSBlbiB0YW50IHF1ZSBjb21tYW5kZSBpbnRlcm5lIG91ZXh0ZXJuZUgAUABYAHAAeAGQAQCYAQCgAQCqAQC4AQPIAQD4AQL4AQGYAgCgAgCYAwCSBwCgBwA&sclient=gws-wiz-serp#fpstate=ive&vld=cid:c424f032,vid:ZYdXP8f78YY,st:0

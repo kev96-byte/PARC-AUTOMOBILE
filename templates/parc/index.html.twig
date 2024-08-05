@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+{# {% block body %}{% endblock %} #}
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Liste des parcs</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('parc.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Nom parc</th>
+                        <th>Téléphone</th>
+                        <th>Adresse mail</th>
+                        <th>Institution</th>
+                        <th>Responsable du parc</th>
+                        <th data-sortable="false" style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for parc in parcs %}
+                    <tr>
+                        <td>{{ parc.nomParc }}</td>
+                        <td>{{ parc.telephoneParc}}</td>
+                        <td>{{ parc.emailParc}}</td>
+                        <td>{{ parc.institution.libelleInstitution }}</td>
+                        <td>{{ parc.chefParc.lastName }} {{ parc.chefParc.firstName }}</td>
+                        <td>
+                            <div class="flex justify-content-end">
+                                <a href="{{ path('parc.edit', {'id': parc.id}) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </a>
+
+                                <form method="post" action="{{ path('parc.delete', {'id': parc.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette parc ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ parc.id) }}">
+                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Aucun enregistrement trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+    </div>
+        
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{# templates/demande/expired.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+    <div class="col-12 card-body tablestyle">
+        <div class="card" style="min-height: 475px;">
+            <h5>Valider les retours de mission</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="dataTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Numéro demande</th>
+                            <th>Objet mission</th>
+                            <th>Date début mission</th>
+                            <th>Date fin mission</th>
+                            <th>Lieu mission</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for demande in expiredMissions %}
+                            <tr>
+                                <th>{{ demande.numDemande }}</th>
+                                <td>{{ demande.objetMission }}</td>
+                                <td>{{ demande.dateDebutMission|date('d-m-Y') }}</td>
+                                <td>{{ demande.dateFinMission|date('d-m-Y') }}</td>
+                                <td>
+                                    {% if demande.lieuMission is iterable %}
+                                        {% for lieu in demande.lieuMission %}
+                                            {{ lieu }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {{ demande.lieuMission }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ path('demande.details', { 'id': demande.id }) }}" class="btn btn-info btn-sm">Voir détails</a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6">Aucun enregistrement trouvé</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

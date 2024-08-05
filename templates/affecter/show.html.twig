@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Affecter{% endblock %}
+
+{% block body %}
+    <h1>Affecter</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ affecter.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_affecter_index') }}">back to list</a>
+
+    <a href="{{ path('app_affecter_edit', {'id': affecter.id}) }}">edit</a>
+
+    {{ include('affecter/_delete_form.html.twig') }}
+{% endblock %}
