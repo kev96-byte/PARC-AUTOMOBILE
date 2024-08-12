@@ -74,6 +74,11 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    App\Twig\GlobalVariablesExtension:
+        arguments:
+            $vehiculeRepository: '@App\Repository\VehiculeRepository'
+        tags: ['twig.extension']
+
  #   App\Form\DemandeType:
   #      arguments:
  #           $communeRepository: '@App\Repository\CommuneRepository'

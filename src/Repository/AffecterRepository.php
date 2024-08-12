@@ -16,6 +16,17 @@ class AffecterRepository extends ServiceEntityRepository
         parent::__construct($registry, Affecter::class);
     }
 
+
+    public function findDemandesByChauffeurId(int $chauffeurId): array
+    {
+        return $this->createQueryBuilder('a')
+            ->innerJoin('a.demande', 'd')
+            ->where('a.chauffeur = :chauffeurId')
+            ->setParameter('chauffeurId', $chauffeurId)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Affecter[] Returns an array of Affecter objects
     //     */
@@ -40,4 +51,7 @@ class AffecterRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+
 }

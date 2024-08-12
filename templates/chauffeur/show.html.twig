@@ -1,9 +1,10 @@
+{# templates/chauffeur/show.html.twig #}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Chauffeur{% endblock %}
 
 {% block mycontent %}
-
     <div class="col-12">
         <div class="card">
             <div class="p-toolbar-group-left">
@@ -19,16 +20,11 @@
             </div>
             <div class="row d-flex">
                 <div class="col-12">
-                    <div class="card  mb-3" style="box-shadow: none !important;">
+                    <div class="card mb-3" style="box-shadow: none !important;">
                         <div class="row no-gutters">
                             <div class="col-md-3">
                                 {% if chauffeur.photoChauffeur is not empty %}
-                                    <tr>
-                                        <td>
-                                            <img class="img-fluid" src="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                        </td>
-
-                                    </tr>
+                                    <img class="img-fluid" src="{{ asset('img/Chauffeurs/' ~ chauffeur.photoChauffeur) }}" style="width: 100%; height: 100%; object-fit: cover;">
                                 {% endif %}
                             </div>
                             <div class="col-md-9">
@@ -37,11 +33,12 @@
                                     <ul class="card-text list-unstyled " style="font-size: 1.2rem">
                                         <li>Institution : {{ chauffeur.Institution.libelleInstitution }}</li>
                                         <li>Matricule : {{ chauffeur.matriculeChauffeur }}</li>
-                                        <li>Numéro de télphone : {{ chauffeur.telephoneChauffeur }}</li>
-
+                                        <li>Numéro de téléphone : {{ chauffeur.telephoneChauffeur }}</li>
                                     </ul>
 
-                                    <p class="card-text d-flex fw-bold"> <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}" class="d-inline-block edited_profil" style="text-decoration: none; cursor: pointer;" >Modifier le profil du chauffeur</a></p>
+                                    <p class="card-text d-flex fw-bold">
+                                        <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}" class="d-inline-block edited_profil" style="text-decoration: none; cursor: pointer;">Modifier le profil du chauffeur</a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -50,20 +47,53 @@
             </div>
             <hr>
             <h1>Historique des missions</h1>
-            <table class="table">
+            <table id="demandesTable" class="table table-striped mt-4">
                 <thead>
-                <th class="col-2">Date de début</th>
-                <th class="col-2">Date de retour</th>
-                <th class="col-5">Objet</th>
-                <th class="col-5">Véhicule utilisé</th>
-
+                    <tr>
+                        <th class="col-2">Numéro de demande</th>
+                        <th class="col-3">Objet de la mission</th>
+                        <th class="col-3">Lieu de la mission</th>
+                        <th class="col-2">Date de début</th>
+                        <th class="col-2">Date de fin</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td colspan="8">Aucun enregistrement trouvé</td>
-                </tr>
+                    {% if demandes is empty %}
+                        <tr>
+                            <td colspan="5">Aucune demande trouvée pour ce chauffeur.</td>
+                        </tr>
+                    {% else %}
+                        {% for demande in demandes %}
+                            <tr>
+                                <td>{{ demande.numDemande }}</td>
+                                <td>{{ demande.ObjetMission }}</td>
+                                <td>                                        
+                                    {% for value in demande.lieuMission %}
+                                        <li>{{ value|upper }}</li>
+                                    {% endfor %}
+                            </ul></td>
+                                <td>{{ demande.dateDebutMission|date('d/m/Y') }}</td>
+                                <td>{{ demande.dateFinMission|date('d/m/Y') }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            $('#demandesTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.1/i18n/French.json"
+                }
+            });
+        });
+    </script>
 {% endblock %}

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Chauffeur;
 use App\Entity\Institution;
 use App\Form\ChauffeurType;
+use App\Repository\AffecterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,11 +65,22 @@ class ChauffeurController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'chauffeur.show', methods: ['GET'])]
-    public function show(Chauffeur $chauffeur): Response
+    
+    #[Route('/chauffeur/{id}', name: 'chauffeur.show', methods: ['GET'])]
+    public function show(Chauffeur $chauffeur, AffecterRepository $affecterRepository): Response
     {
+        // Récupérer les affectations pour le chauffeur
+        $affectations = $affecterRepository->findBy(['chauffeur' => $chauffeur]);
+
+        // Récupérer les demandes associées à ces affectations
+        $demandes = [];
+        foreach ($affectations as $affectation) {
+            $demandes[] = $affectation->getDemande();
+        }
+
         return $this->render('chauffeur/show.html.twig', [
             'chauffeur' => $chauffeur,
+            'demandes' => $demandes,
         ]);
     }
 

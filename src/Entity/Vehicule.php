@@ -918,6 +918,15 @@ class Vehicule
         return $this;
     }
 
+        // Calculer le kilométrage restant
+        public function getKilometrageRestant(): ?int
+        {
+            if ($this->nbreKmPourRenouvellerVidange !== null && $this->kilometrageCourant !== null && $this->kilometrageInitial !== null) {
+                return $this->nbreKmPourRenouvellerVidange - ($this->kilometrageCourant - $this->kilometrageInitial);
+            }
+            return null;
+        }
+
     /**
      * @return Collection<int, Vidange>
      */

@@ -8,6 +8,7 @@ use App\Form\VehiculeType;
 use App\Entity\Institution;
 use App\Entity\Utilisateur;
 use App\Entity\TypeVehicule;
+use App\Repository\VehiculeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -144,19 +145,6 @@ class VehiculeController extends AbstractController
     public function delete(Request $request, Vehicule $vehicule, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$vehicule->getId(), $request->getPayload()->get('_token'))) {
-            // Vérifiez si l'enregistrement de niveau est associé à une institution
-/*             $urilisateursCount = $entityManager->getRepository(Utilisateur::class)->count(['vehicule' => $vehicule]);
-            if ($urilisateursCount > 0) {
-                // Si des institutions sont associées, renvoyez un message d'erreur
-                    $this->addFlash('error', 'Vous ne pouvez pas supprimer ce véhicule car il est associé à des demandes. ');
-                // $this->addFlash('notice', 'Hello world');
-            } else {
-                // Sinon, supprimez l'enregistrement de niveau
-                // $entityManager->remove($niveau);
-                $vehicule->setDeleteAt(new \DateTimeImmutable());
-                $entityManager->flush();
-                $this->addFlash('success', 'Suppression effectuée avec succès.');
-            } */
             $vehicule->setDeleteAt(new \DateTimeImmutable());
             $entityManager->flush();
             $this->addFlash('success', 'Suppression effectuée avec succès.');
@@ -164,4 +152,34 @@ class VehiculeController extends AbstractController
     
         return $this->redirectToRoute('vehicule.index', [], Response::HTTP_SEE_OTHER);
     }
+
+
+// src/Controller/VehiculeController.php
+
+#[Route('/vehicules/disponibles', name: 'vehicules.disponibles')]
+public function disponibles(Request $request, VehiculeRepository $vehiculeRepository): Response
+{
+    // Récupérer les valeurs de filtrage depuis la requête
+    $dateFinAssurance = $request->query->get('dateFinAssurance');
+    $dateFinVisiteTechnique = $request->query->get('dateFinVisiteTechnique');
+    $dateDebutPeriode = $request->query->get('dateDebutPeriode');
+    $dateFinPeriode = $request->query->get('dateFinPeriode');
+
+    // Requête pour récupérer les véhicules disponibles avec filtres
+    $vehicules = $vehiculeRepository->findAvailableVehiclesWithFilters(
+        $dateFinAssurance,
+        $dateFinVisiteTechnique,
+        $dateDebutPeriode,
+        $dateFinPeriode
+    );
+
+    return $this->render('vehicule/disponibles.html.twig', [
+        'vehicules' => $vehicules,
+        'dateFinAssurance' => $dateFinAssurance,
+        'dateFinVisiteTechnique' => $dateFinVisiteTechnique,
+        'dateDebutPeriode' => $dateDebutPeriode,
+        'dateFinPeriode' => $dateFinPeriode,
+    ]);
+}
+    
 }

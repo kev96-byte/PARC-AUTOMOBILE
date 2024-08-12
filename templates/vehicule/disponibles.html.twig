@@ -1,0 +1,63 @@
+{# templates/vehicule/disponibles.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card card-content-template">
+        <h5>Liste des Véhicules disponibles</h5>
+        <form method="get" action="{{ path('vehicules.disponibles') }}">
+            <div class="form-group row mb-3">
+                <div class="col-sm-3">
+                    <label for="dateFinAssurance">Date Fin Assurance</label>
+                    <input type="date" name="dateFinAssurance" id="dateFinAssurance" class="form-control" value="{{ dateFinAssurance }}">
+                </div>
+
+                <div class="col-sm-3">
+                    <label for="dateFinVisiteTechnique">Date Fin Visite Technique</label>
+                    <input type="date" name="dateFinVisiteTechnique" id="dateFinVisiteTechnique" class="form-control" value="{{ dateFinVisiteTechnique }}">
+                </div>
+
+                <div class="col-sm-3">
+                    <label for="dateDebutPeriode">Date Début Période</label>
+                    <input type="date" name="dateDebutPeriode" id="dateDebutPeriode" class="form-control" value="{{ dateDebutPeriode }}">
+                </div>
+
+                <div class="col-sm-3">
+                    <label for="dateFinPeriode">Date Fin Période</label>
+                    <input type="date" name="dateFinPeriode" id="dateFinPeriode" class="form-control" value="{{ dateFinPeriode }}">
+                </div>
+
+                <div class="col-sm-3 mt-5">
+                    <button type="submit" class="btn btn-primary">Filtrer</button>
+                </div>
+            </div>
+        </form>
+
+        <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Matricule</th>
+                    <th>Portée</th>
+                    <th>Date Fin Assurance</th>
+                    <th>Date Fin Visite Technique</th>
+                    <th>Kilométrage Restant</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vehicule in vehicules %}
+                    <tr>
+                        <td>{{ vehicule.matricule }}</td>
+                        <td>{{ vehicule.porteeVehicule }}</td>
+                        <td>{{ vehicule.dateFinAssurance|date('d/m/Y') }}</td>
+                        <td>{{ vehicule.dateFinVisiteTechnique|date('d/m/Y') }}</td>
+                        <td>{{ vehicule.nbreKmPourRenouvellerVidange - (vehicule.kilometrageCourant - vehicule.kilometrageInitial) }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucun véhicule disponible</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
