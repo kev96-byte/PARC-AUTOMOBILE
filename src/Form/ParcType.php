@@ -62,6 +62,9 @@ class ParcType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleInstitution',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
             ])
             
 
@@ -72,6 +75,9 @@ class ParcType extends AbstractType
                     return $user->getLastName() . ' ' . $user->getFirstName();
                 },
                 'placeholder' => 'Sélectionnez le responsable du parc',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
             ])
 
             

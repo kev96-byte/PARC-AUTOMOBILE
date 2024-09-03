@@ -11,6 +11,9 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+#    Dompdf\Dompdf:
+#        arguments:
+#            $options: ['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]
     
     App\Command\UpdateDepartementRegionCommand:
         arguments:

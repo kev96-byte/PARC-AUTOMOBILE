@@ -18,7 +18,7 @@ class VehiculeRepository extends ServiceEntityRepository
         parent::__construct($registry, Vehicule::class);
     }
 
-    public function findAvailableVehicles(\DateTimeInterface $dateFinMission): array
+                public function findAvailableVehicles(\DateTimeInterface $dateFinMission): array
     {
         return $this->createQueryBuilder('v')
             ->where('v.dateFinAssurance > :dateFinMission')
@@ -147,4 +147,25 @@ public function findVehiclesExpiringInPeriod(string $period): array
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function countAllAvailableVehicles(): int
+    {
+        return $this->createQueryBuilder('v')
+            ->select('COUNT(v)')
+            ->where('v.deleteAt IS NULL')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findAllVehiculesInMission():array
+    {
+        return $this->createQueryBuilder('v')
+            ->where('v.deleteAt IS NULL')
+            ->andWhere('v.disponibilite != :disponibilite')
+            ->setParameter('disponibilite', 'Disponible')
+            ->getQuery()
+            ->getResult();
+
+
+    }
 }

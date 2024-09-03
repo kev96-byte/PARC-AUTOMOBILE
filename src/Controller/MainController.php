@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Repository\VehiculeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,13 +12,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+
 #[IsGranted('ROLE_USER')]
 class MainController extends AbstractController
 {
     #[Route('/', name: 'main.index')]
 
-    public function index(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+    public function index(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher, VehiculeRepository $vehiculeRepository): Response
     {
+           $vehicules = $vehiculeRepository->findAllVehiculesInMission();
 /*         $user = new User();
         $user->setlastName('BOKO')
              ->setfirstName('Elodie')
@@ -32,6 +35,7 @@ class MainController extends AbstractController
                          
         return $this->render('base.html.twig', [
             'controller_name' => 'MainController',
+            'vehicules' => $vehicules,
         ]);
     }
 }

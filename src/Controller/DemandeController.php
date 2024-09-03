@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Knp\Snappy\Pdf;
 use App\Entity\User;
 use App\Entity\Commune;
@@ -942,37 +944,20 @@ public function new(Request $request): Response
         }
         $affectations = $this->affecterRepo->findBy(['demande' => $demande]);
 
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+
+        $dompdf = new Dompdf($pdfOptions);
         // Générer le contenu HTML
         $html = $this->renderView('demande/etat.html.twig', [
             'demande' => $demande,
             'affectations' => $affectations,
         ]);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        return new Response($dompdf->stream("demande.pdf",["Attachment" => false]));
 
-        // Générer le PDF avec options
-        $pdfOptions = [
-            'no-outline' => true,        // Éviter les contours par défaut
-            'disable-smart-shrinking' => true,  // Éviter le rétrécissement intelligent
-            'margin-top' => '10mm',       // Marges pour le PDF
-            'margin-right' => '10mm',
-            'margin-bottom' => '10mm',
-            'margin-left' => '10mm',
-        ];
-
-        try {
-            $pdfContent = $this->knpSnappy->getOutputFromHtml($html, $pdfOptions);
-        } catch (\Exception $e) {
-            throw $this->createNotFoundException('Erreur lors de la génération du PDF: ' . $e->getMessage());
-        }
-
-        // Retourner le PDF en réponse
-        return new Response(
-            $pdfContent,
-            200,
-            [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="demande_'.$id.'.pdf"',
-            ]
-        );
     }
 
 

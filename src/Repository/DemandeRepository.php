@@ -27,4 +27,22 @@ class DemandeRepository extends ServiceEntityRepository
             ->getResult();
         
     }
+
+    public function countAllDemandes(): int
+    {
+        return $this->createQueryBuilder('v')
+            ->select('COUNT(v)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countAllDemandesByUser($user):int
+    {
+        return $this->createQueryBuilder('d')
+            ->select('COUNT(d)')
+            ->where('d.demander = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

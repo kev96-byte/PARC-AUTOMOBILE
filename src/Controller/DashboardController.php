@@ -15,8 +15,10 @@ class DashboardController extends AbstractController
     {
         $nombreVehiculesDisponibles = $vehiculeRepository->countAvailableVehicles();
 
+
         return $this->render('base.html.twig', [
             'nombreVehiculesDisponibles' => $nombreVehiculesDisponibles,
+
         ]);
     }
 }
