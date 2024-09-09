@@ -115,6 +115,18 @@ class RegistrationFormType extends AbstractType
                     'data-live-search'=>'true',]
             ])
 
+            ->add('telephone', TextType::class, [
+                'label' => 'numéro de téléphone',
+                'required' => true,
+//                'constraints' => [
+//                    new Regex([
+//                        'pattern' => '/^(\+229)?[0-9]{8}$/',
+//                        'message' => 'Veuillez entrer un numéro de téléphone valide au format 61310079 ou +22961310079.',
+//                    ]),
+//                ],
+            ])
+
+
             ->add('Structure', EntityType::class, [
                 'required' => true,
                 'class' => Structure::class,

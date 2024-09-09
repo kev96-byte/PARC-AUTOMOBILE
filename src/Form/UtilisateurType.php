@@ -75,7 +75,10 @@ class UtilisateurType extends AbstractType
                 'required' => false,
             ])
 
-            ->add('telephoneUtilisateur', TelType::class)
+            ->add('telephoneUtilisateur', TelType::class, [
+                'label'=>'Numéro de téléphone',
+                'required'=>false,
+            ])
 
            ->add('email', EmailType::class, [
                'label' => 'Adresse email',

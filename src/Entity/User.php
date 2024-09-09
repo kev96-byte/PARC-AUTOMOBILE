@@ -70,10 +70,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Regex(
-        pattern: '/^(\+229)?\s?(20|21|22|23|40|41|42|43|44|45|50|51|52|53|54|55|56|57|58|59|60|62|63|64|65|66|67|68|69|90|91|92|93|94|95|96|97|98|99)\s?\d{2}\s?\d{2}\s?\d{2}$/',
-        match: true,
+        pattern: '/^(\+229)?[0-9]{8}$/',
         message: 'Numéro de téléphone incorrecte',
-    )]  
+        match: true,
+    )]
     private ?string $telephone = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

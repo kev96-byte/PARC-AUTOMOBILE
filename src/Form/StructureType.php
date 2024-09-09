@@ -35,6 +35,9 @@ class StructureType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleTypeStructure',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
             ])
 
           ->add('libelleStructure', TextType::class, [
@@ -52,6 +55,9 @@ class StructureType extends AbstractType
                   ->where('n.deleteAt IS NULL');
               },
               'choice_label' => 'libelleInstitution',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
           ])
 
           ->add('Parc', EntityType::class, [
@@ -61,6 +67,9 @@ class StructureType extends AbstractType
               ->where('n.deleteAt IS NULL');
             },
             'choice_label' => 'nomParc',
+              'attr'=>[
+                  'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+              ]
             ])
 
 
@@ -71,6 +80,9 @@ class StructureType extends AbstractType
                 return $user->getLastName() . ' ' . $user->getFirstName();
             },
             'placeholder' => 'Sélectionnez le responsable de la structure',
+            'attr'=>[
+                'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+            ]
         ])
 
         ->add('Parc', EntityType::class, [
@@ -83,9 +95,17 @@ class StructureType extends AbstractType
             'choice_label' => function ($parc) {
                 return $parc->getNomParc() . ' (' . $parc->getInstitution()->getLibelleInstitution() . ')';
             },
+            'attr'=>[
+                'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+            ]
         ])
-                        
-            ->add('save', SubmitType::class)
+
+            ->add('save', SubmitType::class, [
+                'attr'=>[
+                    'class'=>'p-button p-component p-button-success',
+                    'style'=>'font-weight: bold;'
+                ]
+            ])
 
         ;
     }

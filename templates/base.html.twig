@@ -111,14 +111,14 @@
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="véhicule" role="menuitem" href="{{ path('vehicule.index') }}">
                                                 <i class="fa fa-car"></i>
-                                                <span>Véhicule</span><span class="p-ink"></span>
+                                                <span>Véhicules</span><span class="p-ink"></span>
                                             </a>
                                         </li>
 
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="véhicule disponibles" role="menuitem" href="{{ path('vehicules.disponibles') }}">
                                                 <i class="fa fa-car"></i>
-                                                <span>Lise des véhicules disponibles</span><span class="p-ink"></span>
+                                                <span>Véhicules disponibles</span><span class="p-ink"></span>
                                             </a>
                                         </li>
 
@@ -369,6 +369,7 @@
                                 {% endblock %}
 
                         </div>
+                    {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                         <div class="row">
                             <div class="card w-100">
                                 <div class="table-responsive">
@@ -407,6 +408,7 @@
                             </div>
 
                         </div>
+                    {% endif %}
                 </div>
                         {% endblock %}
                     </div>
