@@ -59,6 +59,9 @@ class AffecterType extends AbstractType
                     );
                 },
                 'placeholder' => 'Sélectionnez un véhicule',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
             ])
             ->add('chauffeur', EntityType::class, [
                 'class' => Chauffeur::class,
@@ -72,6 +75,9 @@ class AffecterType extends AbstractType
                     );
                 },
                 'placeholder' => 'Sélectionnez un chauffeur',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
             ])
             ->add('demande_id', HiddenType::class, [
                 'data' => $demandeId,

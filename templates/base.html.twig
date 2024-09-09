@@ -386,9 +386,14 @@
                                             {% for vehicule in vehicules %}
                                                 <tr>
                                                     <td>{{ vehicule.matricule }}</td>
-{#                                                    <td>{{ vehicule.marque.libelle_marque }}</td>#}
+                                                    <td>{{ vehicule.marque.libelleMarque }}</td>
                                                     <td>{{ vehicule.modele }}</td>
-                                                    <td>-</td>
+                                                    <td>
+                                                        {% for lieu in lieuVehiculeMission(vehicule.id) %}
+                                                            {{ lieu }}{% if not loop.last %}, {% endif %}
+                                                        {% endfor %}
+                                                    </td>
+
                                                 </tr>
                                             {% endfor %}
                                         {% else %}

@@ -52,6 +52,16 @@ class AffecterRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    public function findLieuxByVehiculeId(int $vehiculeId): array
+    {
+        return $this->createQueryBuilder('a')
+            ->innerJoin('a.demande', 'd')  // Joindre la table des demandes pour accéder au lieu
+            ->select('d.lieuMission')  // Sélectionner uniquement le champ "lieu" de la demande
+            ->where('a.vehicule = :vehiculeId')  // Filtrer par l'ID du véhicule
+            ->setParameter('vehiculeId', $vehiculeId)
+            ->getQuery()
+            ->getResult();
+    }
 
 
 }

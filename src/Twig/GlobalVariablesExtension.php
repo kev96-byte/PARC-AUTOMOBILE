@@ -3,21 +3,25 @@
 
 namespace App\Twig;
 
+use AllowDynamicProperties;
+use App\Repository\AffecterRepository;
 use App\Repository\DemandeRepository;
 use App\Repository\VehiculeRepository;
 use http\Client\Curl\User;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class GlobalVariablesExtension extends AbstractExtension
+#[AllowDynamicProperties] class GlobalVariablesExtension extends AbstractExtension
 {
     private $vehiculeRepository;
     private $demandeRepository;
+    private $affecterRepository;
 
-    public function __construct(VehiculeRepository $vehiculeRepository, DemandeRepository $demandeRepository)
+    public function __construct(VehiculeRepository $vehiculeRepository, DemandeRepository $demandeRepository, AffecterRepository $affecterRepository)
     {
         $this->vehiculeRepository = $vehiculeRepository;
         $this->demandeRepository = $demandeRepository;
+        $this->affecterRepository = $affecterRepository;
     }
 
 
@@ -30,6 +34,7 @@ class GlobalVariablesExtension extends AbstractExtension
             new TwigFunction('nombreTotalVehicules', [$this, 'getNombreTotalVehicules']),
             new TwigFunction('nombreDemandes', [$this, 'getNombreDemandes']),
             new TwigFunction('nombreDemandeVehiculesParUtilisateur', [$this, 'getNombreDemandeVehiculesParUtilisateur']),
+            new TwigFunction('lieuVehiculeMission', [$this, 'getLieuVehiculeMission']),
         ];
     }
 
@@ -51,5 +56,11 @@ class GlobalVariablesExtension extends AbstractExtension
     public function getNombreDemandeVehiculesParUtilisateur(int $idUtilisateur) : int
     {
        return $this->demandeRepository->countAllDemandesByUser($idUtilisateur);
+    }
+
+    public function getLieuVehiculeMission(int $idVehicule) : array
+    {
+        $lieux = $this->affecterRepository->findLieuxByVehiculeId($idVehicule);
+        return array_column($lieux, 'lieu');
     }
 }

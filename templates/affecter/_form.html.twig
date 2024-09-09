@@ -17,7 +17,10 @@
                 <h5>{{ isEdit ? 'Modifier' : 'Ajouter' }} des véhicules et chauffeurs à la demande N°: {{ numdemande }}</h5>
     {{ form_start(form) }}
         {{ form_widget(form) }}
-        <button class="btn btn-primary">Enregistrer</button>
+                <div class=" d-flex justify-content-end">
+                    <button class="p-button p-component p-button-success" style="font-weight: bold">Enregistrer</button>
+                </div>
+
     {{ form_end(form) }}
 
 </div>
