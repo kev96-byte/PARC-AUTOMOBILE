@@ -15,10 +15,12 @@
     <div class="col-sm-4">{{ form_row(registrationForm.email) }}</div>
     <div class="col-sm-4">{{ form_row(registrationForm.telephone) }}</div>
 </div>
+{% if mode != 'edit' %}
 <div class="form-group row mb-3">
     <div class="col-sm-6">{{ form_row(registrationForm.password.first, {'required': (mode == 'add')}) }}</div>
     <div class="col-sm-6">{{ form_row(registrationForm.password.second, {'required': (mode == 'add')}) }}</div>
 </div>
+{% endif %}
 
 <div class="form-group row mb-3">
     <div class="col-sm-6"> {{ form_row(registrationForm.statutCompte) }}</div>

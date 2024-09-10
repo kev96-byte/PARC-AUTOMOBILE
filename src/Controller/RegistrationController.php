@@ -113,20 +113,25 @@ class RegistrationController extends AbstractController
         // Optional: Check if the current user has permission to edit this user
         // $this->denyAccessUnlessGranted('edit', $user);
 
-        $mode = 'edit';
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        ;
+        if( $mode='edit'){
+           $form = $this->createForm(RegistrationFormType::class, $user, ['mode' => $mode]);
+       }else{
+            $form = $this->createForm(RegistrationFormType::class, $user);
+        }
+
         $form->handleRequest($request);
         
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('password')->getData()) {
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $form->get('password')->getData()
-                    )
-                );
-            }
+//            if ($form->get('password')->getData()) {
+//                $user->setPassword(
+//                    $userPasswordHasher->hashPassword(
+//                        $user,
+//                        $form->get('password')->getData()
+//                    )
+//                );
+//            }
 
             $entityManager->flush();
 

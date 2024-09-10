@@ -27,6 +27,7 @@ class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $defaultPassword = 'DefaultPassword123!';
         $builder
 
             ->add('matricule', IntegerType::class, [
@@ -34,6 +35,7 @@ class RegistrationFormType extends AbstractType
                 'required' => true,
                 'label' => 'Matricule',
             ])
+
 
 
             ->add('lastName', TextType::class, [
@@ -88,23 +90,57 @@ class RegistrationFormType extends AbstractType
                     'class'=>'form-control selectpicker',
                 ]
 
-            ])
+            ]);
 
-            ->add('password', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'first_options' => [
-                    'label' => 'Mot de passe',
-                    'attr' => ['class' => 'form-control'],
-                ],
-                'second_options' => [
-                    'label' => 'Confirmer le mot de passe',
-                    'attr' => ['class' => 'form-control'],
-                ],
-                'invalid_message' => 'Les mots de passe ne correspondent pas.',
 
-            ])
+if ($options['mode'] === 'add') {
+    $builder->add('password', RepeatedType::class, [
 
-            ->add('Institution', EntityType::class, [
+        'type' => PasswordType::class,
+        'first_options' => [
+            'label' => 'Mot de passe',
+            'attr' => [
+                'class' => 'form-control',
+                'value' => $defaultPassword // Valeur par défaut pour le mot de passe
+            ],
+            'constraints' => [
+
+                new Length([
+                    'min' => 8,
+                    'minMessage' => 'Le mot de passe doit contenir au moins 8 caractères.',
+                    'max' => 4096, // Limite maximale de Symfony pour la longueur du mot de passe
+                ]),
+                new Regex([
+                    'pattern' => '/[A-Z]/',
+                    'message' => 'Le mot de passe doit contenir au moins une lettre majuscule.',
+                ]),
+                new Regex([
+                    'pattern' => '/[a-z]/',
+                    'message' => 'Le mot de passe doit contenir au moins une lettre minuscule.',
+                ]),
+                new Regex([
+                    'pattern' => '/\d/',
+                    'message' => 'Le mot de passe doit contenir au moins un chiffre.',
+                ]),
+                new Regex([
+                    'pattern' => '/[\W]/', // Pour exiger un caractère spécial (non alphanumérique)
+                    'message' => 'Le mot de passe doit contenir au moins un caractère spécial (par exemple, @, #, $, etc.).',
+                ]),
+            ],
+        ],
+        'second_options' => [
+            'label' => 'Confirmer le mot de passe',
+            'attr' => [
+                'class' => 'form-control',
+                'value' => $defaultPassword, // Utilisation de la même variable pour la confirmation
+            ],
+        ],
+        'invalid_message' => 'Les mots de passe ne correspondent pas.',
+    ]);
+}
+
+
+            $builder->add('Institution', EntityType::class, [
                 'required' => true,
                 'class' => Institution::class,
                 'query_builder' => function (EntityRepository $er) { return $er->createQueryBuilder('n')
