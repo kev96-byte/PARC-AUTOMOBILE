@@ -32,7 +32,9 @@ class MainController extends AbstractController
              ->setMatricule('112345');
              $em->persist($user);
              $em->flush();  */
-                         
+        if($this->getUser()->isFirstLogin()){
+            return $this->redirectToRoute('app_change_password');
+        }
         return $this->render('base.html.twig', [
             'controller_name' => 'MainController',
             'vehicules' => $vehicules,

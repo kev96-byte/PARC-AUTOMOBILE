@@ -509,4 +509,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isFirstLogin = true;
+
+    public function isFirstLogin(): bool
+    {
+        return $this->isFirstLogin;
+    }
+
+    public function setIsFirstLogin(bool $isFirstLogin): self
+    {
+        $this->isFirstLogin = $isFirstLogin;
+        return $this;
+    }
+
 }

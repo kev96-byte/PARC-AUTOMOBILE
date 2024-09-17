@@ -7,25 +7,38 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20240724192430 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Add nbre_km_pour_renouveller_vidange and kilometrage_courant columns to vehicule table if they don\'t exist';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE vehicule ADD nbre_km_pour_renouveller_vidange INT DEFAULT NULL, ADD kilometrage_courant INT DEFAULT NULL');
+        // Vérifiez si les colonnes existent avant de les ajouter
+        $table = $schema->getTable('vehicule');
+
+        if (!$table->hasColumn('nbre_km_pour_renouveller_vidange')) {
+            $this->addSql('ALTER TABLE vehicule ADD nbre_km_pour_renouveller_vidange INT DEFAULT NULL');
+        }
+
+        if (!$table->hasColumn('kilometrage_courant')) {
+            $this->addSql('ALTER TABLE vehicule ADD kilometrage_courant INT DEFAULT NULL');
+        }
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE vehicule DROP nbre_km_pour_renouveller_vidange, DROP kilometrage_courant');
+        // Vérifiez si les colonnes existent avant de les supprimer
+        $table = $schema->getTable('vehicule');
+
+        if ($table->hasColumn('nbre_km_pour_renouveller_vidange')) {
+            $this->addSql('ALTER TABLE vehicule DROP nbre_km_pour_renouveller_vidange');
+        }
+
+        if ($table->hasColumn('kilometrage_courant')) {
+            $this->addSql('ALTER TABLE vehicule DROP kilometrage_courant');
+        }
     }
 }

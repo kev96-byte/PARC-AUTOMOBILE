@@ -55,6 +55,7 @@ class RegistrationController extends AbstractController
                     $form->get('password')->getData()
                 )
             );
+            $user->setIsFirstLogin(true);
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'Ajout effectué avec succès.');
