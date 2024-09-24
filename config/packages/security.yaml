@@ -35,9 +35,9 @@ security:
         ROLE_USER: ~
         ROLE_POINT_FOCAL: ROLE_USER
         ROLE_RESPONSABLE_STRUCTURE: ROLE_USER
-        ROLE_CHEF_PARC: ROLE_USER
+        ROLE_VALIDATEUR: ROLE_USER
         ROLE_CABINET: ROLE_USER
-        ROLE_ADMIN: [ROLE_POINT_FOCAL, ROLE_RESPONSABLE_STRUCTURE, ROLE_CHEF_PARC, ROLE_CABINET]
+        ROLE_ADMIN: [ROLE_POINT_FOCAL, ROLE_RESPONSABLE_STRUCTURE, ROLE_VALIDATEUR, ROLE_CABINET]
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

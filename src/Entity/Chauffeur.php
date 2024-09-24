@@ -40,7 +40,7 @@ class Chauffeur
         pattern: '/^(\+229)?\s?(20|21|22|23|40|41|42|43|44|45|50|51|52|53|54|55|56|57|58|59|60|62|63|64|65|66|67|68|69|90|91|92|93|94|95|96|97|98|99)\s?\d{2}\s?\d{2}\s?\d{2}$/',
         match: true,
         message: 'Numéro de téléphone incorrecte',
-    )]  
+    )]
     private ?string $telephoneChauffeur = null;
 
     #[ORM\Column(length: 255)]
@@ -71,6 +71,9 @@ class Chauffeur
      */
     #[ORM\OneToMany(targetEntity: Affecter::class, mappedBy: 'chauffeur')]
     private Collection $affecters;
+
+    #[ORM\ManyToOne(inversedBy: 'chauffeurs')]
+    private ?Parc $parc = null;
 
     public function __construct()
     {
@@ -228,6 +231,18 @@ class Chauffeur
                 $affecter->setChauffeur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getParc(): ?Parc
+    {
+        return $this->parc;
+    }
+
+    public function setParc(?Parc $parc): static
+    {
+        $this->parc = $parc;
 
         return $this;
     }

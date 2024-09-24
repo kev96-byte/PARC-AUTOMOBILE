@@ -55,7 +55,7 @@ class Structure
     #[ORM\ManyToOne(inversedBy: 'structure')]
     private ?Parc $parc = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'structure')]
     private ?User $responsableStructure = null;
 
     /**

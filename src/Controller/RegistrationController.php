@@ -157,16 +157,27 @@ class RegistrationController extends AbstractController
         if (!$user) {
             throw new NotFoundHttpException('User not found');
         }
-        $token = $request->request->get('_token');
-        if ($this->isCsrfTokenValid('delete' . $user->getId(), $token)) {
+//        $token = $request->request->get('_token');
+//        if ($this->isCsrfTokenValid('delete' . $user->getId(), $token)) {
+//        // Build the query to check if the user has any associated Demande records
+//        $qb = $this->entityManager->createQueryBuilder();
+//        $qb->select('count(d.id)')
+//            ->from(Demande::class, 'd')
+//            ->where('d.demander = :user')
+//            ->orWhere('d.demandesValidateurs = :user')
+//            ->orWhere('d.demandesTraiteur = :user')
+//            ->setParameter('user', $user);
+
+    $token = $request->request->get('_token');
+    if ($this->isCsrfTokenValid('delete' . $user->getId(), $token)) {
         // Build the query to check if the user has any associated Demande records
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select('count(d.id)')
             ->from(Demande::class, 'd')
             ->where('d.demander = :user')
-            ->orWhere('d.demandesValidateurs = :user')
-            ->orWhere('d.demandesTraiteur = :user')
-            ->setParameter('user', $user);
+            ->orWhere('d.validateurStructure = :user')
+            ->orWhere('d.traiterPar = :user')
+            ->setParameter('user',$user);
         
         $userInterventionCount = $qb->getQuery()->getSingleScalarResult();
 

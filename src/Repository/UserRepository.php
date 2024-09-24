@@ -80,9 +80,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     
-        // Filtrer les utilisateurs pour ne garder que ceux dont le rôle est strictement égal à ROLE_CHEF_PARC
+        // Filtrer les utilisateurs pour ne garder que ceux dont le rôle est strictement égal à ROLE_VALIDATEUR
         return array_filter($users, function($user) {
-            return in_array('ROLE_CHEF_PARC', $user->getRoles());
+            return in_array('ROLE_VALIDATEUR', $user->getRoles());
         });
     }
 
@@ -94,7 +94,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     
-        // Filtrer les utilisateurs pour ne garder que ceux dont le rôle est strictement égal à ROLE_CHEF_PARC
+        // Filtrer les utilisateurs pour ne garder que ceux dont le rôle est strictement égal à ROLE_VALIDATEUR
         return array_filter($users, function($user) {
             return in_array('ROLE_RESPONSABLE_STRUCTURE', $user->getRoles());
         });

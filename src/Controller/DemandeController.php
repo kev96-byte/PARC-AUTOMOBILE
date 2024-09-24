@@ -89,7 +89,7 @@ class DemandeController extends AbstractController
                 'statut' => 'Initial',
                 'deleteAt' => null,
             ]);
-        } elseif (in_array('ROLE_CHEF_PARC', $roles, true)) {
+        } elseif (in_array('ROLE_VALIDATEUR', $roles, true)) {
             $demandes = []; // Initialisation du tableau pour accumuler les demandes
 
             // Récupération du parc du chef de parc
@@ -177,7 +177,7 @@ class DemandeController extends AbstractController
 
         //3-  Mise à jour du kilométrage
         #[Route('/update-kilometrage', name: 'demande.update_kilometrage', methods: ['POST'])]
-        #[IsGranted('ROLE_CHEF_PARC')]
+        #[IsGranted('ROLE_VALIDATEUR')]
         public function updateKilometrage(Request $request, TamponAffecterRepository $tamponAffecterRepository): JsonResponse
         {
             $user = $this->getUser();
@@ -203,7 +203,7 @@ class DemandeController extends AbstractController
 
         //4-  Libération véhicules et chauffeurs
         #[Route('/finalize', name: 'demande.finalize', methods: ['POST'])]
-        #[IsGranted('ROLE_CHEF_PARC')]
+        #[IsGranted('ROLE_VALIDATEUR')]
         public function finalize(Request $request, EntityManagerInterface $entityManager, UserInterface $currentUser)
         {
             $user = $this->getUser();
@@ -290,7 +290,7 @@ class DemandeController extends AbstractController
                 'statut' => 'Rejeté',
                 'deleteAt' => null,
             ]);
-        } elseif (in_array('ROLE_CHEF_PARC', $roles, true)) {
+        } elseif (in_array('ROLE_VALIDATEUR', $roles, true)) {
             $demandes = []; // Initialisation du tableau pour accumuler les demandes
 
             // Récupération du parc du chef de parc
@@ -352,7 +352,7 @@ class DemandeController extends AbstractController
                 'statut' => 'Approuvé',
                 'deleteAt' => null,
             ]);
-        } elseif (in_array('ROLE_CHEF_PARC', $roles, true)) {
+        } elseif (in_array('ROLE_VALIDATEUR', $roles, true)) {
             $demandes = []; // Initialisation du tableau pour accumuler les demandes
 
             // Récupération du parc du chef de parc
@@ -415,7 +415,7 @@ class DemandeController extends AbstractController
                 'statut' => 'Validé',
                 'deleteAt' => null,
             ]);
-        } elseif (in_array('ROLE_CHEF_PARC', $roles, true)) {
+        } elseif (in_array('ROLE_VALIDATEUR', $roles, true)) {
             $demandes = []; // Initialisation du tableau pour accumuler les demandes
 
             // Récupération du parc du chef de parc
@@ -479,7 +479,7 @@ public function finalisees(DemandeRepository $demandeRepository): Response
             'statut' => 'Finalisé',
             'deleteAt' => null,
         ]);
-    } elseif (in_array('ROLE_CHEF_PARC', $roles, true)) {
+    } elseif (in_array('ROLE_VALIDATEUR', $roles, true)) {
         $demandes = []; // Initialisation du tableau pour accumuler les demandes
 
         // Récupération du parc du chef de parc
@@ -693,7 +693,7 @@ public function new(Request $request): Response
     public function dismiss(Request $request, Demande $demande): Response
     {
         // Vérifie si l'utilisateur a l'un des rôles requis
-        if (!$this->isGranted('ROLE_RESPONSABLE_STRUCTURE') && !$this->isGranted('ROLE_CHEF_PARC')) {
+        if (!$this->isGranted('ROLE_RESPONSABLE_STRUCTURE') && !$this->isGranted('ROLE_VALIDATEUR')) {
             throw new AccessDeniedException('Vous n\'êtes pas autorisé à avoir accès à cette ressource.');
         }
     
@@ -711,7 +711,7 @@ public function new(Request $request): Response
             $user = $this->getUser();
     
             // Vérifie le rôle de l'utilisateur connecté et met à jour l'entité Demande en conséquence
-            if ($this->isGranted('ROLE_CHEF_PARC')) {
+            if ($this->isGranted('ROLE_VALIDATEUR')) {
                 $demande->setTraiterPar($user);
             } elseif ($this->isGranted('ROLE_RESPONSABLE_STRUCTURE')) {
                 $demande->setValidateurStructure($user);
@@ -727,7 +727,7 @@ public function new(Request $request): Response
 
 
     #[Route('/{id}/traiter', name: 'demande.traiter', methods: ['POST'])]
-    #[IsGranted('ROLE_CHEF_PARC')]
+    #[IsGranted('ROLE_VALIDATEUR')]
     public function traiter(Request $request, EntityManagerInterface $em, $id): Response
     {
         // Récupérer l'utilisateur actuel
@@ -828,7 +828,7 @@ public function new(Request $request): Response
 
 
     #[Route('/api/available-vehicles-and-drivers', name: 'api_available_vehicles_and_drivers', methods: ['POST'])]
-    #[IsGranted('ROLE_CHEF_PARC')]
+    #[IsGranted('ROLE_VALIDATEUR')]
     public function availableVehiclesAndDrivers(): JsonResponse
     {
         // Récupérez l'utilisateur connecté

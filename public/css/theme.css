@@ -4725,6 +4725,13 @@
       z-index: 1;
     }
   }
+
+@media (max-width: 991px){
+    .layout-sidebar.sidebar-visible {
+        transform: translateX(0)!important;
+        top: unset!important; /* Enlève la valeur 'top' lorsque la sidebar est visible */
+    }
+}
   .p-panelmenu .p-panelmenu-header > a {
     padding: 1.25rem;
     border: 1px solid #dee2e6;
@@ -5854,6 +5861,9 @@ label.required::before {
     border: none !important;
 }
 
+.router-link-exact-active{
+    background: #DAEBFB!important;
+}
 .login_space{
     position: absolute;
     top: 50px; /* Hauteur de l'en-tête */

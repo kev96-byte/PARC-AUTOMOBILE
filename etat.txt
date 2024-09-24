@@ -30,7 +30,7 @@ En bas du tableau tu mettras
 "Chef Parc"                                                        "Responsable structure"                                                      
 
 
-Ici tu afficheras à gauche le nom et prenom de l'utilisateur qui a le role ROLE_CHEF_PARC dans la même institution  que l'utilisateur connecté et à droite le mom et prenom de l'utilisateur qui a le rôle ROLE_RESPONSABLE_STRUCTURE dans la même institution que l'utilisateur connecté      
+Ici tu afficheras à gauche le nom et prenom de l'utilisateur qui a le role ROLE_VALIDATEUR dans la même institution  que l'utilisateur connecté et à droite le mom et prenom de l'utilisateur qui a le rôle ROLE_RESPONSABLE_STRUCTURE dans la même institution que l'utilisateur connecté      
 
 
 

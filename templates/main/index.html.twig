@@ -74,7 +74,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                            {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
+                            {% if is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_CABINET') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des matériels roulants">Gestion des matériels roulants</div>
                                     <ul role="menu">
@@ -138,7 +138,7 @@
                                             {% if is_granted('ROLE_POINT_FOCAL') and not is_granted('ROLE_ADMIN') %}
                                                 <span>Demander véhicules</span>
                                             {% endif %}
-                                            {% if (is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC')) and not is_granted('ROLE_ADMIN') %}
+                                            {% if (is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_VALIDATEUR')) and not is_granted('ROLE_ADMIN') %}
                                                 <span>Traiter demandes</span>
                                             {% endif %}
                                             {% if (is_granted('ROLE_CABINET') and not is_granted('ROLE_ADMIN')) or is_granted('ROLE_ADMIN') %}

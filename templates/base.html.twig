@@ -13,6 +13,7 @@
             <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
             <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+            <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
             <link href="{{ asset('css/theme.css') }}" rel="stylesheet">    
             <link href="{{ asset('css/mystyle.scss') }}" rel="stylesheet">    
             <link href="{{ asset('css/2.3e0fb6e6.chunk.css') }}" rel="stylesheet">
@@ -38,12 +39,10 @@
                             <img src="{{ asset('img/Logos/LOGO_1.png') }}" alt="Logo Ministère de la Santé" class="img-fluid" style="max-height: 50px;">
                         </a>
                         
-                        <button type="button" class="p-link  layout-menu-button layout-topbar-button">
-                            <i class="fa fa-bars"></i>
+                        <button type="button" class="p-link d-lg-none  layout-menu-button layout-topbar-button">
+                            <i class="fa fa-bars" id="toggleSidebar" onclick="toggleResponsiveSidebar()"></i>
                         </button>
-                        <button type="button" class="p-link layout-topbar-menu-button  layout-topbar-button">
-                            <i class="fa fa-ellipsis-v"></i>
-                        </button>
+
 
 
 
@@ -83,60 +82,59 @@
                         </ul>
                     </div>
                     <div class="layout-sidebar">
+                        {% set current_route = app.request.attributes.get('_route') %}
                         <div class="layout-menu-container">
                             <ul class="layout-menu" role="menu">
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Accueil">Accueil</div>
                                     <ul role="menu">
-                                        <li class="" role="none">
-                                            <a aria-current="page" class="p-ripple router-link-active router-link-exact-active" aria-label="Tableau de bord" role="menuitem" href="{{ path('main.index') }}">
-                                                <i class="fa fa-home"></i>
+                                        <li   role="none">
+                                            <a aria-current="page" class="p-ripple {{ current_route == 'main.index' ? 'router-link-active router-link-exact-active' : '' }} d-flex align-items-center" aria-label="Tableau de bord" role="menuitem" href="{{ path('main.index') }}">
+                                                <img src="{{ asset('img/icons/maison.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Tableau de bord</span>
-                                                <span class="p-ink"></span>
                                             </a>
                                         </li>
                                     </ul>
                                 </li>
-                            {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
+                            {% if is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_CABINET') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des matériels roulants">Gestion des matériels roulants</div>
                                     <ul role="menu">
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Type matériel roulant" role="menuitem" href="{{ path('TypeVehicule.index') }}">
-                                                <i class="fa fa-list"></i>
+                                        <li role="none">
+                                            <a class="p-ripple {{ current_route starts with 'TypeVehicule' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="Type matériel roulant" role="menuitem" href="{{ path('TypeVehicule.index') }}">
+                                                <img src="{{ asset('img/icons/voiture-cle.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Type matériel roulant</span>
-                                                <span class="p-ink"></span>
                                             </a>
                                         </li>
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="véhicule" role="menuitem" href="{{ path('vehicule.index') }}">
-                                                <i class="fa fa-car"></i>
+                                            <a class="p-ripple {{ current_route starts with 'vehicule' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="véhicule" data-turbo-frame="my-content" role="menuitem" href="{{ path('vehicule.index') }}">
+                                                <img src="{{ asset('img/icons/voitures.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Véhicules</span><span class="p-ink"></span>
                                             </a>
                                         </li>
 
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="véhicule disponibles" role="menuitem" href="{{ path('vehicules.disponibles') }}">
-                                                <i class="fa fa-car"></i>
+                                            <a class="p-ripple p-ripple {{ current_route == 'vehicules.disponibles' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="véhicule disponibles" role="menuitem" href="{{ path('vehicules.disponibles') }}">
+                                                <img src="{{ asset('img/icons/auto.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Véhicules disponibles</span><span class="p-ink"></span>
                                             </a>
                                         </li>
 
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="assurance" role="menuitem" href="{{ path('assurance.index') }}">
-                                                <i class="fa fa-folder"></i>
+                                            <a class="p-ripple {{ current_route starts with 'assurance' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="assurance" role="menuitem" href="{{ path('assurance.index') }}">
+                                                <img src="{{ asset('img/icons/document-de-conformite.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Assurance</span><span class="p-ink"></span>
                                             </a>
                                         </li>
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="visite" role="menuitem" href="{{ path('visite.index') }}">
-                                                <i class="fa fa-tools"></i>
-                                                <span>visite technique</span><span class="p-ink"></span>
+                                            <a class="p-ripple {{ current_route starts with 'visite' ? 'router-link-active router-link-exact-active' : '' }}"aria-label="visite" role="menuitem" href="{{ path('visite.index') }}">
+                                                <img src="{{ asset('img/icons/mecanicien-automobile.svg') }}" alt="home" style="width: 1.2em;">
+                                                <span>Visite technique</span><span class="p-ink"></span>
                                             </a>
                                         </li>
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="vidange" role="menuitem" href="{{ path('vidange.index') }}">
-                                                <i class="fas fa-wrench"></i>
+                                            <a class="p-ripple {{ current_route starts with 'vidange' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="vidange" role="menuitem" href="{{ path('vidange.index') }}">
+                                                <img src="{{ asset('img/icons/burette-de-graissage.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Vidange</span><span class="p-ink"></span>
                                             </a>
                                         </li>
@@ -146,8 +144,8 @@
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des Cva">Gestion des Cva</div>
                                     <ul role="menu">
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Cva" role="menuitem" href="{{ path('chauffeur.index') }}">
-                                                <i class="fa fa-id-badge"></i>
+                                            <a class="p-ripple {{ current_route starts with 'chauffeur' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="Cva" role="menuitem" href="{{ path('chauffeur.index') }}">
+                                                <img src="{{ asset('img/icons/homme-chauffeur.svg') }}" alt="cva" style="width: 1.2em;">
                                                 <span>Cva</span>
                                                 <span class="p-ink"></span>
                                             </a>
@@ -162,7 +160,7 @@
                                     <ul role="menu">
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Cva" role="menuitem" href="{{ path('parc.index') }}">
-                                                <i class="fas fa-truck"></i>
+                                                <img src="{{ asset('img/icons/garage-voiture.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Parc</span>
                                                 <span class="p-ink"></span>
                                             </a>
@@ -177,12 +175,12 @@
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des missions">Gestion des missions</div>
                                     <ul role="menu">
                                         <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Demande de véhicule" role="menuitem" href="{{ path('demande.index') }}">
+                                            <a class="p-ripple {{ current_route starts with 'demande' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="Demande de véhicule" role="menuitem" href="{{ path('demande.index') }}">
 
                                                 {% if is_granted('ROLE_POINT_FOCAL') and not is_granted('ROLE_ADMIN') %}
                                                     <i class="fa fa-car"></i><span>Demander véhicules</span>
                                                 {% endif %}
-                                                {% if (is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_CHEF_PARC')) and not is_granted('ROLE_ADMIN')  %}
+                                                {% if (is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_VALIDATEUR')) and not is_granted('ROLE_ADMIN')  %}
                                                     <i class="fa fa-car"></i> <span>Traiter demandes</span>
                                                 {% endif %}
                                                 <span class="p-ink"></span>
@@ -192,17 +190,19 @@
 
                                             <li class="" role="none">
                                                 <a class="p-ripple" aria-label="Demandes approuvées" role="menuitem" href="{{ path('demande.approuvees') }}">
-                                                    <i class="fa fa-check-circle"></i>
-                                                    {% if (is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_RESPONSABLE_STRUCTURE')) and not is_granted('ROLE_ADMIN')  %}
+
+                                                    {% if (is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_RESPONSABLE_STRUCTURE')) and not is_granted('ROLE_ADMIN')  %}
+                                                        <i class="fa fa-check-circle"></i>
                                                         <span>Traiter demandes</span>
                                                     {% else %}
+                                                        <img src="{{ asset('img/icons/verification-de-lhexagone.svg') }}" alt="home" style="width: 1.2em;">
                                                         <span>Demandes approuvées</span>
                                                     {% endif %}
                                                     <span class="p-ink"></span>
                                                 </a>
                                             </li>
 
-                                            {% if (is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_RESPONSABLE_STRUCTURE')) and not is_granted('ROLE_ADMIN')  %}
+                                            {% if (is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_RESPONSABLE_STRUCTURE')) and not is_granted('ROLE_ADMIN')  %}
                                                 <li class="" role="none">
                                                     <a class="p-ripple" aria-label="Finaliser demandes" role="menuitem" href="{{ path('demandes.expirees') }}">
                                                         <i class="fa fa-tasks"></i>
@@ -213,7 +213,7 @@
                                             {% endif %}
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Demandes rejetées" role="menuitem" href="{{ path('demande.rejetees') }}">
-                                                <i class="fa fa-times-circle"></i>
+                                                <img src="{{ asset('img/icons/supprimer-le-document.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Demandes rejetées</span>
                                                 <span class="p-ink"></span>
                                             </a>
@@ -221,7 +221,7 @@
 
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Demandes validées" role="menuitem" href="{{ path('demande.validees') }}">
-                                                <i class="fa fa-check-square"></i>
+                                                <img src="{{ asset('img/icons/document-accepte.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Demandes validées</span>
                                                 <span class="p-ink"></span>
                                             </a>
@@ -229,7 +229,7 @@
 
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Retour de mission validés" role="menuitem" href="{{ path('demande.finalisees') }}">
-                                                <i class="fa fa-check-square"></i>
+                                                <img src="{{ asset('img/icons/document-de-conformite.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Retour de mission validés</span>
                                                 <span class="p-ink"></span>
                                             </a>
@@ -246,14 +246,14 @@
                                 <ul role="menu">
                                     <li class="" role="none">
                                         <a class="p-ripple" aria-label="Département" role="menuitem" href="{{ path('departement.index') }}">
-                                            <i class="fa fa-sitemap"></i>
+                                            <img src="{{ asset('img/icons/structure-du-departement.svg') }}" alt="home" style="width: 1.2em;">
                                             <span>Département</span>
                                             <span class="p-ink"></span>
                                         </a>
                                     </li>
                                     <li class="" role="none">
                                         <a class="p-ripple" aria-label="Commune" role="menuitem" href="{{ path('commune.index') }}">
-                                            <i class=" fa fa-city"></i>
+                                            <img src="{{ asset('img/icons/banc-arbre.svg') }}" alt="home" style="width: 1.2em;">
                                             <span>Commune</span>
                                             <span class="p-ink"></span>
                                         </a>
@@ -267,29 +267,28 @@
                                     <ul role="menu">
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Institution" role="menuitem" href="{{ path('institution.index') }}">
-                                                <i class="fa fa-building"></i>
+                                                <img src="{{ asset('img/icons/banque.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Institution</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Niveau" role="menuitem" href="{{ path('niveau.index') }}">
-                                                <i class="fa fa-signal"></i>
+                                                <img src="{{ asset('img/icons/niveau-inferieur-alt.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Niveau</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="TypeStructure" role="menuitem" href="{{ path('TypeStructure.index') }}">
-                                                <i class="fa fa-project-diagram"></i>
+                                                <img src="{{ asset('img/icons/mallette.svg') }}" alt="home" style="width: 1em;">
                                                 <span>Type Structure</span>
-                                                <span class="p-ink"></span>
                                             </a>
                                         </li>
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Structure" role="menuitem" href="{{ path('structure.index') }}">
-                                                <i class="fa fa-th-large"></i>
-                                                <span>Structure</span>
+                                                <img src="{{ asset('img/icons/batiment.svg') }}" alt="home" style="width: 1em;">
+                                                <span>Structures</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
@@ -300,8 +299,8 @@
                                     <ul role="menu">
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Utilisateur" role="menuitem" href="{{ path('user.index') }}">
-                                                <i class="fa fa-users"></i>
-                                                <span>Utilisateur</span>
+                                                <img src="{{ asset('img/icons/utilisateurs-alt.svg') }}" alt="home" style="width: 1em;">
+                                                <span>Utilisateurs</span>
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
@@ -314,7 +313,7 @@
 
 
                     <div class="layout-main-container">
-                <div class="layout-main">
+                <div class="layout-main" >
 
                         {% block mycontent %}
                         <div class="row">
@@ -356,8 +355,8 @@
                                         <div class="card-body d-flex justify-content-between align-items-center">
                                             <div class="d-flex align-items-center justify-content-between w-100">
                                                 <i class="fas fa-car mr-4 dash-icon"></i>
-                                                <h6 class="text-black-50">Demandes {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINE') %} totales {% endif%} : </h6>
-                                                {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINE') %}
+                                                <h6 class="text-black-50">Demandes {% if is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_CABINE') %} totales {% endif%} : </h6>
+                                                {% if is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_CABINE') %}
                                                 <span class="result">{{nombreDemandes()}} </span>
                                                 {% else %}
                                                 <span class="result" >{{nombreDemandeVehiculesParUtilisateur(get_user().id)}}</span>
@@ -369,7 +368,7 @@
                                 {% endblock %}
 
                         </div>
-                    {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
+                    {% if is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_CABINET') %}
                         <div class="row">
                             <div class="card w-100">
                                 <div class="table-responsive">
@@ -456,8 +455,31 @@
             `);
         }
     </script>
+            <script>
+                function toggleResponsiveSidebar() {
+                    const sidebar = document.querySelector('.layout-sidebar');
 
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+                    // Ajoute ou supprime la classe 'sidebar-visible' pour afficher/masquer la sidebar
+                    if (window.innerWidth <= 991) {
+                        sidebar.classList.toggle('sidebar-visible');
+                    }
+                }
+
+                // Fermer la barre latérale en cliquant à l'extérieur
+                document.addEventListener('click', (event) => {
+                    const sidebar = document.querySelector('.layout-sidebar');
+                    const toggleButton = document.querySelector('#toggleSidebar');
+
+                    // Si on clique en dehors de la sidebar et du bouton
+                    if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
+                        sidebar.classList.remove('sidebar-visible');
+                    }
+                });
+            </script>
+
+
+
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script charset="utf-8" src="{{ asset('js/3.d3d46a21.chunk.js') }}"></script> 
     <script src="vendor/chart.js/Chart.min.js"></script>
     <script src="{{ asset('js/chart-area-demo.js') }}"></script>

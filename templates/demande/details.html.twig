@@ -33,7 +33,7 @@
 
         <hr>
 
-            {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN') %}
                 <form id="updateKilometrageForm" method="POST" action="{{ path('demande.update_kilometrage') }}">
                     <h6> Mise à jour du kilométrage des véhicules </h6>
                     <div class="form-group">
@@ -57,7 +57,7 @@
                         <th>Matricule</th>
                         <th>Kilométrage</th>
                         <th>Nom et Prénom(s) Chauffeur</th>
-                        {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+                        {% if is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN') %}
                             <th>Action</th>
                         {% endif %}
                     </tr>
@@ -68,7 +68,7 @@
                             <td>{{ item.tamponMatricule }}</td>
                             <td class="tampon-kilometrage">{{ item.tamponKilometrage }}</td>
                             <td>{{ item.tamponNomChauffeur }} {{ item.tamponPrenomChauffeur }}</td>
-                            {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+                            {% if is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN') %}
                                 <td>
                                     <button type="button" class="btn btn-secondary"
                                             data-matricule="{{ item.tamponMatricule|e('html_attr') }}"
@@ -81,7 +81,7 @@
                 </tbody>
             </table>
 
-            {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') %}
+            {% if is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN') %}
                 <button type="button" class="btn btn-success d-block mx-auto mt-4" id="finalizeButton" onclick="showFinalizeModal()">Valider</button>
             {% endif %}
         </div>

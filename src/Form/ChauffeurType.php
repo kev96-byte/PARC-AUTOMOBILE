@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Chauffeur;
 use App\Entity\Institution;
+use App\Entity\Parc;
 use App\Entity\TypeChauffeur;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -37,6 +38,15 @@ class ChauffeurType extends AbstractType
                     'class'=>'form-control selectpicker', 'data-live-search'=>'true',
                 ]
           ])
+
+            ->add('parc', EntityType::class, [
+                'class' => Parc::class,
+                'choice_label' => 'nomParc',  // Assurez-vous que 'nom' est un champ dans l'entité Parc que vous voulez afficher
+                'placeholder' => 'Sélectionnez un parc',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
+            ])
 
           ->add('matriculeChauffeur', TextType::class, [
             'required' => true,
@@ -72,7 +82,7 @@ class ChauffeurType extends AbstractType
            ->add('photoChauffeurUrl', HiddenType::class, [
                 'mapped' => false,
             ])
-            
+
             ->add('photoChauffeur', FileType::class, [
                 'label' => 'Télécharger la photo du CVA',
                 'mapped' => false,
