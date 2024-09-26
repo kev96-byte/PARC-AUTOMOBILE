@@ -79,7 +79,7 @@ class RegistrationFormType extends AbstractType
                     'Utilisateur simple' => 'ROLE_USER',
                     'Point Focal' => 'ROLE_POINT_FOCAL',
                     'Responsable de Structure' => 'ROLE_RESPONSABLE_STRUCTURE',
-                    'Chef Parc' => 'ROLE_VALIDATEUR',
+                    'Validateur' => 'ROLE_VALIDATEUR',
                     'Membre du cabinet' => 'ROLE_CABINET',
                     'Administrateur' => 'ROLE_ADMIN'
                 ],

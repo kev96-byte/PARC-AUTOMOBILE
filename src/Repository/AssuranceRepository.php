@@ -17,15 +17,32 @@ class AssuranceRepository extends ServiceEntityRepository
     }
 
     public function findLatestByVehicule($vehiculeId)
-{
-    return $this->createQueryBuilder('a')
-        ->where('a.vehicule = :vehiculeId')
-        ->setParameter('vehiculeId', $vehiculeId)
-        ->orderBy('a.dateFinAssurance', 'DESC')
-        ->setMaxResults(1)
-        ->getQuery()
-        ->getOneOrNullResult();
-}
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.vehicule = :vehiculeId')
+            ->setParameter('vehiculeId', $vehiculeId)
+            ->orderBy('a.dateFinAssurance', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
+
+    public function countAssurancesNonvalides(): int
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->where('a.dateFinAssurance < :today') // Assurance non valide
+            ->andWhere('a.dateFinAssurance = (
+            SELECT MAX(a2.dateFinAssurance)
+            FROM App\Entity\Assurance a2
+            WHERE a2.vehicule = a.vehicule
+        )') // Dernière assurance pour chaque véhicule
+            ->setParameter('today', new \DateTime());
+        return (int) $qb->getQuery()->getSingleScalarResult();
+
+    }
 
     //    /**
     //     * @return Assurance[] Returns an array of Assurance objects

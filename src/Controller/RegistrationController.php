@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Parc;
 use App\Entity\User;
 use App\Entity\Demande;
+use App\Entity\Structure;
 use App\Security\EmailVerifier;
 use App\Form\RegistrationFormType;
 use Symfony\Component\Mime\Address;
@@ -55,20 +57,19 @@ class RegistrationController extends AbstractController
                     $form->get('password')->getData()
                 )
             );
-            $user->setIsFirstLogin(true);
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addFlash('success', 'Ajout effectué avec succès.');
             return $this->redirectToRoute('user.index', [], Response::HTTP_SEE_OTHER);
 
             // generate a signed url and email it to the user
-/*             $this->emailVerifier->sendEmailConfirmation('²&_verify_email', $user,
-                (new TemplatedEmail())
-                    ->from(new Address('meboko@gouv.bj', 'Support'))
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            ); */
+            /*             $this->emailVerifier->sendEmailConfirmation('²&_verify_email', $user,
+                            (new TemplatedEmail())
+                                ->from(new Address('meboko@gouv.bj', 'Support'))
+                                ->to($user->getEmail())
+                                ->subject('Please Confirm your Email')
+                                ->htmlTemplate('registration/confirmation_email.html.twig')
+                        ); */
 
             // do anything else you need here, like send an email
 
@@ -116,13 +117,13 @@ class RegistrationController extends AbstractController
 
         ;
         if( $mode='edit'){
-           $form = $this->createForm(RegistrationFormType::class, $user, ['mode' => $mode]);
-       }else{
+            $form = $this->createForm(RegistrationFormType::class, $user, ['mode' => $mode]);
+        }else{
             $form = $this->createForm(RegistrationFormType::class, $user);
         }
 
         $form->handleRequest($request);
-        
+
 
         if ($form->isSubmitted() && $form->isValid()) {
 //            if ($form->get('password')->getData()) {
@@ -150,52 +151,60 @@ class RegistrationController extends AbstractController
 
 
 
-#[Route('/{id}', name: 'user.delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'user.delete', methods: ['POST'])]
     public function delete(int $id, Request $request): Response
-    {        
+    {
         $user = $this->entityManager->getRepository(User::class)->find($id);
         if (!$user) {
             throw new NotFoundHttpException('User not found');
         }
-//        $token = $request->request->get('_token');
-//        if ($this->isCsrfTokenValid('delete' . $user->getId(), $token)) {
-//        // Build the query to check if the user has any associated Demande records
-//        $qb = $this->entityManager->createQueryBuilder();
-//        $qb->select('count(d.id)')
-//            ->from(Demande::class, 'd')
-//            ->where('d.demander = :user')
-//            ->orWhere('d.demandesValidateurs = :user')
-//            ->orWhere('d.demandesTraiteur = :user')
-//            ->setParameter('user', $user);
+        $token = $request->request->get('_token');
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $token)) {
+            // Build the query to check if the user has any associated Demande records
+            $qb = $this->entityManager->createQueryBuilder();
+            $qb->select('count(d.id)')
+                ->from(Demande::class, 'd')
+                ->where('d.demander = :user')
+                ->orWhere('d.validateurStructure = :user')
+                ->orWhere('d.traiterPar = :user')
+                ->setParameter('user', $user);
+            $userInterventionDemandeCount = $qb->getQuery()->getSingleScalarResult();
 
-    $token = $request->request->get('_token');
-    if ($this->isCsrfTokenValid('delete' . $user->getId(), $token)) {
-        // Build the query to check if the user has any associated Demande records
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->select('count(d.id)')
-            ->from(Demande::class, 'd')
-            ->where('d.demander = :user')
-            ->orWhere('d.validateurStructure = :user')
-            ->orWhere('d.traiterPar = :user')
-            ->setParameter('user',$user);
-        
-        $userInterventionCount = $qb->getQuery()->getSingleScalarResult();
+            // Build the query to check if the user has any associated Demande records
+            $qb2 = $this->entityManager->createQueryBuilder();
+            $qb2->select('count(s.id)')
+                ->from(Structure::class, 's')
+                ->where('s.responsableStructure = :user')
+                ->setParameter('user', $user);
+            $userInterventionStructureCount = $qb2->getQuery()->getSingleScalarResult();
 
-        if ($userInterventionCount > 0) {
-            throw new AccessDeniedHttpException('Vous ne pouvez pas supprimer un utilisateur associé à une demande de véhicule.');
-        } else {
-            $user->setDeleteAt(new \DateTimeImmutable());
-            $this->entityManager->flush();
-            $this->addFlash('success', 'Suppression effectuée avec succès.');
-        }
+            // Build the query to check if the user has any associated Demande records
+            $qb3 = $this->entityManager->createQueryBuilder();
+            $qb3->select('count(p.id)')
+                ->from(Parc::class, 'p')
+                ->where('p.chefParc = :user')
+                ->setParameter('user', $user);
 
+            $userInterventionParcCount = $qb3->getQuery()->getSingleScalarResult();
+
+            if ($userInterventionDemandeCount > 0) {
+                $this->addFlash('error', 'Vous ne pouvez pas supprimer cet utilisateur car il est associé à une demande de véhicule.');
+            } elseif ($userInterventionStructureCount > 0) {
+                $this->addFlash('error', 'Vous ne pouvez pas supprimer cet utilisateur car il est le responsable d\'une structure.');
+            } elseif ($userInterventionParcCount > 0) {
+                $this->addFlash('error', 'Vous ne pouvez pas supprimer cet utilisateur car il est le validateur d\'un parc.');
+            } else {
+                $user->setDeleteAt(new \DateTimeImmutable());
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Suppression effectuée avec succès.');
+            }
         } else {
             $this->addFlash('error', 'Jeton CSRF invalide.');
         }
-    
-        return $this->redirectToRoute('demande.index', [], Response::HTTP_SEE_OTHER);
+
+        return $this->redirectToRoute('user.index', [], Response::HTTP_SEE_OTHER);
     }
-    
+
 
 
 

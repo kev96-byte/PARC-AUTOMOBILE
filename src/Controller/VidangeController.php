@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Vidange;
 use App\Form\VidangeType;
+use App\Repository\VisiteRepository;
 use App\Repository\VidangeRepository;
 use App\Repository\VehiculeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,13 +34,13 @@ class VidangeController extends AbstractController
             'is_edit' => false,
             'vehicule_repository' => $vehiculeRepository
         ]);
-        $form->handleRequest($request);        
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $dateVidange = $form->get('dateVidange')->getData();
             $vehicule = $vidange->getVehicule();
             $vehicule->setDateVidange($dateVidange);
-            
+
             // Récupérer l'objet Véhicule sélectionné
             $vehicule = $vidange->getVehicule();
             $kilometrageCourant = $vehicule->getKilometrageCourant();
@@ -47,6 +48,20 @@ class VidangeController extends AbstractController
             // Mettre à jour le champ kilometrageInitial du véhicule
             $vehicule->setKilometrageInitial($kilometrageCourant);
             $vidange->setValeurCompteurKilometrage($kilometrageCourant);
+
+            $file = $form->get('pieceVidange')->getData();
+            if ($file) {
+                $matricule = $vehicule ? $vehicule->getMatricule() : 'unknown';
+                $filename = 'pieceVidange_' . $matricule . '.' . $file->getClientOriginalExtension();
+                try {
+                    $file->move(
+                        $this->getParameter('kernel.project_dir').'/public/img/Vidanges', $filename);
+                    $vidange->setPieceVidange($filename);
+                } catch (FileException $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de la pièce.');
+                }
+
+            }
 
             // Persister et flusher les changements
             $entityManager->persist($vidange);
@@ -94,7 +109,7 @@ class VidangeController extends AbstractController
                     $file->move($this->getParameter('kernel.project_dir') . '/public/img/vidanges', $filename);
                     $vidange->setPieceVidange($filename);
                 } catch (FileException $e) {
-                    // handle exception
+                    $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de la pièce.');
                 }
             }
             $entityManager->flush();

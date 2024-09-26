@@ -25,7 +25,26 @@ class ChauffeurRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function findChauffeursInMission(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.disponibilite = :disponibilite')
+            ->andWhere('c.deleteAt IS NULL')
+            ->setParameter('disponibilite', 'En mission')
+            ->getQuery()
+            ->getResult();
+        }
 
+    public function countChauffeursInMission(): int
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->where('c.disponibilite = :disponibilite')
+            ->andWhere('c.deleteAt IS NULL')
+            ->setParameter('disponibilite', 'En mission');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 
 
 

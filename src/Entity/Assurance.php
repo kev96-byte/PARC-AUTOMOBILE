@@ -48,6 +48,15 @@ class Assurance
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deleteAt = null;
 
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $typeCouverture = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $typeAssurance = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $compagnieAssurance = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -130,6 +139,42 @@ class Assurance
     public function setDeleteAt(?\DateTimeInterface $deleteAt): static
     {
         $this->deleteAt = $deleteAt;
+
+        return $this;
+    }
+
+    public function getTypeCouverture(): ?array
+    {
+        return $this->typeCouverture;
+    }
+
+    public function setTypeCouverture(?array $typeCouverture): static
+    {
+        $this->typeCouverture = $typeCouverture;
+
+        return $this;
+    }
+
+    public function getTypeAssurance(): ?string
+    {
+        return $this->typeAssurance;
+    }
+
+    public function setTypeAssurance(?string $typeAssurance): static
+    {
+        $this->typeAssurance = $typeAssurance;
+
+        return $this;
+    }
+
+    public function getCompagnieAssurance(): ?string
+    {
+        return $this->compagnieAssurance;
+    }
+
+    public function setCompagnieAssurance(?string $compagnieAssurance): static
+    {
+        $this->compagnieAssurance = $compagnieAssurance;
 
         return $this;
     }

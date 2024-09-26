@@ -78,10 +78,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Êtes-vous sûr de vouloir supprimer ce niveau ?
+                Êtes-vous sûr de vouloir supprimer cet utilisateur ?
                 <form id="modalDeleteForm" method="post">
                     <input type="hidden" name="_token" id="modal_token" value="">
-                    <input type="hidden" name="niveau_id" id="modal_niveau_id" value="">
+                    <input type="hidden" name="user_id" id="modal_user_id" value="">
                 </form>
             </div>
             <div class="modal-footer">
@@ -94,15 +94,15 @@
 
 <script>
     function showDeletionModal(button) {
-        var niveauId = button.getAttribute('data-id');
+        var userId = button.getAttribute('data-id');
         var csrfToken = button.getAttribute('data-token');
 
         // Mettre à jour les champs cachés du formulaire dans le modal
         document.getElementById('modal_token').value = csrfToken;
-        document.getElementById('modal_niveau_id').value = niveauId;
+        document.getElementById('modal_user_id').value = userId;
 
-        // Mettre à jour l'action du formulaire avec l'ID du niveau
-        document.getElementById('modalDeleteForm').action = '{{ path("niveau.delete", {"id": "__ID__"}) }}'.replace('__ID__', niveauId);
+        // Mettre à jour l'action du formulaire avec l'ID du user
+        document.getElementById('modalDeleteForm').action = '{{ path("user.delete", {"id": "__ID__"}) }}'.replace('__ID__', userId);
 
         // Afficher le modal de confirmation
         $('#confirmModal').modal('show');

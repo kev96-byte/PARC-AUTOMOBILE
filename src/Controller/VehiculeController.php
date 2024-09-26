@@ -31,6 +31,98 @@ class VehiculeController extends AbstractController
         ]);
     }
 
+
+    #[Route('/nonassurres', name: 'vehicule.nonassurres', methods: ['GET'])]
+    public function nonassurres(VehiculeRepository $vehiculeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Requête pour récupérer les véhicules dont la dateFinAssurance est null
+        $qb = $vehiculeRepository->createQueryBuilder('v')
+            ->where('v.dateFinAssurance IS NULL') // Vérifie si la dateFinAssurance est null
+            ->andWhere('v.deleteAt IS NULL')
+            ->getQuery();
+
+        $vehiculesNonAssures = $qb->getResult();
+
+        return $this->render('vehicule/index.html.twig', [
+            'typesvehicules' => $entityManager->getRepository(TypeVehicule::class)->findBy(['deleteAt' => null]),
+            'vehicules' => $vehiculesNonAssures, // Passer les véhicules à la vue
+            'Institutions' => $entityManager->getRepository(Institution::class)->findBy(['deleteAt' => null]),
+        ]);
+    }
+
+
+    #[Route('/nonvisites', name: 'vehicule.nonvisites', methods: ['GET'])]
+    public function nonvisites(VehiculeRepository $vehiculeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Requête pour récupérer les véhicules dont la dateFinAssurance est null
+        $qb = $vehiculeRepository->createQueryBuilder('v')
+            ->where('v.dateFinVisiteTechnique IS NULL') // Vérifie si la dateFinAssurance est null
+            ->andWhere('v.deleteAt IS NULL')
+            ->getQuery();
+
+        $vehiculesNonAssures = $qb->getResult();
+
+        return $this->render('vehicule/index.html.twig', [
+            'typesvehicules' => $entityManager->getRepository(TypeVehicule::class)->findBy(['deleteAt' => null]),
+            'vehicules' => $vehiculesNonAssures, // Passer les véhicules à la vue
+            'Institutions' => $entityManager->getRepository(Institution::class)->findBy(['deleteAt' => null]),
+        ]);
+    }
+
+
+    #[Route('/vidangevalides', name: 'vehicule.vidangevalides', methods: ['GET'])]
+    public function valides(VehiculeRepository $vehiculeRepository): Response
+    {
+        $qb = $vehiculeRepository->createQueryBuilder('v')
+            ->select('v')
+            ->Where('(v.nbreKmPourRenouvellerVidange - (v.kilometrageCourant - v.kilometrageInitial)) > 0')
+            ->getQuery();
+
+        $vehiculesAvecVidangeAjour = $qb->getResult();
+
+        return $this->render('vehicule/index.html.twig', [
+            'vehicules' => $vehiculesAvecVidangeAjour,
+        ]);
+    }
+
+
+    #[Route('/vidangenonvalides', name: 'vehicule.vidangenonvalides', methods: ['GET'])]
+    public function vidangenonvalides(VehiculeRepository $vehiculeRepository): Response
+    {
+        $qb = $vehiculeRepository->createQueryBuilder('v')
+            ->select('v')
+            ->Where('(v.nbreKmPourRenouvellerVidange - (v.kilometrageCourant - v.kilometrageInitial)) <= 0')
+            ->getQuery();
+
+        $vehiculesAvecVidangeNonAjour = $qb->getResult();
+
+        return $this->render('vehicule/index.html.twig', [
+            'vehicules' => $vehiculesAvecVidangeNonAjour,
+        ]);
+    }
+
+
+    #[Route('/sansvidange', name: 'vehicule.sansvidange', methods: ['GET'])]
+    public function sansvidange(VehiculeRepository $vehiculeRepository, EntityManagerInterface $entityManager): Response
+    {
+        // Requête pour récupérer les véhicules dont la dateFinAssurance est null
+        $qb = $vehiculeRepository->createQueryBuilder('v')
+            ->where('v.dateVidange IS NULL') // Vérifie si la dateFinAssurance est null
+            ->andWhere('v.deleteAt IS NULL')
+            ->getQuery();
+
+        $vehiculesSansVidange = $qb->getResult();
+
+        return $this->render('vehicule/index.html.twig', [
+            'typesvehicules' => $entityManager->getRepository(TypeVehicule::class)->findBy(['deleteAt' => null]),
+            'vehicules' => $vehiculesSansVidange, // Passer les véhicules à la vue
+            'Institutions' => $entityManager->getRepository(Institution::class)->findBy(['deleteAt' => null]),
+        ]);
+    }
+
+
+
+
     #[Route('/etat', name: 'vehicule.etat', methods: ['GET'])]
     public function etat(EntityManagerInterface $entityManager): Response
     {
@@ -49,10 +141,10 @@ class VehiculeController extends AbstractController
         $form->handleRequest($request);
         $file = $form->get('photoVehicule')->getData();
         if ($form->isSubmitted() && $form->isValid()) {
-             /** @var UploadedFile $file */
-             if ($file) {
+            /** @var UploadedFile $file */
+            if ($file) {
                 $filename = 'vehicule_'.$vehicule->getMatricule().'.'.$file->guessExtension();
-    
+
                 try {
                     $file->move(
                         $this->getParameter('kernel.project_dir').'/public/img/Vehicules',
@@ -62,15 +154,15 @@ class VehiculeController extends AbstractController
                 } catch (FileException $e) {
                     $this->addFlash('error', 'Une erreur est survenue lors du téléchargement de l\'image.');
                 }
-                
-             }
-             $vehicule->setEtat('En service');
-             $vehicule->setDisponibilite('Disponible');
-             $entityManager->persist($vehicule);
-             $entityManager->flush();
-             $this->addFlash('success', 'Ajout effectué avec succès.');
- 
-             return $this->redirectToRoute('vehicule.index', [], Response::HTTP_SEE_OTHER);
+
+            }
+            $vehicule->setEtat('En service');
+            $vehicule->setDisponibilite('Disponible');
+            $entityManager->persist($vehicule);
+            $entityManager->flush();
+            $this->addFlash('success', 'Ajout effectué avec succès.');
+
+            return $this->redirectToRoute('vehicule.index', [], Response::HTTP_SEE_OTHER);
 
         }
 
@@ -85,7 +177,7 @@ class VehiculeController extends AbstractController
     public function show(Vehicule $vehicule, EntityManagerInterface $entityManager, $id): Response
     {
         $vehicule = $entityManager->getRepository(Vehicule::class)->find($id);
-    
+
         if (!$vehicule) {
             throw $this->createNotFoundException('Véhicule introuvable.');
         }
@@ -149,37 +241,58 @@ class VehiculeController extends AbstractController
             $entityManager->flush();
             $this->addFlash('success', 'Suppression effectuée avec succès.');
         }
-    
+
         return $this->redirectToRoute('vehicule.index', [], Response::HTTP_SEE_OTHER);
     }
 
 
-// src/Controller/VehiculeController.php
+    #[Route('/disponibles', name: 'vehicules.disponibles')]
+    public function disponibles(Request $request, VehiculeRepository $vehiculeRepository): Response
+    {
+        // Récupérer les valeurs de filtrage depuis la requête
+        $dateFinAssurance = $request->query->get('dateFinAssurance');
+        $dateFinVisiteTechnique = $request->query->get('dateFinVisiteTechnique');
+        $dateDebutPeriode = $request->query->get('dateDebutPeriode');
+        $dateFinPeriode = $request->query->get('dateFinPeriode');
 
-#[Route('/vehicules/disponibles', name: 'vehicules.disponibles')]
-public function disponibles(Request $request, VehiculeRepository $vehiculeRepository): Response
-{
-    // Récupérer les valeurs de filtrage depuis la requête
-    $dateFinAssurance = $request->query->get('dateFinAssurance');
-    $dateFinVisiteTechnique = $request->query->get('dateFinVisiteTechnique');
-    $dateDebutPeriode = $request->query->get('dateDebutPeriode');
-    $dateFinPeriode = $request->query->get('dateFinPeriode');
+        // Requête pour récupérer les véhicules disponibles avec filtres
+        $vehicules = $vehiculeRepository->findAvailableVehiclesWithFilters(
+            $dateFinAssurance,
+            $dateFinVisiteTechnique,
+            $dateDebutPeriode,
+            $dateFinPeriode
+        );
 
-    // Requête pour récupérer les véhicules disponibles avec filtres
-    $vehicules = $vehiculeRepository->findAvailableVehiclesWithFilters(
-        $dateFinAssurance,
-        $dateFinVisiteTechnique,
-        $dateDebutPeriode,
-        $dateFinPeriode
-    );
+        return $this->render('vehicule/disponibles.html.twig', [
+            'vehicules' => $vehicules,
+            'dateFinAssurance' => $dateFinAssurance,
+            'dateFinVisiteTechnique' => $dateFinVisiteTechnique,
+            'dateDebutPeriode' => $dateDebutPeriode,
+            'dateFinPeriode' => $dateFinPeriode,
+        ]);
+    }
 
-    return $this->render('vehicule/disponibles.html.twig', [
-        'vehicules' => $vehicules,
-        'dateFinAssurance' => $dateFinAssurance,
-        'dateFinVisiteTechnique' => $dateFinVisiteTechnique,
-        'dateDebutPeriode' => $dateDebutPeriode,
-        'dateFinPeriode' => $dateFinPeriode,
-    ]);
-}
-    
+
+
+    #[Route('/nondisponibles', name: 'vehicules.nondisponibles')]
+    public function nondisponibles(VehiculeRepository $vehiculeRepository): Response
+    {
+        // Requête pour récupérer les véhicules disponibles avec filtres
+        $vehicules = $vehiculeRepository->findNOAvailableVehicles();
+
+        return $this->render('vehicule/nondisponibles.html.twig', [
+            'vehicules' => $vehicules,
+        ]);
+    }
+
+    #[Route('/mission', name: 'vehicule.mission', methods: ['GET'])]
+    public function mission(EntityManagerInterface $entityManager, VehiculeRepository $vehiculeRepository): Response
+    {
+        return $this->render('vehicule/index.html.twig', [
+            'typesvehicules' => $entityManager->getRepository(TypeVehicule::class)->findBy(['deleteAt' => null]),
+            'vehicules' => $vehiculeRepository->findVehiclesInMission(),
+            'Institutions' => $entityManager->getRepository(Institution::class)->findBy(['deleteAt' => null]),
+            ]);
+        }
+
 }

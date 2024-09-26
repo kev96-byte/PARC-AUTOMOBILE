@@ -8,6 +8,7 @@ use App\Entity\Assurance;
 use App\Validator\DatesConstraint;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\File;
@@ -35,8 +36,49 @@ class AssuranceType extends AbstractType
               ->where('n.deleteAt IS NULL');
           },
           'choice_label' => 'matricule',
-          'label' => 'Matricule',
+          'label' => 'Numéro d\'immatriculation',
             'attr'=>['class'=>'form-control selectpicker', 'data-live-search'=>'true']
+        ])
+
+        ->add('compagnieAssurance', ChoiceType::class, [
+            'label'=>'Compagnie d\'assurance',
+            'required' => true,
+            'choices'=>[
+                'NSIA Assurance Bénin' => 'NSIA Assurance Bénin',
+                'Saham Assurance Bénin' => 'Saham Assurance Bénin',
+            ],
+            'attr'=>[
+                'data-live-search'=>'true',
+                'class'=>'form-control selectpicker',
+            ]
+        ])
+
+        ->add('typeAssurance', ChoiceType::class, [
+            'label'=>'Type d\'assurance',
+            'required' => true,
+            'choices'=>[
+                'Certificat d\'Assurance des Véhicules Administratifs (CAVA)' => 'CAVA',
+                'Assurance ordinaire' => 'Assurance ordinaire',
+            ],
+             'attr'=>[
+                    'class'=>'form-control selectpicker',
+                    'data-live-search'=>'true',
+                    'placeholder'=>'Choisissez une option',
+             ],
+        ])
+
+        ->add('typeCouverture', ChoiceType::class, [
+            'label'=>'Type de couverture',
+            'required' => true,
+            'choices'=>[
+                'Assurance Responsabilité Civile Obligatoire' => 'Assurance_Responsabilite_Civile_Obligatoire',
+                'Assurance Tous Risques' => 'Assurance_Tous_Risques',
+            ],
+            'multiple'=>'true',
+            'attr'=>[
+                'data-live-search'=>'true',
+                'class'=>'form-control selectpicker',
+            ]
         ])
 
 

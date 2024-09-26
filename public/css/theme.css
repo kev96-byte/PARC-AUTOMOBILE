@@ -5693,17 +5693,14 @@ label.required::before {
     margin-right: 5px; /* Ajoutez un espace entre l'astérisque et l'étiquette */
 }
 
-.btn-circle-view{
-    background: #22C552;
+
+.btn-circle{
+    background: transparent!important;
+    color :#000 !important;
+    font-size: 1.2em!important;
 }
 
-.btn-circle-edit{
-    background:#088B53;
-}
 
-.btn-circle-trash{
-    background: #E62533;
-}
 .btn-default:hover {
   background-color: #e7e7e7;
   color: #333;
