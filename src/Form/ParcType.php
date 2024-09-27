@@ -70,6 +70,7 @@ class ParcType extends AbstractType
 
             ->add('chefParc', EntityType::class, [
                 'class' => User::class,
+                'label'=>'Validateur',
                 'choices' => $this->userRepository->findChefsParc(),
                 'choice_label' => function (User $user) {
                     return $user->getLastName() . ' ' . $user->getFirstName();
