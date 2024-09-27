@@ -46,6 +46,18 @@ class ChauffeurRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
+    public function countAvailableChauffeurs(): int
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->where('c.disponibilite = :disponibilite')
+            ->andWhere('c.etatChauffeur = :etat')
+            ->andWhere('c.deleteAt IS NULL')
+            ->setParameter('disponibilite', 'Disponible')
+            ->setParameter('etat', 'En service');
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
 
 
     
@@ -74,4 +86,5 @@ class ChauffeurRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
 }

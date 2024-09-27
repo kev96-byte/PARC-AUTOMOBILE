@@ -245,6 +245,7 @@ class VehiculeRepository extends ServiceEntityRepository
     }
 
 
+
     public function countVehiclesSansVidange(): int
     {
         $qb = $this->createQueryBuilder('v')
