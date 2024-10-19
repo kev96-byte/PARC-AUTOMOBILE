@@ -1,7 +1,15 @@
 {{ form_start(form) }}
 
 <div class="form-group row mb-3">
-    <div class="col-sm-12">    
+    <div class="col-sm-6">
+        {{ form_row(form.Institution, {
+            'label': 'Institution',
+            'label_attr': {'class': 'required'},
+            'attr': {'placeholder': 'Choisir l\'institution'}
+        }) }}
+    </div>
+
+    <div class="col-sm-6">    
         {{ form_row(form.nomParc, {
             'label': 'Nom du parc automobile',
             'label_attr': {'class': 'required'}
@@ -24,11 +32,7 @@
 
 <div class="form-group row mb-3">
     <div class="col-sm-6">
-        {{ form_row(form.Institution, {
-            'label': 'Institution',
-            'label_attr': {'class': 'required'},
-            'attr': {'placeholder': 'Choisir l\'institution'}
-        }) }}
+        {{ form_row(form.validateurParc) }}
     </div>
 
     <div class="col-sm-6">

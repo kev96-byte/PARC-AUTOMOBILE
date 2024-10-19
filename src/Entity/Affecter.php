@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\AffecterRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AffecterRepository;
 
 #[ORM\Entity(repositoryClass: AffecterRepository::class)]
 class Affecter
@@ -22,8 +23,18 @@ class Affecter
     #[ORM\ManyToOne(inversedBy: 'affecters')]
     private ?Chauffeur $chauffeur = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]  
+    private $dateDebutMission;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private $dateFinMission;
+
+
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $deleteAt = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $statut = null;
 
     public function getId(): ?int
     {
@@ -66,6 +77,31 @@ class Affecter
         return $this;
     }
 
+
+
+    public function getDateDebutMission(): ?\DateTime
+    {
+        return $this->dateDebutMission;
+    }
+
+    public function setDateDebutMission(?\DateTime $dateDebutMission): self
+    {
+        $this->dateDebutMission = $dateDebutMission;
+        return $this;
+    }
+
+
+    public function getDateFinMission(): ?\DateTime
+    {
+        return $this->dateFinMission;
+    }
+
+    public function setDateFinMission(?\DateTime $dateFinMission): self
+    {
+        $this->dateFinMission = $dateFinMission;
+        return $this;
+    }
+
     public function getDeleteAt(): ?\DateTimeImmutable
     {
         return $this->deleteAt;
@@ -74,6 +110,18 @@ class Affecter
     public function setDeleteAt(?\DateTimeImmutable $deleteAt): static
     {
         $this->deleteAt = $deleteAt;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?string $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }

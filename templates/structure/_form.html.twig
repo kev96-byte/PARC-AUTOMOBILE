@@ -36,23 +36,16 @@
 
 </div>
 
-{% if mode == 'edit' %}
-<div class="form-group row mb-3">
-    <div class="col-sm-6">
-        {{ form_row(form.responsableStructure) }}
-    </div>
 
-    <div class="col-sm-6">
-        {{ form_row(form.Parc) }}
-    </div>
-</div>
-{% else %}
     <div class="form-group row mb-3">
+        <div class="col-sm-6">
+            {{ form_row(form.responsableStructure) }}
+        </div>
         <div class="col-sm-6">
             {{ form_row(form.Parc) }}
         </div>
     </div>
-{% endif %}
+
 
 <div class="form-group row mb-3">
     <div class="col-sm-12 text-right">

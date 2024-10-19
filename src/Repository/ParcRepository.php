@@ -16,6 +16,29 @@ class ParcRepository extends ServiceEntityRepository
         parent::__construct($registry, Parc::class);
     }
 
+    public function findByChefParc($userId)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.chefParc = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+    public function findByValidateur($userId)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.validateurParc = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+
     //    /**
     //     * @return Parc[] Returns an array of Parc objects
     //     */

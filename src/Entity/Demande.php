@@ -11,11 +11,24 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\DatesConstraint;
+use App\Validator as AppAssert; // Importez votre contrainte personnalisée
 
 #[ORM\Entity(repositoryClass: DemandeRepository::class)]
 #[DatesConstraint]
 class Demande
 {
+
+    
+    protected Collection $communes;
+
+    public function __construct()
+    {
+        $this->communes = new ArrayCollection();
+        $this->dateDebutMission = new \DateTime();
+        $this->dateFinMission = new \DateTime();
+        $this->affecters = new ArrayCollection();
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -27,25 +40,17 @@ class Demande
      #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dateDemande = null;
 
-/*     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private $dateDemande; */
-
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'objet de la mission est requis.')]
     private string $objetMission = '';
 
-/*     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateDebutMission = null;
-
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $dateFinMission = null; */
-
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'La date de début de mission est requise.')]
     private $dateDebutMission;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'La date de fin de mission est requise.')]
     private $dateFinMission;
 
     #[ORM\ManyToMany(targetEntity: Commune::class)]
@@ -53,25 +58,26 @@ class Demande
     private $commune;
 
 
-    protected Collection $communes;
-
-    public function __construct()
-    {
-        $this->communes = new ArrayCollection();
-        $this->dateDebutMission = new \DateTime();
-        $this->dateFinMission = new \DateTime();
-        $this->affecters = new ArrayCollection();
-    }
 
 
-    #[ORM\Column(name: "lieuMission", type: "json")]
+    #[ORM\Column(name: "lieuMission", type: "json")] 
+    #[Assert\NotBlank(message: 'Le lieu de la mission est requise.')]  
     private array $lieuMission;
+
+    #[ORM\Column(name: "vehicules", type: "json")]
+    private array $vehicules = [];
+
+    #[ORM\Column(name: "chauffeurs", type: "json")]
+    private array $chauffeurs = [];
+
 
 
     #[ORM\Column]
+    #[Assert\Positive(message: 'Le nombre de participants doit être supérieur à 0.')]
     private ?int $nbreParticipants = null;
 
     #[ORM\Column]
+    #[Assert\Positive(message: 'Le nombre de véhicules doit être supérieur à 0.')]
     private ?int $nbreVehicules = null;
 
     #[ORM\ManyToOne(inversedBy: 'demandes')]
@@ -134,6 +140,27 @@ class Demande
 
     #[ORM\ManyToOne(inversedBy: 'demandes')]
     private ?Institution $institution = null;
+
+    #[ORM\ManyToOne(inversedBy: 'userWhoCancelledRequest')]
+    private ?User $cancelledBy = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $cancellationDate = null;
+
+    #[ORM\ManyToOne(inversedBy: 'userWhoCancellationRequest')]
+    private ?user $cancellationRequestBy = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $cancellationRequestDate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $cancellationReason = null;
+
+    #[ORM\ManyToOne(inversedBy: 'whoValideDemandes')]
+    private ?User $validatedBy = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $validatedAt = null;
 
 
     public function getId(): ?int
@@ -286,6 +313,34 @@ class Demande
     public function setLieuMission(array $lieuMission): self
     {
         $this->lieuMission = $lieuMission;
+    
+        return $this;
+    }
+
+
+    public function getVehicules(): array
+    {
+        return $this->vehicules;
+    }
+    
+
+    public function setVehicules(array $vehicules): self
+    {
+        $this->vehicules = $vehicules;
+    
+        return $this;
+    }
+
+
+    public function getChauffeurs(): array
+    {
+        return $this->chauffeurs;
+    }
+    
+
+    public function setChauffeurs(array $chauffeurs): self
+    {
+        $this->chauffeurs = $chauffeurs;
     
         return $this;
     }
@@ -547,6 +602,90 @@ public function getInstitution(): ?Institution
 public function setInstitution(?Institution $institution): static
 {
     $this->institution = $institution;
+
+    return $this;
+}
+
+public function getCancelledBy(): ?User
+{
+    return $this->cancelledBy;
+}
+
+public function setCancelledBy(?User $cancelledBy): static
+{
+    $this->cancelledBy = $cancelledBy;
+
+    return $this;
+}
+
+public function getCancellationDate(): ?\DateTimeInterface
+{
+    return $this->cancellationDate;
+}
+
+public function setCancellationDate(?\DateTimeInterface $cancellationDate): static
+{
+    $this->cancellationDate = $cancellationDate;
+
+    return $this;
+}
+
+public function getCancellationRequestBy(): ?user
+{
+    return $this->cancellationRequestBy;
+}
+
+public function setCancellationRequestBy(?user $cancellationRequestBy): static
+{
+    $this->cancellationRequestBy = $cancellationRequestBy;
+
+    return $this;
+}
+
+public function getCancellationRequestDate(): ?\DateTimeInterface
+{
+    return $this->cancellationRequestDate;
+}
+
+public function setCancellationRequestDate(?\DateTimeInterface $cancellationRequestDate): static
+{
+    $this->cancellationRequestDate = $cancellationRequestDate;
+
+    return $this;
+}
+
+public function getCancellationReason(): ?string
+{
+    return $this->cancellationReason;
+}
+
+public function setCancellationReason(?string $cancellationReason): static
+{
+    $this->cancellationReason = $cancellationReason;
+
+    return $this;
+}
+
+public function getValidatedBy(): ?User
+{
+    return $this->validatedBy;
+}
+
+public function setValidatedBy(?User $validatedBy): static
+{
+    $this->validatedBy = $validatedBy;
+
+    return $this;
+}
+
+public function getValidatedAt(): ?\DateTimeImmutable
+{
+    return $this->validatedAt;
+}
+
+public function setValidatedAt(?\DateTimeImmutable $validatedAt): static
+{
+    $this->validatedAt = $validatedAt;
 
     return $this;
 }

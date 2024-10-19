@@ -24,26 +24,74 @@ class VehiculeRepository extends ServiceEntityRepository
             ->where('v.dateFinAssurance > :dateFinMission')
             ->andWhere('v.dateFinVisiteTechnique > :dateFinMission')
             ->andWhere('(v.nbreKmPourRenouvellerVidange - (v.kilometrageCourant - v.kilometrageInitial)) > 0')
-            ->andWhere('v.disponibilite = :disponibilite')
             ->andWhere('v.etat = :etat')
             ->andWhere('v.deleteAt IS NULL')
             ->setParameter('dateFinMission', $dateFinMission)
-            ->setParameter('disponibilite', 'Disponible')
             ->setParameter('etat', 'En service')
             ->getQuery()
             ->getResult();
     }
 
-    public function findNOAvailableVehicles(): array
+
+    public function findActiveVehiculesFormatted(): array
+    {
+        $qb = $this->createQueryBuilder('v')
+            ->select("v.matricule as formattedVehicule, v.matricule")
+            ->where('v.etat = :etat')
+            ->andWhere('v.deleteAt IS NULL')
+            ->setParameter('etat', 'En service')
+            ->orderBy('v.matricule', 'ASC');
+    
+        $result = $qb->getQuery()->getResult();
+    
+        $vehiculeChoices = [];
+        foreach ($result as $row) {
+            $vehiculeChoices[$row['formattedVehicule']] = $row['matricule'];
+        }
+    
+        return $vehiculeChoices;
+    }
+    
+
+    public function findVehiculesDisponibles(\DateTimeInterface $dateDebutMission, \DateTimeInterface $dateFinMission, $parc)
+    {
+        // Sous-requête pour trouver les véhicules déjà affectés pendant la période
+        $subQuery = $this->createQueryBuilder('v2')
+            ->select('v2.id')
+            ->innerJoin('v2.affecters', 'a')
+            ->where('a.dateDebutMission BETWEEN :dateDebut AND :dateFin')
+            ->orWhere('a.dateFinMission BETWEEN :dateDebut AND :dateFin')
+            ->orWhere(':dateDebut BETWEEN a.dateDebutMission AND a.dateFinMission')
+            ->orWhere(':dateFin BETWEEN a.dateDebutMission AND a.dateFinMission');
+    
+            // Requête principale pour trouver les véhicules disponibles
+            $qb = $this->createQueryBuilder('v');
+
+            $qb->where('v.deleteAt IS NULL')
+            ->andWhere('v.dateFinAssurance > :dateFinMission')
+            ->andWhere('v.dateFinVisiteTechnique > :dateFinMission')
+            ->andWhere('v.etat = :etat')
+            ->andWhere('v.parc = :parc')
+            ->andWhere('(v.nbreKmPourRenouvellerVidange - (v.kilometrageCourant - v.kilometrageInitial)) > 0')
+            ->andWhere($qb->expr()->notIn('v.id', $subQuery->getDQL()))
+            ->setParameter('dateDebut', $dateDebutMission)
+            ->setParameter('dateFin', $dateFinMission)
+            ->setParameter('dateFinMission', $dateFinMission)
+            ->setParameter('etat', 'En service')
+            ->setParameter('parc', $parc);
+    
+        return $qb->getQuery()->getResult();
+    }
+
+
+    public function findAvailableVehicles2(): array
     {
         return $this->createQueryBuilder('v')
-            ->where('v.disponibilite != :disponible')
-            ->orWhere('v.etat != :etat')
-            ->orWhere('v.deleteAt IS NOT NULL')
-            ->orWhere('v.dateFinAssurance < :today')
-            ->orWhere('v.dateFinVisiteTechnique < :today')
-            ->orWhere('v.nbreKmPourRenouvellerVidange - (v.kilometrageCourant - v.kilometrageInitial) <= 0')
-            ->setParameter('disponible', 'Disponible')
+            ->where('v.etat = :etat')
+            ->andWhere('v.deleteAt IS NULL')
+            ->andWhere('v.dateFinAssurance > :today')
+            ->andWhere('v.dateFinVisiteTechnique > :today')
+            ->andWhere('v.nbreKmPourRenouvellerVidange - (v.kilometrageCourant - v.kilometrageInitial) > 0')
             ->setParameter('etat', 'En service')
             ->setParameter('today', new \DateTime())
             ->getQuery()
@@ -54,13 +102,11 @@ class VehiculeRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('v')
             ->select('COUNT(v.id)')
-            ->where('v.disponibilite = :disponible')
             ->andWhere('v.etat = :etat')
             ->andWhere('v.deleteAt IS NULL')
             ->andWhere('v.dateFinAssurance > :today')
             ->andWhere('v.dateFinVisiteTechnique > :today')
             ->andWhere('v.nbreKmPourRenouvellerVidange - (v.kilometrageCourant - v.kilometrageInitial) > 0')
-            ->setParameter('disponible', 'Disponible')
             ->setParameter('etat', 'En service')
             ->setParameter('today', new \DateTime());
 
@@ -172,7 +218,7 @@ class VehiculeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function countAllAvailableVehicles(): int
+    public function countAllVehicles(): int
     {
         return $this->createQueryBuilder('v')
             ->select('COUNT(v)')
@@ -181,16 +227,12 @@ class VehiculeRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findAllVehiculesInMission():array
+    public function findAllVehicules():array
     {
         return $this->createQueryBuilder('v')
             ->where('v.deleteAt IS NULL')
-            ->andWhere('v.disponibilite != :disponibilite')
-            ->setParameter('disponibilite', 'Disponible')
             ->getQuery()
             ->getResult();
-
-
     }
 
     public function findVehiclesInMission(): array
@@ -201,7 +243,17 @@ class VehiculeRepository extends ServiceEntityRepository
             ->setParameter('disponibilite', 'En mission')
             ->getQuery()
             ->getResult();
-        }
+    }
+
+    public function findAllVehiculesInMission(): array
+    {
+        return $this->createQueryBuilder('v')
+            ->where('v.disponibilite = :disponibilite')
+            ->andWhere('v.deleteAt IS NULL')
+            ->setParameter('disponibilite', 'En mission')
+            ->getQuery()
+            ->getResult();
+    }
 
     public function countVehiclesInMission(): int
     {

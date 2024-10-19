@@ -93,6 +93,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Demande>
      */
+    #[ORM\OneToMany(targetEntity: Demande::class, mappedBy: 'responsableStructure')]
+    private Collection $structuresResponsables;
+
+
+        /**
+     * @var Collection<int, Demande>
+     */
     #[ORM\OneToMany(targetEntity: Demande::class, mappedBy: 'validateurStructure')]
     private Collection $demandesValidateurs;
 
@@ -123,11 +130,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->demandes = new ArrayCollection();
+        $this->structuresResponsables = new ArrayCollection();
         $this->demandesValidateurs = new ArrayCollection();
         $this->demandesTraiteur = new ArrayCollection();
         $this->demandesfinaliser = new ArrayCollection();
         $this->demandesfinaliserpar = new ArrayCollection();
         $this->parcs = new ArrayCollection();
+        $this->userWhoCancelledRequest = new ArrayCollection();
+        $this->userWhoCancellationRequest = new ArrayCollection();
+        $this->whoValideDemandes = new ArrayCollection();
+        $this->ParcsValidateurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -363,6 +375,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->demandesValidateurs;
     }
 
+
     public function addDemandesValidateur(Demande $demandesValidateur): static
     {
         if (!$this->demandesValidateurs->contains($demandesValidateur)) {
@@ -372,6 +385,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
     public function removeDemandesValidateur(Demande $demandesValidateur): static
     {
@@ -384,6 +398,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+
+
 
     /**
      * @return Collection<int, Demande>
@@ -513,6 +530,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isFirstLogin = true;
 
+    /**
+     * @var Collection<int, Demande>
+     */
+    #[ORM\OneToMany(targetEntity: Demande::class, mappedBy: 'cancelledBy')]
+    private Collection $userWhoCancelledRequest;
+
+    /**
+     * @var Collection<int, Demande>
+     */
+    #[ORM\OneToMany(targetEntity: Demande::class, mappedBy: 'cancellationRequestBy')]
+    private Collection $userWhoCancellationRequest;
+
+    /**
+     * @var Collection<int, Demande>
+     */
+    #[ORM\OneToMany(targetEntity: Demande::class, mappedBy: 'validatedBy')]
+    private Collection $whoValideDemandes;
+
+    /**
+     * @var Collection<int, Parc>
+     */
+    #[ORM\OneToMany(targetEntity: Parc::class, mappedBy: 'validateurParc')]
+    private Collection $ParcsValidateurs;
+
     public function isFirstLogin(): bool
     {
         return $this->isFirstLogin;
@@ -521,6 +562,159 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsFirstLogin(bool $isFirstLogin): self
     {
         $this->isFirstLogin = $isFirstLogin;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Demande>
+     */
+    public function getUserWhoCancelledRequest(): Collection
+    {
+        return $this->userWhoCancelledRequest;
+    }
+
+    public function addUserWhoCancelledRequest(Demande $userWhoCancelledRequest): static
+    {
+        if (!$this->userWhoCancelledRequest->contains($userWhoCancelledRequest)) {
+            $this->userWhoCancelledRequest->add($userWhoCancelledRequest);
+            $userWhoCancelledRequest->setCancelledBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserWhoCancelledRequest(Demande $userWhoCancelledRequest): static
+    {
+        if ($this->userWhoCancelledRequest->removeElement($userWhoCancelledRequest)) {
+            // set the owning side to null (unless already changed)
+            if ($userWhoCancelledRequest->getCancelledBy() === $this) {
+                $userWhoCancelledRequest->setCancelledBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Demande>
+     */
+    public function getUserWhoCancellationRequest(): Collection
+    {
+        return $this->userWhoCancellationRequest;
+    }
+
+    public function addUserWhoCancellationRequest(Demande $userWhoCancellationRequest): static
+    {
+        if (!$this->userWhoCancellationRequest->contains($userWhoCancellationRequest)) {
+            $this->userWhoCancellationRequest->add($userWhoCancellationRequest);
+            $userWhoCancellationRequest->setCancellationRequestBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserWhoCancellationRequest(Demande $userWhoCancellationRequest): static
+    {
+        if ($this->userWhoCancellationRequest->removeElement($userWhoCancellationRequest)) {
+            // set the owning side to null (unless already changed)
+            if ($userWhoCancellationRequest->getCancellationRequestBy() === $this) {
+                $userWhoCancellationRequest->setCancellationRequestBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Demande>
+     */
+    public function getWhoValideDemandes(): Collection
+    {
+        return $this->whoValideDemandes;
+    }
+
+    public function addWhoValideDemande(Demande $whoValideDemande): static
+    {
+        if (!$this->whoValideDemandes->contains($whoValideDemande)) {
+            $this->whoValideDemandes->add($whoValideDemande);
+            $whoValideDemande->setValidatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWhoValideDemande(Demande $whoValideDemande): static
+    {
+        if ($this->whoValideDemandes->removeElement($whoValideDemande)) {
+            // set the owning side to null (unless already changed)
+            if ($whoValideDemande->getValidatedBy() === $this) {
+                $whoValideDemande->setValidatedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Parc>
+     */
+    public function getParcsValidateurs(): Collection
+    {
+        return $this->ParcsValidateurs;
+    }
+
+    public function addParcsValidateur(Parc $parcsValidateur): static
+    {
+        if (!$this->ParcsValidateurs->contains($parcsValidateur)) {
+            $this->ParcsValidateurs->add($parcsValidateur);
+            $parcsValidateur->setValidateurParc($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParcsValidateur(Parc $parcsValidateur): static
+    {
+        if ($this->ParcsValidateurs->removeElement($parcsValidateur)) {
+            // set the owning side to null (unless already changed)
+            if ($parcsValidateur->getValidateurParc() === $this) {
+                $parcsValidateur->setValidateurParc(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+            /**
+     * @return Collection<int, Structure>
+     */
+    public function getStructuresResponsables(): Collection
+    {
+        return $this->structuresResponsables;
+    }
+
+
+    public function addStructuresResponsable(Structure $structuresResponsable): static
+    {
+        if (!$this->structuresResponsables->contains($structuresResponsable)) {
+            $this->structuresResponsables->add($structuresResponsable);
+            $structuresResponsable->setResponsableStructure($this);
+        }
+
+        return $this;
+    }
+
+
+    public function removeStructuresResponsable(Structure $structuresResponsable): static
+    {
+        if ($this->structuresResponsables->removeElement($structuresResponsable)) {
+            // set the owning side to null (unless already changed)
+            if ($structuresResponsable->getResponsableStructure() === $this) {
+                $structuresResponsable->setResponsableStructure(null);
+            }
+        }
+
         return $this;
     }
 

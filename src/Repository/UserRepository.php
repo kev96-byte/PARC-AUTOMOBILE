@@ -77,6 +77,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         // Récupérer tous les utilisateurs dont deleteAt est NULL
         $users = $this->createQueryBuilder('u')
             ->where('u.deleteAt IS NULL')
+            ->andWhere('u.statutCompte = :statutCompte')
+            ->setParameter('statutCompte', 'Activé')
+            ->getQuery()
+            ->getResult();
+    
+        // Filtrer les utilisateurs pour ne garder que ceux dont le rôle est strictement égal à ROLE_VALIDATEUR
+        return array_filter($users, function($user) {
+            return in_array('ROLE_CHEF_PARC', $user->getRoles());
+        });
+    }
+
+
+    public function findValidateurParc()
+    {
+        // Récupérer tous les utilisateurs dont deleteAt est NULL
+        $users = $this->createQueryBuilder('u')
+            ->where('u.deleteAt IS NULL')
+            ->andWhere('u.statutCompte = :statutCompte')
+            ->setParameter('statutCompte', 'Activé')
             ->getQuery()
             ->getResult();
     
@@ -91,6 +110,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         // Récupérer tous les utilisateurs dont deleteAt est NULL
         $users = $this->createQueryBuilder('u')
             ->where('u.deleteAt IS NULL')
+            ->andWhere('u.statutCompte = :statutCompte')
+            ->setParameter('statutCompte', 'Activé')
             ->getQuery()
             ->getResult();
     

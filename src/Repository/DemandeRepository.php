@@ -291,4 +291,252 @@ class DemandeRepository extends ServiceEntityRepository
 
     }
 
+    public function countDemandesTraiteesByChefParc($user):int
+    {
+        $qb = $this->createQueryBuilder('d')
+            ->select('COUNT(d)')
+            ->where('d.traiterPar = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.deleteAt IS NULL')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Traité');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findApprobateurDemandesEnAttente($structure)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.structure = :structure')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->andWhere('d.deleteAt IS NULL')
+            ->setParameter('structure', $structure)
+            ->setParameter('statut', 'Initial')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findChefParcDemandesEnAttente($structure)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.structure = :structure')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->andWhere('d.deleteAt IS NULL')
+            ->setParameter('structure', $structure)
+            ->setParameter('statut', 'Approuvé')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findValidateurDemandesEnAttente($structure)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.structure = :structure')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->andWhere('d.deleteAt IS NULL')
+            ->setParameter('structure', $structure)
+            ->setParameter('statut', 'Traité')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPointFocalDemandesApprouveesByResponsable($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.demander = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Approuvé')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPointFocalDemandesTraiteesByChefParc($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.demander = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Traité')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findPointFocalDemandesValideesByValidateur($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.demander = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Validé')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findDemandesApprouveesByResponsable($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.validateurStructure = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Approuvé')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findDemandesApprouveesByResponsableAndTraiteByChefParc($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.validateurStructure = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Traité')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findDemandesApprouveesByResponsableAndValideesByValidateur($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.validateurStructure = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Validé')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findDemandesTraiteesByChefParc($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.traiterPar = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->andWhere('d.deleteAt IS NULL')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Traité')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findDemandesValideesByValidateur($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.validatedBy = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->andWhere('d.deleteAt IS NULL')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Validé')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findDemandesTraiteesByChefParcValideesByValidateur($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.traiterPar = :user')
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.dateFinMission >= :today')
+            ->andWhere('d.deleteAt IS NULL')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Validé')
+            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findPointFocalDemandesInitiales($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.demander = :user')
+            ->andWhere('d.statut = :statut')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Initial')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findAllDemandesForOneInstitution($institution)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.institution = :institution')
+            ->andWhere('d.deleteAt IS NULL')
+            ->andWhere('d.cancellationDate IS NULL')
+            ->setParameter('institution', $institution)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findAllDemandesApprouveesForOneInstitution($institution)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.institution = :institution')            
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.deleteAt IS NULL')
+            ->andWhere('d.cancellationDate IS NULL')
+            ->setParameter('institution', $institution)
+            ->setParameter('statut', 'Approuvé')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllDemandesTraiteesForOneInstitution($institution)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.institution = :institution')            
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.deleteAt IS NULL')
+            ->andWhere('d.cancellationDate IS NULL')
+            ->setParameter('institution', $institution)
+            ->setParameter('statut', 'Traité')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findAllDemandesValideesForOneInstitution($institution)
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.institution = :institution')            
+            ->andWhere('d.statut = :statut')
+            ->andWhere('d.deleteAt IS NULL')
+            ->andWhere('d.cancellationDate IS NULL')
+            ->setParameter('institution', $institution)
+            ->setParameter('statut', 'Validé')
+            ->getQuery()
+            ->getResult();
+    }
+
+
 }

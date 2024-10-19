@@ -4,21 +4,67 @@
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">Liste des véhicules affectés à la demande N° : {{ numdemande }}</h5>
+            <h5 class="mb-0">Affectation de véhicules et chauffeurs à la demande N° : {{ numdemande }}</h5>
         </div>
         <div class="card-body">
-            <div class="d-flex justify-content-between mb-3">
-                <a href="{{ path('affecter.create', {'demandeId': demandeId}) }}" class="btn btn-success">
-                    <i class="fa fa-plus"></i> Ajouter
-                </a>
+            <!-- Premier bloc : Liste des véhicules et chauffeurs demandés -->
+            {% if vehiculesDemandes is not empty and chauffeursDemandes is not empty %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Liste des véhicules et chauffeurs demandés par le point focal</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Matricule du Véhicule</th>
+                                <th>Chauffeur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in 0..(vehiculesDemandes|length - 1) %}
+                                <tr>
+                                    <td>{{ vehiculesDemandes[i].matricule }}</td>
+                                    <td>{{ chauffeursDemandes[i].nomChauffeur }} {{ chauffeursDemandes[i].prenomChauffeur }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="2" class="text-center">Aucun véhicule ou chauffeur demandé trouvé</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Deuxième bloc : Formulaire d'affectation -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0">{{ is_edit ? 'Modifier le véhicule et le chauffeur' : 'Ajouter un véhicule et un chauffeur' }}</h6>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_row(form.vehicule) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.chauffeur) }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            {{ is_edit ? 'Modifier' : 'Ajouter' }}
+                        </button>
+                    {{ form_end(form) }}
+                </div>
             </div>
 
-            <table class="table table-bordered table-striped" id="dataTable">
+            <!-- Tableau des véhicules et chauffeurs affectés -->
+            <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>Matricule du Véhicule</th>
                         <th>Chauffeur</th>
-                        {# <th>Actions</th> #}
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -26,22 +72,18 @@
                     <tr>
                         <td>{{ affecter.vehicule.matricule }}</td>
                         <td>{{ affecter.chauffeur.nomChauffeur }} {{ affecter.chauffeur.prenomChauffeur }}</td>
-{#                         <td>
-                            <div class="flex justify-content-end">
-                                <a href="{{ path('affecter.edit', {'id': affecter.id}) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
+                        <td>
+                            <div class="d-flex justify-content-end">
+                                <a href="{{ path('affecter.edit', {'id': affecter.id}) }}" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                    <i class="fa fa-pen"></i>
                                 </a>
-
-                                <form method="post" action="{{ path('affecter.delete', {'id': affecter.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cette parc ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ affecter.id) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
+                                {% if affecter.statut is null %}
+                                    <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;" data-id="{{ affecter.id }}" data-token="{{ csrf_token('delete' ~ affecter.id) }}" onclick="showDeletionModal(this)">
                                         <i class="fa fa-trash"></i>
-                                    </button>
-                                </form>
+                                    </button>    
+                                {% endif %}
                             </div>
-                        </td> #}
+                        </td>
                     </tr>
                     {% else %}
                     <tr>
@@ -50,6 +92,12 @@
                     {% endfor %}
                 </tbody>
             </table>
+
+            <!-- Bouton Valider -->
+            <div class="d-flex justify-content-end mt-4">
+                <button type="button" class="btn btn-success" id="validateButton" data-id="{{ demandeId }}" {% if affecters is empty %}disabled{% endif %}>Valider</button>
+            </div>
+
         </div>
     </div>
 </div>
@@ -63,10 +111,100 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Êtes-vous sûr de vouloir supprimer cette affectation ?
+                Êtes-vous sûr de vouloir valider ces choix ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="confirmValidationButton">Valider</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Gérer le clic sur le bouton de validation
+document.getElementById('validateButton').addEventListener('click', function () {
+    // Afficher le modal de confirmation
+    $('#confirmModal').modal('show');
+});
+
+// Gérer le clic sur le bouton de confirmation du modal
+document.getElementById('confirmValidationButton').addEventListener('click', function () {
+    // Récupérer l'ID de la demande à partir de l'attribut data-id du bouton
+    const demandeId = document.getElementById('validateButton').getAttribute('data-id');
+    
+    // Appel AJAX vers le contrôleur Symfony
+    fetch('{{ path("affecter.validate", {"demandeId": 0}) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-Token': '{{ csrf_token("validate_action") }}' // Ajoutez un token CSRF si nécessaire
+        },
+        body: JSON.stringify({
+            demandeId: demandeId // Transmettre l'ID récupéré
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        }
+        throw new Error('Erreur lors de la validation');
+    })
+    .then(data => {
+        if (data.success) {
+            // Fermer le modal après la validation réussie
+            $('#confirmModal').modal('hide');
+            
+            // Rediriger vers la route 'demande.validates' après la validation réussie
+            window.location.href = '{{ path("demande.traitees") }}';
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+    });
+});
+    
+    
+
+    // Fonction pour désactiver les options déjà sélectionnées
+    function disableSelectedOptions() {
+        const selectedVehicles = [...document.querySelectorAll('tr td:nth-child(1)')].map(td => td.innerText);
+        const selectedDrivers = [...document.querySelectorAll('tr td:nth-child(2)')].map(td => td.innerText);
+        
+        // Exemple de désactivation, à adapter selon votre logique d'affichage des options
+        document.querySelectorAll('select[name="form[vehicule]"] option').forEach(option => {
+            if (selectedVehicles.includes(option.innerText)) {
+                option.disabled = true;
+            }
+        });
+        
+        document.querySelectorAll('select[name="form[chauffeur]"] option').forEach(option => {
+            if (selectedDrivers.includes(option.innerText)) {
+                option.disabled = true;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        disableSelectedOptions();
+    });
+</script>
+
+
+<!-- Modal de confirmation pour supprimer -->
+<div class="modal fade" id="confirmModalDeletion" tabindex="-1" aria-labelledby="confirmModalDeletion" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalDeletion">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cet enregistrement ?
                 <form id="modalDeleteForm" method="post">
                     <input type="hidden" name="_token" id="modal_token" value="">
-                    <input type="hidden" name="affecter" id="modal_affecter_id" value="">
+                    <input type="hidden" name="affecter_id" id="modal_affecter_id" value="">
                 </form>
             </div>
             <div class="modal-footer">
@@ -76,6 +214,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script>
     function showDeletionModal(button) {
@@ -90,7 +230,7 @@
         document.getElementById('modalDeleteForm').action = '{{ path("affecter.delete", {"id": "__ID__"}) }}'.replace('__ID__', affecterId);
 
         // Afficher le modal de confirmation
-        $('#confirmModal').modal('show');
+        $('#confirmModalDeletion').modal('show');
     }
 
     document.addEventListener('DOMContentLoaded', function () {

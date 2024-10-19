@@ -16,19 +16,17 @@
 </div>
 
 <div class="form-group row mb-3">
-    <div class="col-sm-12">{{ form_row(form.lieuMission) }}
-    </div>
+    <div class="col-sm-12">{{ form_row(form.lieuMission) }}</div>
 </div>
 
-
-
-
-
-
-
-
-    <div class="d-flex justify-content-end">
-        {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+{% if is_granted('ROLE_POINT_FOCAL_AVANCE') and form.vehicules is defined and form.chauffeurs is defined %}
+    <div class="form-group row mb-3">
+        <div class="col-sm-6">{{ form_row(form.vehicules) }}</div>
+        <div class="col-sm-6">{{ form_row(form.chauffeurs) }}</div>
     </div>
-{{ form_end(form) }}
+{% endif %}
 
+<div class="d-flex justify-content-end">
+    {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+</div>
+{{ form_end(form) }}

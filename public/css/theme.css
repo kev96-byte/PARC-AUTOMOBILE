@@ -5896,6 +5896,16 @@ label.required::before {
         font-weight:bold;
     }
 
+    .processed {
+      background-color: #4A90E2; /* Bleu un peu plus clair que initial */
+      color: white;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+   }
+  
+
     .rejected {
         background-color: #B71C1C;
         color: black;

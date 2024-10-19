@@ -1,0 +1,25 @@
+<?php
+// src/Validator/ParticipantsVehiclesConstraint.php
+
+namespace App\Validator;
+
+use Symfony\Component\Validator\Constraint;
+
+/**
+ * @Annotation
+ */
+class ParticipantsVehiclesConstraint extends Constraint
+{
+    public $message = 'Le nombre de véhicules doit être inférieur ou égal au nombre de participants.';
+
+    public function validatedBy(): string
+    {
+        return ParticipantsVehiclesValidator::class;
+    }
+
+    public function getTargets(): string
+    {
+        // Retourne la constante pour indiquer que la contrainte s'applique au niveau de la classe
+        return self::CLASS_CONSTRAINT;
+    }
+}

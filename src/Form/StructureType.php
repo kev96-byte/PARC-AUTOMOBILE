@@ -70,24 +70,25 @@ class StructureType extends AbstractType
               'attr'=>[
                   'class'=>'form-control selectpicker', 'data-live-search'=>'true',
               ]
-            ]);
+            ])
 
 
-        if($options['mode'] === 'edit'){
-            $builder->add('responsableStructure', EntityType::class, [
-            'class' => User::class,
-            'choices' => $this->userRepository->findResponsableStructure(),
-            'choice_label' => function (User $user) {
-                return $user->getLastName() . ' ' . $user->getFirstName();
-            },
-            'placeholder' => 'Sélectionnez le responsable de la structure',
-                'required' => false,
-            'attr'=>[
-                'class'=>'form-control selectpicker', 'data-live-search'=>'true',
-            ]
-        ]);
-  }
-        $builder->add('Parc', EntityType::class, [
+
+            ->add('responsableStructure', EntityType::class, [
+                    'class' => User::class,
+                    'choices' => $this->userRepository->findResponsableStructure(),
+                    'choice_label' => function (User $user) {
+                        return $user->getLastName() . ' ' . $user->getFirstName();
+                    },
+                    'placeholder' => 'Sélectionnez le responsable de la structure',
+                    'required' => false,
+                    'attr' => [
+                        'class' => 'form-control selectpicker', 
+                        'data-live-search' => 'true',
+                    ],
+                ])
+                
+                ->add('Parc', EntityType::class, [
             'required' => true,
             'class' => Parc::class,
             'query_builder' => function (EntityRepository $er) {

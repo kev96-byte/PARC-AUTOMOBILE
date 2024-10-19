@@ -21,11 +21,12 @@
             <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Nom parc</th>
+                        <th>Nom du parc</th>
                         <th>Téléphone</th>
                         <th>Adresse mail</th>
                         <th>Institution</th>
-                        <th>Responsable du parc</th>
+                        <th>Chef parc</th>
+                        <th>Validateur</th>
                         <th data-sortable="false" style="text-align: center;">Actions</th>
                     </tr>
                 </thead>
@@ -34,9 +35,22 @@
                     <tr>
                         <td>{{ parc.nomParc }}</td>
                         <td>{{ parc.telephoneParc}}</td>
-                        <td>{{ parc.emailParc}}</td>
+                        <td>{{ parc.emailParc}}</td>                        
                         <td>{{ parc.institution.libelleInstitution }}</td>
-                        <td>{{ parc.chefParc.lastName }} {{ parc.chefParc.firstName }}</td>
+                        <td>
+                            {% if parc.chefParc is not null %}
+                                {{ parc.chefParc.lastName }} {{ parc.chefParc.firstName }}
+                            {% else %}
+                                Pas de chef parc
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if parc.validateurParc is not null %}
+                                {{ parc.validateurParc.lastName }} {{ parc.validateurParc.firstName }}
+                            {% else %}
+                                Pas de validateur
+                            {% endif %}
+                        </td>
                         <td>
                             <div class="flex justify-content-end">
                                 <a href="{{ path('parc.edit', {'id': parc.id}) }}">
@@ -56,7 +70,7 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6">Aucun enregistrement trouvé</td>
+                        <td colspan="7">Aucun enregistrement trouvé</td>
                     </tr>
                 {% endfor %}
                 </tbody>

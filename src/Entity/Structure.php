@@ -55,7 +55,7 @@ class Structure
     #[ORM\ManyToOne(inversedBy: 'structure')]
     private ?Parc $parc = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'structure')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'structures')]
     private ?User $responsableStructure = null;
 
     /**
@@ -195,13 +195,14 @@ class Structure
     {
         return $this->responsableStructure;
     }
-
-    public function setResponsableStructure(?User $responsableStructure): static
+    
+    public function setResponsableStructure(?User $responsableStructure): self
     {
         $this->responsableStructure = $responsableStructure;
-
+    
         return $this;
     }
+    
 
     /**
      * @return Collection<int, Demande>

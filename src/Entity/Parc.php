@@ -58,6 +58,9 @@ class Parc
     #[ORM\Column(length: 255, nullable: true)]
     private string $emailParc = '';
 
+    #[ORM\ManyToOne(inversedBy: 'ParcsValidateurs')]
+    private ?User $validateurParc = null;
+
 
 
     public function __construct()
@@ -199,6 +202,18 @@ class Parc
     public function setEmailParc(?string $emailParc): static
     {
         $this->emailParc = $emailParc;
+
+        return $this;
+    }
+
+    public function getValidateurParc(): ?User
+    {
+        return $this->validateurParc;
+    }
+
+    public function setValidateurParc(?User $validateurParc): static
+    {
+        $this->validateurParc = $validateurParc;
 
         return $this;
     }

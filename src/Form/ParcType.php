@@ -70,8 +70,22 @@ class ParcType extends AbstractType
 
             ->add('chefParc', EntityType::class, [
                 'class' => User::class,
-                'label'=>'Validateur',
+                'label'=>'Chef parc',
                 'choices' => $this->userRepository->findChefsParc(),
+                'choice_label' => function (User $user) {
+                    return $user->getLastName() . ' ' . $user->getFirstName();
+                },
+                'placeholder' => 'Sélectionnez le responsable du parc',
+                'attr'=>[
+                    'class'=>'form-control selectpicker', 'data-live-search'=>'true',
+                ]
+            ])
+
+
+            ->add('validateurParc', EntityType::class, [
+                'class' => User::class,
+                'label'=>'Validateur du parc',
+                'choices' => $this->userRepository->findValidateurParc(),
                 'choice_label' => function (User $user) {
                     return $user->getLastName() . ' ' . $user->getFirstName();
                 },

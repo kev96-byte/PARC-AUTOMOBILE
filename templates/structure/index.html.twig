@@ -36,8 +36,15 @@
                         <td>{{ structure.libelleStructure }}</td>
                         <td>{{ structure.telephoneStructure }}</td>
                         <td>{{ structure.institution.libelleInstitution}}</td>
-                        <td>{{ structure.parc.nomParc}}</td>
-                        <td>{{ structure.responsableStructure.lastName }} {{ structure.responsableStructure.firstName }}</td>
+                        <td>{{ structure.parc.nomParc}}</td>                        
+                        <td>
+                            {% if structure.responsableStructure is not null %}
+                                {{ structure.responsableStructure.lastName }} {{ structure.responsableStructure.firstName }}
+                            {% else %}
+                                Pas de responsable
+                            {% endif %}
+                        </td>
+
                         <td>
                             <div class="flex justify-content-end">
                                 <a href="{{ path('structure.edit', {'id': structure.id}) }}">

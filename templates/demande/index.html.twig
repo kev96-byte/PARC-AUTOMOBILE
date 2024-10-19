@@ -37,13 +37,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% set initialDemandes = demandes|filter(d => d.statut == 'Initial') %}
-                    {% if initialDemandes is empty %}
+                    {% if (demandes is empty) %}
                         <tr>
                             <td colspan="7">Aucun enregistrement trouvé</td>
                         </tr>
                     {% else %}
-                        {% for demande in initialDemandes %}
+                        {% for demande in demandes %}
                             <tr>
                                 <td>{{ demande.numDemande }}</td>
                                 <td>{{ demande.dateDemande|date("d/m/Y") }}</td>
@@ -57,7 +56,23 @@
                                     </ul>
                                 </td>
                                 <td>
-                                    <span class="initial">{{ demande.statut }}</span>
+                                    <span class="
+                                        {% if demande.statut == 'Initial' %}
+                                            initial
+                                        {% elseif demande.statut == 'Approuvé' %}
+                                            approved
+                                        {% elseif demande.statut == 'Validé' %}
+                                            validated
+                                        {% elseif demande.statut == 'Traité' %}
+                                            processed
+                                        {% elseif demande.statut == 'Rejeté' and demande.traiterPar is not null %}
+                                            rejected-special
+                                        {% else %}
+                                            rejected
+                                        {% endif %}
+                                    ">
+                                        {{ demande.statut }}
+                                    </span>
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end">
@@ -80,16 +95,19 @@
                                                             <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
                                                                 <i class="fa fa-pen"></i>
                                                             </button>
+                                                            <span style="color: #777;">&nbsp; Modifier</span>
                                                         </a>
                                                     </li>
                                                     <li style="padding-left: 10px;">
-                                                        <a href="#" onclick="showDeletionModal(this);" data-id="{{ demande.id }}" data-token="{{ csrf_token('delete' ~ demande.id) }}" style="text-decoration: none;">
-                                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: hsl(0, 92%, 50%);">
-                                                                <i class="fa fa-trash"></i>
+                                                        <!-- Lien pour ouvrir le modal -->
+                                                        <a href="#" class="open-cancel-modal" data-id="{{ demande.id }}" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #220bf5; width: 30px; height: 30px;">
+                                                                <i class="fa fa-times"></i>
                                                             </button>
+                                                            <span style="color: #777;">&nbsp; Annuler</span>
                                                         </a>
                                                     </li>
-                                                    {% if demande.statut == 'Validé'%}
+                                                    {% if demande.statut == 'Validé' %}
                                                         <li style="padding-left: 10px;">
                                                             <a href="{{ path('demande.etat', {'id': demande.id}) }}">
                                                                 <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #228cc5; width: 30px; height: 30px;">
@@ -99,6 +117,7 @@
                                                         </li>
                                                     {% endif %}
                                                 </ul>
+                                                
                                             </div>
                                         {% else %}
                                             <a href="{{ path('demande.show', {'id': demande.id}) }}">
@@ -129,58 +148,45 @@
 
 
 
-
-    <!-- Modal de confirmation -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmModalLabel">Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Êtes-vous sûr de vouloir supprimer cette demande ?
-                    <form id="modalDeleteForm" method="post">
-                        <input type="hidden" name="_token" id="modal_token" value="">
-                        <input type="hidden" name="demande_id" id="modal_demande_id" value="">
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
-                    <button type="button" class="btn btn-primary" id="confirmButton">Oui</button>
+        <!-- Modal pour la saisie de la raison d'annulation -->
+        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelModalLabel">Raison de l'annulation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="cancelForm" method="POST" action="">
+                            <div class="mb-3">
+                                <label for="cancelReason" class="form-label">Raison :</label>
+                                <textarea class="form-control" id="cancelReason" name="reason" rows="3" required></textarea>
+                            </div>
+                            <input type="hidden" name="demande_id" id="demandeId">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                        <button type="submit" class="btn btn-primary" form="cancelForm">Confirmer l'annulation</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
 
-
-    <script>
-        function showDeletionModal(button) {
-            var demandeId = button.getAttribute('data-id');
-            var csrfToken = button.getAttribute('data-token');
-
-            // Mettre à jour les champs cachés du formulaire dans le modal
-            document.getElementById('modal_token').value = csrfToken;
-            document.getElementById('modal_demande_id').value = demandeId;
-
-            // Mettre à jour l'action du formulaire avec l'ID du niveau
-            document.getElementById('modalDeleteForm').action = '{{ path("demande.delete", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
-
-            // Afficher le modal de confirmation
-            $('#confirmModal').modal('show');
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var confirmButton = document.getElementById('confirmButton');
-
-            confirmButton.addEventListener('click', function () {
-                // Soumettre le formulaire de suppression dans le modal
-                document.getElementById('modalDeleteForm').submit();
+        <script>
+            const cancelButtons = document.querySelectorAll('[data-bs-target="#cancelModal"]');
+        
+            cancelButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const demandeId = this.getAttribute('data-id');
+                    document.getElementById('demandeId').value = demandeId;
+                    // Mettez à jour l'action du formulaire pour inclure l'ID de la demande
+                    document.getElementById('cancelForm').action = "{{ path('demande.cancel', {'id': '__id__'}) }}".replace('__id__', demandeId);
+                });
             });
-        });
-    </script>
-
+        </script>
+        
 
 
 {% endblock %}

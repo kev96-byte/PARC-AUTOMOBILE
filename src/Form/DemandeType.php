@@ -4,30 +4,40 @@ namespace App\Form;
 
 use App\Entity\Commune;
 use App\Entity\Demande;
+use App\Entity\Vehicule;
+use App\Entity\Chauffeur;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Repository\CommuneRepository;
 
 class DemandeType extends AbstractType
 {
-    private $communeRepository;
+    private $entityManager;
+    private $security;    
 
-    public function __construct(CommuneRepository $communeRepository)
+    public function __construct(EntityManagerInterface $entityManager, Security $security)
     {
-        $this->communeRepository = $communeRepository;
+        $this->entityManager = $entityManager;
+        $this->security = $security;
     }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $communeChoices = $this->communeRepository->findActiveCommunesFormatted();
-        $builder
+        $communeChoices = $this->entityManager->getRepository(Commune::class)->findActiveCommunesFormatted();
+        // Vérifier si l'utilisateur connecté a le rôle ROLE_POINT_FOCAL_AVANCE
+        if ($this->security->isGranted('ROLE_POINT_FOCAL_AVANCE')) {
+            $vehiculeChoices = $this->entityManager->getRepository(Vehicule::class)->findActiveVehiculesFormatted();
+            $chauffeurChoices = $this->entityManager->getRepository(Chauffeur::class)->findActiveChauffeursFormatted();         
+        }
 
+        $builder
             ->add('dateDebutMission', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
@@ -78,10 +88,13 @@ class DemandeType extends AbstractType
                     'min' => 1, // Valeur minimale (peut être ajustée)
                     'max' => 10, // Valeur maximale (peut être ajustée)
                 ],
+
             ])
+            
 
             ->add('lieuMission', ChoiceType::class, [
                 'label' => 'Lieux de Mission',
+                'required' => true,
                 'choices' => $communeChoices,
                 'multiple' => true,
                 'expanded' => false,
@@ -89,16 +102,46 @@ class DemandeType extends AbstractType
                     'class' => 'form-control selectpicker',
                     'data-live-search' => true,
                 ],
-            ])
-
-            ->add('save', SubmitType::class, [
-                'attr'=>['class'=>'p-component p-button p-button-success','style'=>'font-weight: bold;']
-
-            ])
+            ]);
 
 
-        ;
-    }
+            if ($this->security->isGranted('ROLE_POINT_FOCAL_AVANCE')) {
+                $builder
+                    ->add('vehicules', ChoiceType::class, [
+                        'label' => 'Véhicules',
+                        'required' => false,
+                        'choices' => $vehiculeChoices,
+                        'multiple' => true,
+                        'expanded' => false,
+                        'attr' => [
+                            'class' => 'form-control selectpicker',
+                            'data-live-search' => true,
+                        ],
+                    ])
+
+                    ->add('chauffeurs', ChoiceType::class, [
+                        'label' => 'Chauffeurs',
+                        'required' => false,
+                        'choices' => $chauffeurChoices,
+                        'multiple' => true,
+                        'expanded' => false,
+                        'attr' => [
+                            'class' => 'form-control selectpicker',
+                            'data-live-search' => true,
+                        ],
+                    ]);
+            }
+
+            $builder
+                ->add('save', SubmitType::class, [
+                    'attr'=>['class'=>'p-component p-button p-button-success','style'=>'font-weight: bold;']
+
+                ])
+            ;
+
+
+        }
+
 
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -110,3 +153,4 @@ class DemandeType extends AbstractType
 
 }
 
+ 

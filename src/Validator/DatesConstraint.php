@@ -11,6 +11,10 @@ use Symfony\Component\Validator\Constraint;
 class DatesConstraint extends Constraint
 {
     public $messageStartTodayMission = 'La date de début de mission ne peut pas être antérieure à aujourd\'hui.';
+    public $messageEndTodayMission = 'La date de fin de mission ne peut pas être antérieure à aujourd\'hui.';
+    public $messageStartTodayMissionModified = 'La date de début de mission ne peut pas être antérieure à aujourd\'hui.';
+    public $messageEndTodayMissionModified = 'La date de fin de mission ne peut pas être antérieure à aujourd\'hui.';
+    public $messageDateDemande = 'La date de la demande ne peut pas être antérieure à aujourd\'hui.';
     public $messageStartMission = 'La date de début de mission ne peut pas être antérieure à la date de demande.';
     public $messageEndMission = 'La date de fin de mission ne peut pas être antérieure à la date de début de mission.';
     public $messageEndAssurance = "La date de fin d\'assurance ne peut pas être antérieure à la date de début d\'assurance.";

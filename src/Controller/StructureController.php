@@ -56,6 +56,7 @@ class StructureController extends AbstractController
         return $this->render('structure/new.html.twig', [
             'structure' => $structure,
             'form' => $form,
+            'mode' => 'add',
         ]);
 }
 
@@ -82,21 +83,9 @@ class StructureController extends AbstractController
         return $this->render('structure/edit.html.twig', [
             'structure' => $structure,
             'form' => $form,
+            'mode' => 'edit',
         ]);
     }
-/* 
-    #[Route('/{id}', name: 'structure.delete', methods: ['POST'])]
-    public function delete(Request $request, Structure $structure, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$structure->getId(), $request->getPayload()->get('_token'))) {
-            $entityManager->remove($structure);
-            $entityManager->flush();
-            $this->addFlash('success', 'Suppression effectuée avec succès.');
-        }
-
-        return $this->redirectToRoute('structure.index', [], Response::HTTP_SEE_OTHER);
-    } */
-
 
     #[Route('/{id}', name: 'structure.delete', methods: ['POST'])]
     public function delete(Request $request, Structure $structure, EntityManagerInterface $entityManager): Response

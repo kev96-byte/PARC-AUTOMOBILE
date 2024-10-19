@@ -16,7 +16,6 @@ visite.index:
     path: /visite
     controller: App\Controller\VisiteController::index
 
-
 api_available_vehicles_and_drivers:
     path: /api/available-vehicles-and-drivers
     controller: App\Controller\DemandeController::availableVehiclesAndDrivers

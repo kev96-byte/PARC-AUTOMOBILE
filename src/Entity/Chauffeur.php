@@ -13,7 +13,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 #[Gedmo\SoftDeleteable(fieldName:"deleteAt", timeAware:false)]
-#[UniqueEntity(fields: ['matriculeChauffeur', 'numPermis'])]
+#[UniqueEntity(fields: ['matriculeChauffeur'])]
+#[UniqueEntity(fields: ['numPermis'])]
 #[ORM\Entity(repositoryClass: ChauffeurRepository::class)]
 class Chauffeur
 {
@@ -57,6 +58,7 @@ class Chauffeur
     private ?\DateTimeImmutable $deleteAt = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private string $matriculeChauffeur = '';
 
 

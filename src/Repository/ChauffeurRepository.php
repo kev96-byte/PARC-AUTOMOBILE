@@ -19,12 +19,61 @@ class ChauffeurRepository extends ServiceEntityRepository
     public function findAvailableChauffeurs(): array
     {
         return $this->createQueryBuilder('c')
-            ->where('c.disponibilite = :disponibilite')
+            ->where('c.etatChauffeur = :etat')
             ->andWhere('c.deleteAt IS NULL')
-            ->setParameter('disponibilite', 'Disponible')
+            ->setParameter('etat', 'En service')
             ->getQuery()
             ->getResult();
     }
+
+
+
+    public function findActiveChauffeursFormatted(): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select("CONCAT(c.matriculeChauffeur, ' (', UPPER(c.nomChauffeur), ' ', UPPER(c.prenomChauffeur), ')') as formattedChauffeur, c.matriculeChauffeur")
+            ->where('c.etatChauffeur = :etat')
+            ->andWhere('c.deleteAt IS NULL')
+            ->setParameter('etat', 'En service')
+            ->orderBy('c.matriculeChauffeur', 'ASC');
+    
+        $result = $qb->getQuery()->getResult();
+    
+        $chauffeurChoices = [];
+        foreach ($result as $row) {
+            $chauffeurChoices[$row['formattedChauffeur']] = $row['matriculeChauffeur'];
+        }
+    
+        return $chauffeurChoices;
+    }
+    
+
+    public function findChauffeursDisponibles(\DateTimeInterface $dateDebutMission, \DateTimeInterface $dateFinMission, $parc)
+    {
+        // Sous-requête pour trouver les chauffeurs déjà affectés pendant la période
+        $subQuery = $this->createQueryBuilder('c2')
+        ->select('c2.id')
+        ->innerJoin('c2.affecters', 'a')
+        ->where('a.dateDebutMission BETWEEN :dateDebut AND :dateFin')
+        ->orWhere('a.dateFinMission BETWEEN :dateDebut AND :dateFin')
+        ->orWhere(':dateDebut BETWEEN a.dateDebutMission AND a.dateFinMission')
+        ->orWhere(':dateFin BETWEEN a.dateDebutMission AND a.dateFinMission');
+    
+        // Requête principale pour trouver les véhicules disponibles
+        $qb = $this->createQueryBuilder('c');
+
+        $qb->where('c.deleteAt IS NULL')
+        ->andWhere('c.etatChauffeur = :etat')
+        ->andWhere('c.parc = :parc')
+        ->andWhere($qb->expr()->notIn('c.id', $subQuery->getDQL()))
+        ->setParameter('dateDebut', $dateDebutMission)
+        ->setParameter('dateFin', $dateFinMission)
+        ->setParameter('etat', 'En service')
+        ->setParameter('parc', $parc);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findChauffeursInMission(): array
     {
         return $this->createQueryBuilder('c')
@@ -33,7 +82,7 @@ class ChauffeurRepository extends ServiceEntityRepository
             ->setParameter('disponibilite', 'En mission')
             ->getQuery()
             ->getResult();
-        }
+    }
 
     public function countChauffeursInMission(): int
     {
@@ -50,13 +99,13 @@ class ChauffeurRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('c')
             ->select('COUNT(c.id)')
-            ->where('c.disponibilite = :disponibilite')
             ->andWhere('c.etatChauffeur = :etat')
             ->andWhere('c.deleteAt IS NULL')
-            ->setParameter('disponibilite', 'Disponible')
             ->setParameter('etat', 'En service');
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
+
+
 
 
 

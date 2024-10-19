@@ -109,7 +109,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                            {% if is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_CABINET') %}
+                            {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_CABINET') %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des matériels roulants">Gestion des matériels roulants</div>
                                     <ul role="menu">
@@ -125,13 +125,6 @@
                                                 <span>Véhicules</span><span class="p-ink"></span>
                                             </a>
                                         </li>
-
-{#                                        <li class="" role="none">#}
-{#                                            <a class="p-ripple p-ripple {{ current_route == 'vehicules.disponibles' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="véhicule disponibles" role="menuitem" href="{{ path('vehicules.disponibles') }}">#}
-{#                                                <img src="{{ asset('img/icons/auto.svg') }}" alt="home" style="width: 1.2em;">#}
-{#                                                <span>Véhicules disponibles</span><span class="p-ink"></span>#}
-{#                                            </a>#}
-{#                                        </li>#}
 
                                         <li class="" role="none">
                                             <a class="p-ripple {{ current_route starts with 'assurance' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="assurance" role="menuitem" href="{{ path('assurance.index') }}">
@@ -189,41 +182,24 @@
                                     <ul role="menu">
                                         <li class="" role="none">
                                             <a class="p-ripple {{ current_route starts with 'demande' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="Demande de véhicule" role="menuitem" href="{{ path('demande.index') }}">
-
-                                                {% if is_granted('ROLE_POINT_FOCAL') and not is_granted('ROLE_ADMIN') %}
+                                                {% if ((is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_POINT_FOCAL_AVANCE')) and not is_granted('ROLE_ADMIN')) %}
                                                     <img src="{{ asset('img/icons/question-de-dossier.svg') }}" alt="cva" style="width: 1.2em;"> <span>Demander véhicules</span>
-                                                {% endif %}
-                                                {% if (is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_VALIDATEUR')) and not is_granted('ROLE_ADMIN')  %}
+                                                {% elseif ((is_granted('ROLE_RESPONSABLE_STRUCTURE') or is_granted('ROLE_CHEF_PARC')) and not is_granted('ROLE_ADMIN'))  %}
                                                     <img src="{{ asset('img/icons/question-de-dossier.svg') }}" alt="cva" style="width: 1.2em;"> <span>Traiter demandes</span>
+                                                {% elseif (is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN'))  %}
+                                                    <img src="{{ asset('img/icons/question-de-dossier.svg') }}" alt="cva" style="width: 1.2em;"> <span>Valider demandes</span>
+                                                {% else %}
+                                                    <img src="{{ asset('img/icons/question-de-dossier.svg') }}" alt="cva" style="width: 1.2em;"> <span>Liste des demandes</span>
                                                 {% endif %}
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
-
-
-                                            <li class="" role="none">
-                                                <a class="p-ripple" aria-label="Demandes approuvées" role="menuitem" href="{{ path('demande.approuvees') }}">
-
-                                                    {% if (is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_RESPONSABLE_STRUCTURE')) and not is_granted('ROLE_ADMIN')  %}
-                                                        <i class="fa fa-check-circle"></i>
-                                                        <span>Traiter demandes</span>
-                                                    {% else %}
-                                                        <img src="{{ asset('img/icons/verification-de-lhexagone.svg') }}" alt="home" style="width: 1.2em;">
-                                                        <span>Demandes approuvées</span>
-                                                    {% endif %}
-                                                    <span class="p-ink"></span>
-                                                </a>
-                                            </li>
-
-                                            {% if (is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_RESPONSABLE_STRUCTURE')) and not is_granted('ROLE_ADMIN')  %}
-                                                <li class="" role="none">
-                                                    <a class="p-ripple" aria-label="Finaliser demandes" role="menuitem" href="{{ path('demandes.expirees') }}">
-                                                        <i class="fa fa-tasks"></i>
-                                                        <span>Valider retour mission</span>
-                                                        <span class="p-ink"></span>
-                                                    </a>
-                                                </li>
-                                            {% endif %}
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Demandes approuvées" role="menuitem" href="{{ path('demande.approuvees') }}">
+                                                <img src="{{ asset('img/icons/verification-de-lhexagone.svg') }}" alt="home" style="width: 1.2em;"> <span>Demandes approuvées</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Demandes rejetées" role="menuitem" href="{{ path('demande.rejetees') }}">
                                                 <img src="{{ asset('img/icons/supprimer-le-document.svg') }}" alt="home" style="width: 1.2em;">
@@ -231,7 +207,13 @@
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
-
+                                        <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Demandes validées" role="menuitem" href="{{ path('demande.traitees') }}">
+                                                <img src="{{ asset('img/icons/document-accepte.svg') }}" alt="home" style="width: 1.2em;">
+                                                <span>Demandes traitées</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
                                         <li class="" role="none">
                                             <a class="p-ripple" aria-label="Demandes validées" role="menuitem" href="{{ path('demande.validees') }}">
                                                 <img src="{{ asset('img/icons/document-accepte.svg') }}" alt="home" style="width: 1.2em;">
@@ -239,14 +221,14 @@
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
-
-                                        <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Retour de mission validés" role="menuitem" href="{{ path('demande.finalisees') }}">
-                                                <img src="{{ asset('img/icons/document-de-conformite.svg') }}" alt="home" style="width: 1.2em;">
-                                                <span>Retour de mission validés</span>
+{#                                      <li class="" role="none">
+                                            <a class="p-ripple" aria-label="Demandes validées" role="menuitem" href="{{ path('demande.cancel') }}">
+                                                <img src="{{ asset('img/icons/document-accepte.svg') }}" alt="home" style="width: 1.2em;">
+                                                <span>Demandes annulées</span>
                                                 <span class="p-ink"></span>
                                             </a>
-                                        </li>
+                                        </li> #}
+
                                     </ul>
 
 
@@ -386,7 +368,7 @@
                                             <td class="text-uppercase"> <a href="{{ path('demande.rejetees') }}"><span class="badge badge-light">Voir détails</span></a> </td>
                                         </tr>
 
-                                        {% elseif (is_granted('ROLE_VALIDATEUR') and not is_granted("ROLE_ADMIN")) %}
+                                        {% elseif (is_granted('ROLE_CHEF_PARC') and not is_granted("ROLE_ADMIN")) %}
                                             <tr>
                                                 <td class="text-uppercase">Nombre de demandes à traiter</td>
                                                 <td class="text-uppercase">{{ nombreDemandesEnAttente() }}</td>
@@ -394,9 +376,15 @@
                                             </tr>
                                             <tr>
                                                 <td class="text-uppercase">Nombre de demandes traitées</td>
-                                                <td class="text-uppercase">{{ nombreDemandesTraiteesByValidateur() }}</td>
+                                                <td class="text-uppercase">{{ nombreDemandesTraiteesByChefParc() }}</td>
+                                                <td class="text-uppercase"> <a href="{{ path('demande.traitees') }}"><span class="badge badge-light">Voir détails</span></a> </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-uppercase">Nombre de demandes validées</td>
+                                                <td class="text-uppercase">{{ nombreDemandesTraiteesByChefParc() }}</td>
                                                 <td class="text-uppercase"> <a href="{{ path('demande.validees') }}"><span class="badge badge-light">Voir détails</span></a> </td>
                                             </tr>
+                                            <tr>
                                             <td class="text-uppercase">Nombre de demandes rejetées</td>
                                             <td class="text-uppercase">{{ nombreDemandesRejetees() }}</td>
                                             <td class="text-uppercase"> <a href="{{ path('demande.rejetees') }}"><span class="badge badge-light">Voir détails</span></a> </td>
@@ -414,7 +402,7 @@
                             {% endif %}
 
 
-                            {% if is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_ADMIN') or is_granted('ROLE_CABINET') %}
+                            {% if is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_ADMIN') or is_granted('ROLE_CABINET') %}
                                 {# Affichage véhicules #}
                             <div class="card w-100">
                                 <table class="table">

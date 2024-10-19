@@ -32,16 +32,20 @@ class AffecterType extends AbstractType
             throw new \Exception("Demande not found with ID $demandeId");
         }
 
+        
+        $dateDebutMission = $demande->getDateDebutMission();
         $dateFinMission = $demande->getDateFinMission();
         $nbreVehicules = $demande->getNbreVehicules();
+        $parc = $demande->getStructure()->getParc();
+
         
         // Récupère les véhicules filtrés
         $vehicules = $this->entityManager->getRepository(Vehicule::class)
-            ->findAvailableVehicles($dateFinMission);
+            ->findVehiculesDisponibles($dateDebutMission, $dateFinMission, $parc);
 
         // Récupère les chauffeurs filtrés
         $chauffeurs = $this->entityManager->getRepository(Chauffeur::class)
-            ->findAvailableChauffeurs();
+            ->findChauffeursDisponibles($dateDebutMission, $dateFinMission, $parc);
 
         $builder
             ->add('vehicule', EntityType::class, [

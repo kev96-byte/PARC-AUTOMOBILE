@@ -22,30 +22,49 @@ class DatesValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'Demande, Assurance, or Visite');
         }
 
-        $today = new \DateTimeImmutable('today');
-
         if ($value instanceof Demande) {
-            // Validate Demande specific constraints
-            if ($value->getDateDebutMission() && $value->getDateDebutMission() < $today) {
-                $this->context->buildViolation($constraint->messageStartTodayMission)
+            $mode = $this->context->getRoot()->getConfig()->getOption('mode');
+            $oldDateDebutMission = $this->context->getRoot()->getConfig()->getOption('oldDateDebutMission');
+            $oldDateFinMission = $this->context->getRoot()->getConfig()->getOption('oldDateFinMission');
+            $today = (new \DateTimeImmutable('today'))->format('Y-m-d');
+            if ($value->getDateDebutMission()->format('Y-m-d') < $today) {
+                $mode = $this->context->getRoot()->getConfig()->getOption('mode');
+                dump($mode);
+                if ($mode === 'add') {
+                    $this->context->buildViolation($constraint->messageStartTodayMission)
                     ->atPath('dateDebutMission')
                     ->addViolation();
-            }
-
-            if ($value->getDateDebutMission() && $value->getDateDemande()) {
-                if ($value->getDateDebutMission() < $value->getDateDemande()) {
-                    $this->context->buildViolation($constraint->messageStartMission)
+                } else {
+                    // Vérifier si la date de début de mission a été modifiée
+                    $dateDebutModified = $value->getDateDebutMission()->format('Y-m-d') != $oldDateDebutMission->format('Y-m-d');
+                    // Si la DateDebutMission a été modifiée et elle est dans le passé, bloquer la modification
+                    if ($dateDebutModified && $value->getDateDebutMission()->format('Y-m-d') < $today) {
+                        $this->context->buildViolation($constraint->messageStartTodayMissionModified)                    
                         ->atPath('dateDebutMission')
                         ->addViolation();
+                    }
                 }
-            }
-
-            if ($value->getDateFinMission() && $value->getDateDebutMission()) {
-                if ($value->getDateFinMission() < $value->getDateDebutMission()) {
-                    $this->context->buildViolation($constraint->messageEndMission)
+                    
+            } elseif ($value->getDateFinMission()->format('Y-m-d') < $today) {
+                $mode = $this->context->getRoot()->getConfig()->getOption('mode');
+                if ($mode === 'add') {
+                    $this->context->buildViolation($constraint->messageEndTodayMission)
+                    ->atPath('dateFinMission')
+                    ->addViolation();
+                } else {
+                    // Vérifier si la date de fin de mission a été modifiée
+                    $dateFinModified = $value->getDateFinMission()->format('Y-m-d') != $oldDateFinMission->format('Y-m-d');
+                    // Si la DateFinMission a été modifiée et elle est dans le passé, bloquer la modification
+                    if ($dateFinModified && $value->getDateFinMission()->format('Y-m-d') < $today) {                    
+                        $this->context->buildViolation($constraint->messageEndTodayMissionModified)
                         ->atPath('dateFinMission')
                         ->addViolation();
+                    }
                 }
+            } elseif ($value->getDateFinMission() < $value->getDateDebutMission()) {
+                $this->context->buildViolation($constraint->messageEndMission)
+                ->atPath('dateFinMission')
+                ->addViolation();
             }
         }
 

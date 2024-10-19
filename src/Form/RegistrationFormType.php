@@ -78,11 +78,15 @@ class RegistrationFormType extends AbstractType
                 'choices' => [
                     'Utilisateur simple' => 'ROLE_USER',
                     'Point Focal' => 'ROLE_POINT_FOCAL',
+                    'Point Focal Avance' => 'ROLE_POINT_FOCAL_AVANCE',
                     'Responsable de Structure' => 'ROLE_RESPONSABLE_STRUCTURE',
+                    'Chef Parc' => 'ROLE_CHEF_PARC',
                     'Validateur' => 'ROLE_VALIDATEUR',
                     'Membre du cabinet' => 'ROLE_CABINET',
-                    'Administrateur' => 'ROLE_ADMIN'
+                    'Administrateur' => 'ROLE_ADMIN',
+                    'Administrateur Avance' => 'ROLE_ADMIN_AVANCE'
                 ],
+                
                 'required' => true,
                 'multiple' => true,
                 'expanded' => false,

@@ -1,0 +1,54 @@
+<?php
+namespace App\Validator;
+
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Exception\UnexpectedValueException;
+
+class ParticipantsVehiclesValidator extends ConstraintValidator
+{
+    public function validate($entity, Constraint $constraint)
+    {
+        // Vérifier si la contrainte est du bon type
+        if (!$constraint instanceof ParticipantsVehiclesConstraint) {
+            throw new UnexpectedTypeException($constraint, ParticipantsVehiclesConstraint::class);
+        }
+
+        // Vérifier que l'entité est du bon type
+        if (!is_object($entity)) {
+            throw new UnexpectedValueException($entity, 'object');
+        }
+
+        $nbreParticipants = $entity->getNbreParticipants();
+        $nbreVehicules = $entity->getNbreVehicules();
+        $vehicules = $entity->getVehicules(); // Récupération des véhicules choisis
+
+/*         // Vérifier que les valeurs sont supérieures à 0
+        if ($nbreParticipants <= 0) {
+            $this->context->buildViolation('Le nombre de participants doit être supérieur à 0.')
+                ->atPath('nbreParticipants')
+                ->addViolation();
+        }
+
+        if ($nbreVehicules <= 0) {
+            $this->context->buildViolation('Le nombre de véhicules doit être supérieur à 0.')
+                ->atPath('nbreVehicules')
+                ->addViolation();
+        }
+ */
+        // Vérifier que le nombre de véhicules est inférieur ou égal au nombre de participants
+        if ($nbreVehicules > $nbreParticipants) {
+            $this->context->buildViolation($constraint->message)
+                ->atPath('nbreVehicules')
+                ->addViolation();
+        }
+
+        // Si le champ vehicules n'est pas vide, vérifier que le nombre de véhicules ne dépasse pas la valeur saisie
+        if (!empty($vehicules) && count($vehicules) > $nbreVehicules) {
+            $this->context->buildViolation('Le nombre de véhicules sélectionnés ne doit pas dépasser le nombre de véhicules saisi.')
+                ->atPath('vehicules')
+                ->addViolation();
+        }
+    }
+}

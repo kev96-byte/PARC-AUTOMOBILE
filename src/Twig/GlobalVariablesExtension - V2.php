@@ -91,11 +91,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
         return $this->vehiculeRepository->countAvailableVehicles();
     }
 
-    public function getAllVehicle(): int
-    {
-        return $this->vehiculeRepository->countAllVehicles();
-    }
-
 
     public function getNombreChauffeursDisponibles(): int
     {
@@ -106,7 +101,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
     public function getNombreTotalVehicules(): int
     {
-        return $this->vehiculeRepository->countAllVehicles();
+        return $this->vehiculeRepository->countAllAvailableVehicles();
     }
 
 
@@ -174,13 +169,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
             $roles = $user->getRoles();
             if (in_array('ROLE_POINT_FOCAL', $roles, true)) {
                 $nombreDemandesInitieeByPointFocal = $this->demandeRepository->countDemandesInitieeByPointFocal($user);
-                
-                // S'assurer que la valeur est un entier ou null
-                return $nombreDemandesInitieeByPointFocal ?? 0; // ou return $nombreDemandesInitieeByPointFocal;
+
+                return $nombreDemandesInitieeByPointFocal;
             }
-        
-            // Retourner 0 ou null si le rôle n'est pas trouvé
-            return 0; // ou return null;
+
+
 
         } catch (AuthenticationException $e) {
             // Gère l'exception d'authentification
@@ -247,11 +240,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
             if (in_array('ROLE_POINT_FOCAL', $roles, true)) {
                 $nombreDemandesForPointFocalApprouvees = $this->demandeRepository->countDemandesForPointFocalApprouvees($user);
 
-                // S'assurer que la valeur est un entier ou null
-                return $nombreDemandesForPointFocalApprouvees ?? 0; // ou return $nombreDemandesInitieeByPointFocal;
+                return $nombreDemandesForPointFocalApprouvees;
             }
-            // Retourner 0 ou null si le rôle n'est pas trouvé
-            return 0; // ou return null;
+
+
 
         } catch (AuthenticationException $e) {
             // Gère l'exception d'authentification
@@ -298,12 +290,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
             $roles = $user->getRoles();
             if (in_array('ROLE_CHEF_PARC', $roles, true)) {
-                $nombreDemandesTraiteesByChefParc = $this->demandeRepository->countDemandesTraiteesByChefParc($user);
+                $nombreDemandesTraiteesByChefParc = $this->demandeRepository->countDemandesTraiteesByValidateur($user);
 
-                return $nombreDemandesTraiteesByChefParc ?? 0;;
+                return $nombreDemandesTraiteesByChefParc;
             }
-            // Retourner 0 ou null si le rôle n'est pas trouvé
-            return 0; // ou return null;
+
 
 
         } catch (AuthenticationException $e) {
@@ -504,7 +495,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
                 $nombreDemandesEnAttente = $this->demandeRepository->countApprobateurDemandesEnAttente($structure);
 
 
-            } elseif (in_array('ROLE_CHEF_PARC', $roles, true)) {
+            } elseif (in_array('ROLE_VALIDATEUR', $roles, true)) {
                 // Récupération du parc du chef de parc
                 $parc = $user->getStructure()->getParc();
 
