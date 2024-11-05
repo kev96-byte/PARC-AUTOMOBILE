@@ -167,7 +167,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
             }
 
             $roles = $user->getRoles();
-            if (in_array('ROLE_POINT_FOCAL', $roles, true)) {
+            if  (in_array('ROLE_POINT_FOCAL', $roles, true) || in_array('ROLE_POINT_FOCAL_AVANCE', $roles, true)) {
                 $nombreDemandesInitieeByPointFocal = $this->demandeRepository->countDemandesInitieeByPointFocal($user);
 
                 return $nombreDemandesInitieeByPointFocal;

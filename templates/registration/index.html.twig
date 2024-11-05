@@ -51,10 +51,37 @@
                                         <i class="fa fa-pen"></i>
                                     </button>
                                 </a>
+                                
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#resetPasswordModal{{ user.id }}">
+                                    <img src="{{ asset('img/icons/reset_password.svg') }}" alt="reset password" style="width: 1.2em;">
+                                </a>
+
 
                                 <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #EF4444;" data-id="{{ user.id }}" data-token="{{ csrf_token('delete' ~ user.id) }}" onclick="showDeletionModal(this)">
                                     <i class="fa fa-trash"></i>
                                 </button>
+                                <div class="modal fade" id="resetPasswordModal{{ user.id }}" tabindex="-1" aria-labelledby="resetPasswordModalLabel{{ user.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalLabel{{ user.id }}">Réinitialisation du mot de passe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ path('reset.user.password', {'id': user.id}) }}" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="defaultPassword{{ user.id }}" class="form-label">Nouveau mot de passe par défaut</label>
+                            <input type="password" class="form-control" id="defaultPassword{{ user.id }}" name="defaultPassword" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Réinitialiser</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
                             </div>
                         </td>
                     </tr>
@@ -69,7 +96,7 @@
     </div>
 </div>
 
-<!-- Modal de confirmation -->
+<!-- Modal de confirmation suppression de l'utilisateur-->
 <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -91,8 +118,11 @@
         </div>
     </div>
 </div>
+    <!-- Fin modal de confirmation suppression de l'utilisateur-->
+ 
 
-<script>
+
+    <script>
     function showDeletionModal(button) {
         var userId = button.getAttribute('data-id');
         var csrfToken = button.getAttribute('data-token');
@@ -116,6 +146,12 @@
             document.getElementById('modalDeleteForm').submit();
         });
     });
-</script>
+
+
+
+
+
+
+    </script>
 
 {% endblock %}

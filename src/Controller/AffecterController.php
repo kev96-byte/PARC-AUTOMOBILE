@@ -19,127 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Csrf\Exception\InvalidCsrfTokenException;
 
 #[Route('/affecter')]
 class AffecterController extends AbstractController
 {
-  /*   #[Route('/{demandeId}', name: 'affecter.index', methods: ['GET'], requirements: ['demandeId' => '\d+'])]
-    public function index(int $demandeId, Request $request, DemandeRepository $demandeRepository, VehiculeRepository $vehiculeRepository, ChauffeurRepository $chauffeurRepository, EntityManagerInterface $entityManager): Response
-    {
-        $demande = $demandeRepository->find($demandeId);
-        $numDemande = $demande->getNumDemande();
-
-        if (!$demande) {
-            throw $this->createNotFoundException('Demande non trouvée');
-        }
-
-
-        $chauffeursDemandes = [];    
-        foreach ($demande->getChauffeurs() as $matricule) {
-            $chauffeur = $chauffeurRepository->findOneBy(['matriculeChauffeur' => $matricule]);
-            if ($chauffeur) {
-                $chauffeursDemandes[] = $chauffeur;
-            }
-        }
-
-
-        $vehiculesDemandes = [];    
-        foreach ($demande->getVehicules() as $matricule) {
-            $vehicule = $vehiculeRepository->findOneBy(['matricule' => $matricule]);
-            if ($vehicule) {
-                $vehiculesDemandes[] = $vehicule;
-            }
-        }
-    
-        $affecters = $entityManager->getRepository(Affecter::class)->findBy([
-            'deleteAt' => null,
-            'demande' => $demandeId
-        ]);
-
-        
-        $affecter = new Affecter();
-        
-        // Créez le formulaire en passant l'ID de la demande en option
-        $form = $this->createForm(AffecterType::class, $affecter, [
-            'demande_id' => $demandeId,
-            'numdemande' => $numDemande
-        ]);
-    
-        $form->handleRequest($request);
-    
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer les données du formulaire soumises
-            $formData = $form->getData();
-    
-            // Récupérer l'entité Véhicule et Chauffeur sélectionnées
-            $vehicule = $formData->getVehicule();
-            $chauffeur = $formData->getChauffeur();
-    
-            // Mettre à jour la disponibilité du véhicule et du chauffeur
-            if ($vehicule) {
-                $vehicule->setDisponibilite('En mission');
-            }
-            if ($chauffeur) {
-                $chauffeur->setDisponibilite('En mission');
-            }
-            
-            // Récupérer l'objet Demande correspondant à l'ID
-            $demande = $entityManager->getRepository(Demande::class)->find($demandeId);
-            if (!$demande) {
-                throw $this->createNotFoundException('Demande not found for ID ' . $demandeId);
-            }
-    
-            // Associer l'objet Demande à l'affectation
-            $affecter->setDemande($demande);
-            $affecter->setVehicule($vehicule);
-            $affecter->setChauffeur($chauffeur);
-    
-            $entityManager->persist($vehicule);
-            $entityManager->persist($chauffeur);
-            $entityManager->persist($demande);    
-            $entityManager->persist($affecter);
-            $entityManager->flush();
-    
-            // Rediriger avec un message flash
-            $this->addFlash('success', 'Affectation ajoutée avec succès.');
-    
-            return $this->redirectToRoute('affecter.index', ['demandeId' => $demandeId]);
-        }
-    
-        return $this->render('affecter/index.html.twig', [
-            'form' => $form->createView(),
-            'numdemande' => $numDemande,
-            'affecters' => $affecters,
-            'demandeId' => $demandeId,
-            'chauffeursDemandes' => $chauffeursDemandes, // Passez la liste des objets Chauffeur demandés au template
-            'vehiculesDemandes' => $vehiculesDemandes, // Passez la liste des objets Véhicules demandés au template
-       
-        ]);
-    } */
-
-
-    public function afficherDemande(int $id, DemandeRepository $demandeRepository): Response
-    {
-        $demande = $demandeRepository->find($id);
-        if (!$demande) {
-            throw $this->createNotFoundException('La demande n\'existe pas');
-        }
-        return $this->render('demande/afficher.html.twig', [
-            'demande' => $demande,
-        ]);
-    }
-
-/*     #[Route('/affecter/list', name: 'affecter.list', methods: ['GET'])]
-    public function list(EntityManagerInterface $entityManager, NiveauRepository $niveauRepository): Response
-    {
-        // Récupérer les données nécessaires pour la liste
-        $affecters = $entityManager->getRepository(Affecter::class)->findAll();
-
-        return $this->render('affecter/list.html.twig', [
-            'affecters' => $affecters,
-            'niveau' => $niveauRepository->findAll()
-        ]);
-    } */
+  
 
     #[Route('/create/{demandeId}', name: 'affecter.create', methods: ['GET', 'POST'])]
     public function create(Request $request, VehiculeRepository $vehiculeRepository, ChauffeurRepository $chauffeurRepository, DemandeRepository $demandeRepository, EntityManagerInterface $entityManager, int $demandeId): Response
@@ -359,5 +245,58 @@ class AffecterController extends AbstractController
 
         // Redirection après suppression, en récupérant l'identifiant de la demande
         return $this->redirectToRoute('affecter.create', ['demandeId' => $affecter->getDemande()->getId()]);
+    }
+
+    #[Route('/process-cancellation/{id}', name: 'affecter.process_cancellation', methods: ['POST'])]
+    public function processCancellation(
+        Request $request, 
+        Demande $demande, 
+        EntityManagerInterface $entityManager
+    ): Response {
+        // Vérification de base
+        if (!$this->isCsrfTokenValid('cancel' . $demande->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token invalide, veuillez réessayer.');
+            return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+        }
+
+        // Vérification des droits
+        if (!$this->isGranted('ROLE_VALIDATEUR')) {
+            $this->addFlash('error', 'Vous n\'avez pas les droits nécessaires.');
+            return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+        }
+
+        // Vérification de l'état de la demande
+        if ($demande->getStatut() !== 'Validé' || empty($demande->getCanceledRequest())) {
+            $this->addFlash('error', 'Cette demande ne peut pas être annulée.');
+            return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+        }
+
+        try {
+            // Récupération des affectations
+            $affectations = $entityManager->getRepository(Affecter::class)->findBy([
+                'demande' => $demande
+            ]);
+
+            // Suppression des affectations
+            foreach ($affectations as $affectation) {
+                $entityManager->remove($affectation);
+            }
+
+            // Mise à jour de la demande
+            $demande->setStatut('Annulé');
+            $demande->setCancelledBy($this->getUser());
+            $demande->setCancellationDate(new \DateTimeImmutable());
+            $demande->setCancellationReason($demande->getCanceledRequest());
+            $demande->setCanceledRequest(null);
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'La demande a été annulée avec succès.');
+            return $this->redirectToRoute('demande.index');
+
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'annulation.');
+            return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+        }
     }
 }

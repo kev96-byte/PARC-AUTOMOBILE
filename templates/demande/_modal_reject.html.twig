@@ -1,0 +1,23 @@
+{# templates/demande/_modal_reject.html.twig #}
+<div class="modal fade" id="rejectionModal" tabindex="-1" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ path('demande.dismiss', {'id': demande.id}) }}" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rejectionModalLabel">Raison du rejet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="raisonRejetApprobation" class="form-label">Raison</label>
+                        <textarea class="form-control" id="raisonRejetApprobation" name="raisonRejetApprobation" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">Confirmer le rejet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

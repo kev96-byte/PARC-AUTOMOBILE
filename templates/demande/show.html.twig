@@ -1,54 +1,63 @@
+{# templates/demande/show.html.twig #}
 {% extends 'base.html.twig' %}
-{% block mycontent %}
-    <div class="col-12 card-body">
-        <div class="card" style="min-height: 475px;">
-            <h5>Details demande</h5>
-            <div class="p-toolbar p-component mb-4" role="toolbar">
-                <div class="p-toolbar-group-left">
-                    <div class="my-2">
-                        <a href="javascript:history.back()">
-                            <button class="p-button p-component p-button-success mr-2">
-                                <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
-                                <span class="p-button-label p-c">Retour à la liste</span>
-                                <span class="p-ink"></span>
-                            </button>
-                        </a>
-                    </div>
-                </div>
 
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 475px;">
+        <h5>Details demande</h5>
+        
+        {# Bouton Retour #}
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="javascript:history.back()">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                        </button>
+                    </a>
+                </div>
             </div>
-            <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
-                <tbody>
+        </div>
+
+        {# Tableau des détails #}
+        <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+            <tbody>
+                {# Informations de base #}
                 <tr>
                     <th>Numéro demande</th>
                     <td>{{ demande.numDemande }}</td>
                 </tr>
-
                 <tr>
                     <th>Date Demande</th>
                     <td>{{ demande.dateDemande|format_date('m/d/Y H:i:s') }}</td>
                 </tr>
-
                 <tr>
                     <th>Référence note de service</th>
                     <td>{{ demande.referenceNoteDeService }}</td>
                 </tr>
-
                 <tr>
                     <th>Objet mission</th>
                     <td>{{ demande.objetMission }}</td>
                 </tr>
-
                 <tr>
                     <th>Date début mission</th>
                     <td>{{ demande.dateDebutMission|date("m/d/Y") }}</td>
                 </tr>
-
                 <tr>
                     <th>Date fin mission</th>
                     <td>{{ demande.dateFinMission|date("m/d/Y") }}</td>
                 </tr>
 
+                {# Date annulation si applicable #}
+                {% if demande.statut == 'Annulé' %}
+                    <tr>
+                        <th>Date annulation mission</th>
+                        <td>{{ demande.cancellationDate|date("m/d/Y") }}</td>
+                    </tr>
+                {% endif %}
+
+                {# Lieu et participants #}
                 <tr>
                     <th>Lieu Mission</th>
                     <td>
@@ -59,18 +68,16 @@
                         </ul>
                     </td>
                 </tr>
-
                 <tr>
                     <th>Nombre de participants</th>
                     <td>{{ demande.nbreParticipants }}</td>
                 </tr>
-
-
                 <tr>
                     <th>Nombre de véhicules</th>
                     <td>{{ demande.nbreVehicules }}</td>
                 </tr>
 
+                {# Véhicules et chauffeurs si assignés #}
                 {% if demande.vehicules is not empty %}
                     <tr>
                         <th>Véhicules choisis</th>
@@ -99,12 +106,11 @@
                     </tr>
                 {% endif %}
 
-
+                {# Informations utilisateurs #}
                 <tr>
                     <th>Point focal (Demandeur)</th>
                     <td>
-                        <span class="user-lastname">{{ demande.demander.lastName }}</span>
-                        <span class="user-firstname">{{ demande.demander.firstName }}</span>
+                        {{ demande.demander.lastName }} {{ demande.demander.firstName }}
                     </td>
                 </tr>
 
@@ -112,8 +118,7 @@
                     <tr>
                         <th>Responsable structure (Approbateur)</th>
                         <td>
-                            <span class="user-rs-lastname">{{ demande.validateurStructure.lastName }}</span>
-                            <span class="user-rs-firstname">{{ demande.validateurStructure.firstName }}</span>
+                            {{ demande.validateurStructure.lastName }} {{ demande.validateurStructure.firstName }}
                         </td>
                     </tr>
                 {% endif %}
@@ -122,30 +127,21 @@
                     <tr>
                         <th>Chef parc</th>
                         <td>
-                            <span class="user-rs-lastname">{{ demande.traiterPar.lastName }}</span>
-                            <span class="user-rs-firstname">{{ demande.traiterPar.firstName }}</span>
+                            {{ demande.traiterPar.lastName }} {{ demande.traiterPar.firstName }}
                         </td>
                     </tr>
                 {% endif %}
 
+                {# Statut et raisons #}
                 <tr>
                     <th>Statut demande</th>
                     <td>
-                        <span class="
-                            {% if demande.statut == 'Initial' %}
-                                initial
-                            {% elseif demande.statut == 'Approuvé' %}
-                                approved
-                            {% elseif demande.statut == 'Validé' %}
-                                validated
-                            {% elseif demande.statut == 'Traité' %}
-                                processed
-                            {% elseif demande.statut == 'Rejeté' and demande.traiterPar is not null %}
-                                rejected-special
-                            {% else %}
-                                rejected
-                            {% endif %}
-                        ">
+                        <span class="badge {% if demande.statut == 'Initial' %}bg-secondary
+                            {% elseif demande.statut == 'Approuvé' %}bg-primary
+                            {% elseif demande.statut == 'Validé' %}bg-success
+                            {% elseif demande.statut == 'Traité' %}bg-primary
+                            {% elseif demande.statut == 'Rejeté' %}bg-warning
+                            {% else %}bg-warning{% endif %}">
                             {{ demande.statut }}
                         </span>
                     </td>
@@ -154,82 +150,51 @@
                 {% if demande.statut == 'Rejeté' %}
                     <tr>
                         <th>Raison rejet</th>
-                        <td>
-                            <span class="raison-rejet">{{ demande.raisonRejetApprobation }}</span>
-                        </td>
+                        <td>{{ demande.raisonRejetApprobation }}</td>
+                    </tr>
+                {% endif %}
+
+                {% if demande.statut == 'Annulé' %}
+                    <tr>
+                        <th>Raison annulation</th>
+                        <td>{{ demande.cancellationReason }}</td>
                     </tr>
                 {% endif %}
 
                 {% if demande.observations is not empty %}
                     <tr>
                         <th>Commentaire</th>
-                        <td>
-                            <span class="observations">{{ demande.observations }}</span>
-                        </td>
+                        <td>{{ demande.observations }}</td>
                     </tr>
                 {% endif %}
 
-                {# Ici affichage du tableau détails affectation de véhicules et chauffeurs pour une demande #}
-                {% if demande.statut == 'Traité' and details is not empty %}
-                    <tr>
-                        <td colspan="2">
-                            <div class="shadow-sm p-3 mb-5 bg-white rounded">
-                                <hr class="my-4 border-primary">
-                            </div>
-                            <div class="table-responsive">
-                                <h5><b>Véhicule (s) et chauffeur(s) affecté(s)</b></h5>
-                                <table class="table table-bordered table-striped " id="dataTable" cellspacing="0">
-                                    <thead>
-                                    <tr>
-                                        <th>Matricule</th>
-                                        <th>Voir véhicule</th>
-                                        <th>Nom et prénom chauffeur</th>
-                                        <th>Voir chauffeur</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for detail in details %}
-
-                                        <tr>
-                                            <td>{{ detail.matricule }}</td>
-
-                                            <td>                            
-                                                <a target="_blank" href="{{ asset('img/Vehicules/' ~ detail.photoVehicule) }}">
-                                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
-                                                        <i class="fa fa-download"></i>
-                                                    </button>
-                                                </a>  
-                                            </td>
-
-
-                                            <td>{{ detail.nomChauffeur }} {{ detail.prenomChauffeur }}</td>
-                                            <td>
-                                                <a target="_blank" href="{{ asset('img/Chauffeurs/' ~ detail.photoChauffeur) }}">
-                                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
-                                                        <i class="fa fa-download"></i>
-                                                    </button>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        </td>
-                    </tr>
-                {% endif %}
-                {# Fin affichage du tableau détails affectation de véhicules et chauffeurs pour une demande #}
-
-
+                {# Boutons d'action selon le rôle #}
                 {% if is_granted('ROLE_RESPONSABLE_STRUCTURE') and not is_granted('ROLE_ADMIN') and demande.statut == 'Initial' %}
                     <tr>
                         <td colspan="2">
-                            <div class="d-flex justify-content-center" style="margin-top: 50px;">
-                                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#approveModal" onclick="showApproveModal('{{ demande.id }}')">
+                            <div class="d-flex justify-content-center mt-4">
+                                <button type="button" class="btn btn-success mx-2" data-bs-toggle="modal" data-bs-target="#approveModal">
                                     Approuver
                                 </button>
-                                <button type="submit" name="btnRejeter" class="btn btn-danger mx-2" style="width: 100px;" onclick="showRejectionModal('{{ demande.id }}')">
+                                <button type="button" class="btn btn-danger mx-2" data-bs-toggle="modal" data-bs-target="#rejectionModal">
+                                    Rejeter
+                                </button>
+                                <button type="button" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                    Annuler
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {% if is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN') and demande.statut == 'Approuvé' %}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center mt-4">
+                                <a href="{{ path('affecter.create', {'demandeId': demande.id}) }}" class="btn btn-primary mx-2">
+                                    Traiter
+                                </a>
+                                <button type="button" class="btn btn-danger mx-2" data-bs-toggle="modal" data-bs-target="#rejectionModal">
                                     Rejeter
                                 </button>
                             </div>
@@ -237,320 +202,115 @@
                     </tr>
                 {% endif %}
 
-                {% if ((is_granted('ROLE_CHEF_PARC') and not is_granted('ROLE_ADMIN')) and demande.statut == 'Approuvé') %}
-                <tr>
-                    <td colspan="2">
-                        <div class="d-flex justify-content-center" style="margin-top: 50px;">
-
-
-                            <button type="button" name="btnTraiter" class="btn btn-primary mx-2" style="width: 100px;" data-id="{{ demande.id }}">
-                                Traiter
-                            </button>
-
-                                                            
-
-                            <button type="submit" name="btnRejeter" class="btn btn-danger mx-2" style="width: 100px;" onclick="showRejectionModal('{{ demande.id }}')">
-                                Rejeter
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            {% endif %}
-
-            {% if ((is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN')) and demande.statut == 'Traité') %}
-            <tr>
-                <td colspan="2">
-                    <div class="d-flex justify-content-center" style="margin-top: 50px;">
-
-
-                        <button type="button" name="btnValider" class="btn btn-primary mx-2" style="width: 100px;" data-id="{{ demande.id }}">
-                            Valider
-                        </button>
-
-                                                        
-
-                        <button type="submit" name="btnRejeter" class="btn btn-danger mx-2" style="width: 100px;" onclick="showRejectionModal('{{ demande.id }}')">
-                            Rejeter
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        {% endif %}
-
-                {% if ((is_granted('ROLE_POINT_FOCAL') or is_granted('ROLE_POINT_FOCAL_AVANCE')) and not is_granted('ROLE_ADMIN')) %}
-                    {% if demande.statut == 'Initial' %}
-                        <tr>
-                            <td colspan="2">
-                                <div class="d-flex justify-content-center" style="margin-top: 50px;">
-                                    <a href="{{ path('demande.edit', {'id': demande.id}) }}">
-                                        <button type="submit" name="" class="p-button p-component p-button-Warning mx-2" style="width: 100px; color: white; background-color: #323b76;">
-                                            Modifier
-                                        </button>
-                                    </a>
-
-                                    <!-- Bouton qui ouvre le modal -->
-                                    <button type="button" class="p-button p-component p-button-Warning mx-2" style="width: 100px; color: white; background-color: #220bf5;" data-bs-toggle="modal" data-bs-target="#cancelModal">
-                                        Annuler
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <a href="#">
-                                <button type="submit" name="" class="p-button p-component p-button-Warning mx-2" style="width: 100px; color: white; background-color: #220bf5;">
-                                    Demande d'annulation
+                {% if is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN') and demande.statut == 'Traité' %}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center mt-4">
+                                <a href="{{ path('demande_valider', {'id': demande.id}) }}" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#validateModal">
+                                    Valider
+                                </a>
+                                <button type="button" class="btn btn-danger mx-2" data-bs-toggle="modal" data-bs-target="#rejectionModal">
+                                    Rejeter
                                 </button>
-                            </a>
-                        </tr>
-                    {% endif %}
-
-                {% endif %}
-                </tbody>
-            </table>
-
-
-
-
-
-
-    </div>
-
-
-    <!-- Modal de rejet -->
-    <div class="modal fade" id="rejectionModal" tabindex="-1" role="dialog" aria-labelledby="rejectionModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form id="reject-form" method="post" action="{{ path('demande.dismiss', {'id': '__ID__'}) }}" onsubmit="return false;">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="rejectionModalLabel">Raison de rejet</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="_token" value="{{ csrf_token('dismiss') }}">
-                        <input type="hidden" name="demande_id" id="demande-id">
-                        <div class="form-group">
-                            <label for="raisonRejetApprobation">Raison de rejet</label>
-                            <textarea name="raisonRejetApprobation" id="raisonRejetApprobation" class="form-control" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-danger" onclick="submitRejectionForm()">Rejeter</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- Modal de confirmation d'approbation -->
-    <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form id="approve-form" method="post" action="{{ path('demande.approve', {'id': '__ID__'}) }}">
-                    <div class="modal-body">
-                        <input type="hidden" name="_token" value="{{ csrf_token('dismiss') }}">
-                        <input type="hidden" name="demande_id" id="demande-id">
-                        <input type="hidden" name="statut" value="Approuvé">
-                        <input type="hidden" name="validateurStructure" value="{{ app.user.id }}">
-                    </div>
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="approveModalLabel">Confirmation d'approbation</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Êtes-vous sûr de vouloir approuver cette demande ?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
-                        <button type="button" class="btn btn-primary" id="confirmApproveButton">Oui</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    </div>
-
-        <!-- Modal pour la saisie de la raison d'annulation -->
-        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="cancelModalLabel">Raison de l'annulation</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="cancelForm" method="POST" action="{{ path('demande.cancel', {'id': demande.id}) }}">
-                            <div class="mb-3">
-                                <label for="cancelReason" class="form-label">Raison :</label>
-                                <textarea class="form-control" id="cancelReason" name="reason" rows="3" required></textarea>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" class="btn btn-primary" form="cancelForm">Confirmer l'annulation</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if is_granted('ROLE_VALIDATEUR') and not is_granted('ROLE_ADMIN') and demande.statut == 'Validé' and demande.canceledRequest is not empty %}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center mt-4">
+                                <form action="{{ path('affecter.process_cancellation', {'id': demande.id}) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette demande ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ demande.id) }}">
+                                    <button type="submit" class="btn btn-warning mx-2">Annuler la demande</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% if is_granted('ROLE_RESPONSABLE_STRUCTURE') and demande.validateurStructure == app.user and not is_granted('ROLE_ADMIN') and demande.statut == 'Validé' and demande.canceledRequest is null %}
+                    <tr>
+                        <td colspan="2">
+                            <div class="d-flex justify-content-center mt-4">
+                                {# <a href="{{path('demande.request_cancellation', {'id':demande.id})}}" class="btn btn-warning mx-2" data-bs-toggle="modal" data-bs-target="#requestCancellationModal">
+                                    Demande d'annulation
+                                </a> #}
+                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#requestCancellationModal">
+                                    Demander l'annulation
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                {%endif%}
+            </tbody>
+        </table>
+    </div>
+</div>
 
-        <!-- Modal pour la validation par le validateur -->
-        <div class="modal fade" id="ModalFormForValidator" tabindex="-1" role="dialog" aria-labelledby="ModalFormForValidatorLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="ModalFormForValidatorLabel">Confirmer la validation</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Êtes-vous sûr de vouloir valider cette demande ?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary" id="confirmValidation">Confirmer</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {# Fin du modalform #}
-        
-
-
-
-    {# ... Début Script de rejet ... #}
-    <script>
-        function showRejectionModal(demandeId) {
-            document.getElementById('reject-form').action = '{{ path("demande.dismiss", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
-            document.getElementById('demande-id').value = demandeId;
-            $('#rejectionModal').modal('show');
-        }
-
-        function submitRejectionForm() {
-            var form = document.getElementById('reject-form');
-            if (form.checkValidity()) {
-                form.onsubmit = function() { return true; };
-                form.submit();
-            }
-        }
-
-        //... Fin script de rejet ...
-
-
-        // ... Début script d'approbation ...
-        function showApproveModal(demandeId) {
-            document.getElementById('approve-form').action = '{{ path("demande.approve", {"id": "__ID__"}) }}'.replace('__ID__', demandeId);
-            document.getElementById('demande-id').value = demandeId;
-            $('#approveModal').modal('show');
-        }
-
-        function submitApproveForm() {
-            var form = document.getElementById('approve-form');
-            if (form.checkValidity()) {
-                form.onsubmit = function() { return true; };
-                form.submit();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var confirmApproveButton = document.getElementById('confirmApproveButton');
-
-            confirmApproveButton.addEventListener('click', function () {
-                // Soumettre le formulaire d'approbation
-                document.getElementById('approve-form').submit();
-            });
-        });
-        //... Fin script de rejet ...       
-
-
-        
-        document.addEventListener('DOMContentLoaded', function () {
-            var btnTraiter = document.querySelector('button[name="btnTraiter"]');
-    
-            if (btnTraiter) {
-                btnTraiter.addEventListener('click', function () {
-                    var demandeId = this.getAttribute('data-id');
-                    if (demandeId) {
-                        // Générer l'URL avec l'ID de la demande
-                        var baseUrl = '{{ path("affecter.create", {"demandeId": 0}) }}'; // Utiliser une valeur par défaut
-                        var url = baseUrl.replace('0', demandeId); // Remplacer la valeur par défaut par l'ID réel
-                        
-                        // Afficher l'URL dans la console
-                        console.log('URL générée : ' + url);
-                        
-                        // Redirection
-                        window.location.href = url;
-                    } else {
-                        alert('ID de la demande manquant');
-                    }
-                });
-            }
-        });
-
-
-
-        // Script pour gérer le modalform du validateur
-        document.addEventListener('DOMContentLoaded', function () {
-            // Écouteur d'événement pour le bouton "Valider"
-            document.querySelectorAll('button[name="btnValider"]').forEach(function (button) {
-                button.addEventListener('click', function () {
-                    // Récupère l'ID de la demande
-                    const demandeId = this.getAttribute('data-id');
-        
-                    // Stocke l'ID de la demande dans un attribut du bouton de confirmation du modal
-                    document.getElementById('confirmValidation').setAttribute('data-id', demandeId);
-        
-                    // Affiche le modal
-                    $('#ModalFormForValidator').modal('show');
-                });
-            });
-        
-            // Écouteur d'événement pour le bouton de confirmation dans le modal
-            document.getElementById('confirmValidation').addEventListener('click', function () {
-                // Récupère l'ID de la demande
-                const demandeId = this.getAttribute('data-id');
-        
-                // Appel AJAX pour valider la demande
-                fetch(`/demande/valider/${demandeId}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Ferme le modal
-                        $('#ModalFormForValidator').modal('hide');
-                        // Affiche un message de succès ou effectue d'autres actions (comme recharger la page)
-                        alert('La demande a été validée avec succès.');
-                        location.reload(); // recharge la page après validation
-                    } else {
-                        // Gérer les erreurs de validation ici
-                        alert('Erreur lors de la validation de la demande.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    alert('Une erreur s\'est produite lors de la validation.');
-                });
-            });
-        });
-    // Fin du script pour gérer le modalform du validateur
-    
-    
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
-
-
-
+{# Modals #}
+{% include 'demande/_modal_reject.html.twig' %}
+{% include 'demande/_modal_approve.html.twig' %}
+{% include 'demande/_modal_cancel.html.twig' %}
+{% include 'demande/_modal_validate.html.twig' %}
+{% include 'demande/_modal_request_cancellation.html.twig' %}
+{% include 'demande/_modal_confirmation_cancellation.html.twig'%}
 {% endblock %}
 
+{% block javascripts %}
+<script>
+    // Définition globale des fonctions
+   
+
+    // function validerDemande(button) {
+    //     const demandeId = button.getAttribute('data-id');
+    //     fetch(`/demande/valider/${demandeId}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'X-Requested-With': 'XMLHttpRequest',
+    //             'Content-Type': 'application/json',
+    //             'X-CSRF-TOKEN': '{{ csrf_token("validate") }}'
+    //         }
+    //     })
+    //     .then(response => {
+    //         if (response.ok) {
+    //             location.reload();
+    //         } else {
+    //             alert('Une erreur est survenue lors de la validation de la demande.');
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Erreur:', error);
+    //         alert('Une erreur est survenue lors de la validation de la demande.');
+    //     });
+    // }
+
+    // Initialisation au chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation des modals Bootstrap
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => new bootstrap.Modal(modal));
+
+        // Gestion des formulaires
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Veuillez remplir tous les champs requis.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

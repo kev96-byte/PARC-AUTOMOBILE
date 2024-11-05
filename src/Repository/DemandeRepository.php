@@ -445,20 +445,33 @@ class DemandeRepository extends ServiceEntityRepository
     }
 
 
-    public function findDemandesValideesByValidateur($user)
-    {
-        return $this->createQueryBuilder('d')
-            ->where('d.validatedBy = :user')
-            ->andWhere('d.statut = :statut')
-            ->andWhere('d.dateFinMission >= :today')
-            ->andWhere('d.deleteAt IS NULL')
-            ->setParameter('user', $user)
-            ->setParameter('statut', 'Validé')
-            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
-            ->getQuery()
-            ->getResult();
-    }
+    // public function findDemandesValideesByValidateur($structure)
+    // {
+    //     return $this->createQueryBuilder('d')
+    //         ->where('d.validatedBy = :user')
+    //         ->andWhere('d.statut = :statut')
+    //         ->andWhere('d.dateFinMission >= :today')
+    //         ->andWhere('d.deleteAt IS NULL')
+    //         ->setParameter('user', $user)
+    //         ->setParameter('statut', 'Validé')
+    //         ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+    //         ->getQuery()
+    //         ->getResult();
+    // }
 
+    public function findDemandesValideesByValidateur($structure)
+{
+    return $this->createQueryBuilder('d')
+        ->where('d.structure = :structure') 
+        ->andWhere('d.statut = :statut')
+        ->andWhere('d.dateFinMission >= :today')
+        ->andWhere('d.deleteAt IS NULL')
+        ->setParameter('structure', $structure)
+        ->setParameter('statut', 'Validé')
+        ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+        ->getQuery()
+        ->getResult();
+}
 
     public function findDemandesTraiteesByChefParcValideesByValidateur($user)
     {
@@ -534,6 +547,27 @@ class DemandeRepository extends ServiceEntityRepository
             ->andWhere('d.cancellationDate IS NULL')
             ->setParameter('institution', $institution)
             ->setParameter('statut', 'Validé')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findCanceledDemandesbyPointFocal($user){
+        return $this->createQueryBuilder('d')
+            ->where('d.demander = :user')
+            ->andWhere('d.statut = :statut')
+            ->setParameter('user', $user)
+            ->setParameter('statut', 'Annulé')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllCanceledDemandesInStructure($structure){
+        return $this->createQueryBuilder('d')
+            ->where('d.structure = :structure')
+            ->andWhere('d.deleteAt IS NULL')
+            ->andWhere('d.statut = :statut')
+            ->setParameter('structure', $structure)
+            ->setParameter('statut', 'Annulé')
             ->getQuery()
             ->getResult();
     }

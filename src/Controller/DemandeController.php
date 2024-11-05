@@ -47,6 +47,7 @@ class DemandeController extends AbstractController
     private $institutionRepository;
     private $affecterRepo;
 
+
     public function __construct(Pdf $knpSnappy, InstitutionRepository $institutionRepository,  AffecterRepository $affecterRepo, DemandeRepository $demandeRepository, EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -57,6 +58,7 @@ class DemandeController extends AbstractController
         $this->affecterRepo = $affecterRepo;
 
         $this->knpSnappy = $knpSnappy;
+
 
     }
 
@@ -215,6 +217,7 @@ class DemandeController extends AbstractController
         ]);
     }
 
+
 // Ici fin affichage de la liste des demandes rejetées
 
 // Ici on affiche la liste des demandes approuvées
@@ -343,7 +346,7 @@ class DemandeController extends AbstractController
             $demandes = $demandeRepository->findDemandesTraiteesByChefParcValideesByValidateur($user);   
 
         } elseif (in_array('ROLE_VALIDATEUR', $roles, true) && (!in_array('ROLE_ADMIN', $roles, true)) ) {
-            $demandes = []; // Initialisation du tableau pour accumuler les demandes            
+            $demandes = []; // Initialisation du tableau pour accumuler les demandes
             $parc = $user->getStructure()->getParc();  // Récupération du parc du chef de parc            
             $structures = $parc->getStructure();       // Récupération des structures associées à ce parc
 
@@ -357,11 +360,11 @@ class DemandeController extends AbstractController
             $demandes = $demandeRepository->findAllDemandesValideesForOneInstitution($institution);
         }
 
-        return $this->render('demande/traitees.html.twig', [
+        return $this->render('demande/validees.html.twig', [
             'communes' => $this->entityManager->getRepository(Commune::class)->findBy(['deleteAt' => null]),
             'users' => $this->entityManager->getRepository(User::class)->findBy(['deleteAt' => null]),
             'demandes' => $demandes,
-            'type' => 'traitees'
+            'type' => 'validees'
         ]);
     }
 
@@ -439,6 +442,7 @@ class DemandeController extends AbstractController
                 $demande->setStatut('Initial');
                 $this->entityManager->persist($demande);
                 $this->entityManager->flush();
+
                 $this->addFlash('success', 'Ajout effectué avec succès.');
 
                 return $this->redirectToRoute('demande.index', [], Response::HTTP_SEE_OTHER);
@@ -579,9 +583,10 @@ class DemandeController extends AbstractController
             $this->addFlash('error', 'L\'utilisateur n\'est pas connecté');
             return $this->redirectToRoute('app_login');
         }
-    
+
         // Vérification du rôle de l'utilisateur
-        if ($this->isGranted('ROLE_POINT_FOCAL') && !$this->isGranted('ROLE_ADMIN')) {
+
+        if ($this->isGranted('ROLE_POINT_FOCAL') || $this->isGranted('ROLE_POINT_FOCAL_AVANCE') || $this->isGranted('ROLE_RESPONSABLE_STRUCTURE') && !$this->isGranted('ROLE_ADMIN')) {
             // Vérification du statut de la demande
             if ($demande->getStatut() == 'Initial') {
                 // Récupérer la raison de l'annulation
@@ -593,18 +598,46 @@ class DemandeController extends AbstractController
                     $demande->setCancellationDate(new \DateTimeImmutable());
                     $this->entityManager->flush();
                     $this->addFlash('success', 'Demande annulée avec succès.');
+            
                     return $this->redirectToRoute('demande.index', [], Response::HTTP_SEE_OTHER);
                 } else {
                     $this->addFlash('warning', 'La raison de l\'annulation est obligatoire.');
                 }
-            } else {
+            }            
+            else {
                 $this->addFlash('warning', 'Vous ne pouvez pas annuler cette demande. Formulez une demande d\'annulation.');
             }
         }
-    
         return $this->redirectToRoute('demande.index'); // Rediriger en cas de problème
     }
 
+    #[Route('/demandes/annulees', name: 'demande.annulees', methods: ['GET'])]
+    public function annullees(Request $request, DemandeRepository $demandeRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            $this->addFlash('error', 'L\'utilisateur n\'est pas connecté');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $roles = $user->getRoles();
+
+        if (in_array('ROLE_POINT_FOCAL', $roles, true) || in_array('ROLE_POINT_FOCAL_AVANCE', $roles, true)) {
+            $demandes = $demandeRepository->findCanceledDemandesbyPointFocal($user);
+        } elseif (in_array('ROLE_RESPONSABLE_STRUCTURE', $roles, true) && (!in_array('ROLE_ADMIN', $roles, true))) {
+            $structure = $user->getStructure();
+            $demandes = $demandeRepository->findAllCanceledDemandesInStructure($structure);
+        } else {
+            // Si l'utilisateur n'a aucun de ces rôles, on peut lui montrer toutes les demandes annulées
+            $demandes = $demandeRepository->findBy(['statut' => 'Annulé']);
+        }
+
+        return $this->render('demande/annulees.html.twig', [
+            'communes' => $this->entityManager->getRepository(Commune::class)->findBy(['deleteAt' => null]),
+            'users' => $this->entityManager->getRepository(User::class)->findBy(['deleteAt' => null]),
+            'demandes' => $demandes,
+        ]);
+    }
 
     #[Route('/{id}/approve', name: 'demande.approve', methods: ['GET', 'POST'])]
     public function approve(Demande $demande): Response
@@ -626,7 +659,8 @@ class DemandeController extends AbstractController
             $this->entityManager->flush();
             $this->addFlash('success', 'Approbation réussie.');
         }
-    
+
+
         return $this->redirectToRoute('demande.index');
     }
     
@@ -668,9 +702,13 @@ class DemandeController extends AbstractController
             if (in_array('ROLE_CHEF_PARC', $roles, true)) {
                 $demande->setTraiterPar($user);
                 $demande->setDateTraitement(new \DateTimeImmutable());
+                
+
             } elseif (in_array('ROLE_RESPONSABLE_STRUCTURE', $roles, true)) {
                 $demande->setValidateurStructure($user);
                 $demande->setdateApprobation(new \DateTimeImmutable());
+
+
             } elseif (in_array('ROLE_VALIDATEUR', $roles, true)) {
                 $demande->setValidatedBy($user);                
                 $demande->setValidatedAt(new \DateTimeImmutable());  
@@ -685,12 +723,14 @@ class DemandeController extends AbstractController
                     $affecter->setDateDebutMission(null);
                     $affecter->setDateFinMission(null);
                 }
+
+                
             }    
             $this->entityManager->flush();
     
             $this->addFlash('success', 'Demande rejetée avec succès.');
         }
-    
+
         return $this->redirectToRoute('demande.rejetees');
     }
 
@@ -899,7 +939,54 @@ class DemandeController extends AbstractController
         ]);
     }
 
+    
+        
+    
    
+
+    #[Route('/{id}/request-cancellation', name: 'demande.request_cancellation', methods: ['POST'])]
+public function requestCancellation(Request $request, Demande $demande, EntityManagerInterface $entityManager): Response
+{
+    $user = $this->getUser();
+    if (!$user instanceof User) {
+        throw new AccessDeniedException('Vous devez être connecté.');
+    }
+
+    // Vérifier si l'utilisateur est le responsable structure de la demande
+    if (!$this->isGranted('ROLE_RESPONSABLE_STRUCTURE') || 
+        $demande->getValidateurStructure() !== $user) {
+        throw new AccessDeniedException('Seul le responsable structure peut demander l\'annulation.');
+    }
+
+    if ($demande->getStatut() !== 'Validé') {
+        $this->addFlash('error', 'Seules les demandes validées peuvent être annulées.');
+        return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+    }
+
+    // Vérifier si une demande d'annulation existe déjà
+    if ($demande->getCanceledRequest() !== null) {
+        $this->addFlash('error', 'Une demande d\'annulation est déjà en cours pour cette demande.');
+        return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+    }
+
+    $reason = $request->request->get('reason');
+    if (empty($reason)) {
+        $this->addFlash('error', 'La raison de l\'annulation est obligatoire.');
+        return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+    }
+
+    // Mettre à jour la demande
+    $demande->setCanceledRequest($reason);
+    $demande->setCancellationRequestBy($user);
+    $demande->setCancellationRequestDate(new \DateTime());
+    
+    $entityManager->flush();
+
+
+    $this->addFlash('success', 'Demande d\'annulation envoyée avec succès.');
+    return $this->redirectToRoute('demande.show', ['id' => $demande->getId()]);
+}
+
 
 }
 

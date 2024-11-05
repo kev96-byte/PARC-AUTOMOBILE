@@ -1,0 +1,40 @@
+{# templates/demande/_modal_validate.html.twig
+<div class="modal fade" id="validateModal" tabindex="-1" aria-labelledby="validateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="validateModalLabel">Confirmation de validation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir valider cette demande ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="validerDemande({{ demande.id }})">Confirmer la validation</button>
+            </div>
+        </div>
+    </div>
+</div> #}
+
+{# templates/demande/_modal_validate.html.twig #}
+<div class="modal fade" id="validateModal" tabindex="-1" aria-labelledby="validateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="validateModalLabel">Confirmation de validation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir valider cette demande ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form action="{{ path('demande_valider', {'id': demande.id}) }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('validate') }}">
+                    <button type="submit" class="btn btn-primary">Confirmer la validation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

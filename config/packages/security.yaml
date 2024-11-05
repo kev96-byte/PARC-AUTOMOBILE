@@ -48,6 +48,7 @@ security:
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/change-password, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/affecter/process-cancellation, roles: ROLE_VALIDATEUR }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

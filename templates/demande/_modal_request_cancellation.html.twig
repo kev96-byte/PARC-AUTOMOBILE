@@ -1,0 +1,22 @@
+<div class="modal fade" id="requestCancellationModal" tabindex="-1" aria-labelledby="requestCancellationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="requestCancellationModalLabel">Demande d'annulation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ path('demande.request_cancellation', {'id': demande.id}) }}" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="reason">Raison de l'annulation</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

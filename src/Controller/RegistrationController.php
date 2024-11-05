@@ -206,7 +206,35 @@ class RegistrationController extends AbstractController
     }
 
 
+#[Route('/reset_password/{id}', name: 'reset.user.password', methods: ['POST'])]
+public function resetPassword(int $id, Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+{
 
+$user = $this->entityManager->getRepository(User::class)->find($id);
+    if (!$user) {
+        throw new NotFoundHttpException('Cet utilisateur n\'existe pas');
+    }
+
+    // Récupérer le mot de passe saisi dans le modal
+    $defaultPassword = $request->request->get('defaultPassword');
+    
+    if (empty($defaultPassword)) {
+        $this->addFlash('error', 'Le mot de passe ne peut pas être vide');
+        return $this->redirectToRoute('user.index');
+    }
+
+    // Hacher le mot de passe et mettre à jour l'utilisateur
+    $hashedPassword = $userPasswordHasher->hashPassword($user, $defaultPassword);
+    $user->setPassword($hashedPassword);
+    $user->setIsFirstLogin(true);
+
+    // Sauvegarder les modifications
+    $this->entityManager->flush();
+
+    $this->addFlash('success', 'Mot de passe réinitialisé avec succès');
+
+    return $this->redirectToRoute('user.index', [], Response::HTTP_SEE_OTHER);
+}
 
 
 

@@ -1,0 +1,22 @@
+<div class="modal fade" id="confirmCancellationModal" tabindex="-1" aria-labelledby="confirmCancellationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmCancellationModalLabel">Confirmation d'annulation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir annuler cette demande ?</p>
+                <p><strong>Raison de la demande d'annulation :</strong></p>
+                <p>{{ demande.canceledRequest }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Non</button>
+                <form action="{{ path('affecter.process_cancellation', {'id': demande.id}) }}" method="POST">
+                    <input type="hidden" name="_token" value="{{ csrf_token('cancel-demande-' ~ demande.id) }}">
+                    <button type="submit" class="btn btn-warning">Confirmer l'annulation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

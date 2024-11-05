@@ -21,23 +21,21 @@ class MainController extends AbstractController
     public function index(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher, VehiculeRepository $vehiculeRepository): Response
     {
            $vehicules = $vehiculeRepository->findAllVehiculesInMission();
-/*         $user = new User();
-        $user->setlastName('BOKO')
-             ->setfirstName('Elodie')
-             ->setUsername('meboko')
-             ->setEmail('meboko@gouv.bj')
-             ->setPassword($hasher->hashPassword($user,'0000'))
-             ->setRoles([])
-             ->setstatutCompte('INITIAL')
-             ->setMatricule('112345');
-             $em->persist($user);
-             $em->flush();  */
-        if($this->getUser()->isFirstLogin()){
-            return $this->redirectToRoute('app_change_password');
-        }
-        return $this->render('base.html.twig', [
-            'controller_name' => 'MainController',
-            'vehicules' => $vehicules,
-        ]);
+
+           $user = $this->getUser();
+           dump($user);
+           if (!$user) {
+               return $this->redirectToRoute('app_login');
+           }
+
+
+
+           if($user->isFirstLogin()){
+               return $this->redirectToRoute('app_change_password');
+           }
+           return $this->render('base.html.twig', [
+               'controller_name' => 'MainController',
+               'vehicules' => $vehicules,
+           ]);
     }
 }

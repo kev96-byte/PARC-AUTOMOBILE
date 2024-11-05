@@ -162,6 +162,9 @@ class Demande
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $validatedAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $canceled_request = null;
+
 
     public function getId(): ?int
     {
@@ -686,6 +689,18 @@ public function getValidatedAt(): ?\DateTimeImmutable
 public function setValidatedAt(?\DateTimeImmutable $validatedAt): static
 {
     $this->validatedAt = $validatedAt;
+
+    return $this;
+}
+
+public function getCanceledRequest(): ?string
+{
+    return $this->canceled_request;
+}
+
+public function setCanceledRequest(?string $canceled_request): static
+{
+    $this->canceled_request = $canceled_request;
 
     return $this;
 }
