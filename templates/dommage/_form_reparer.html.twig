@@ -1,0 +1,40 @@
+{# templates/dommage/reparer.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Réparation de Dommage{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h5>Enregistrer une réparation de dommage</h5>
+
+        {# Affiche un message de succès après la soumission du formulaire #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        <div class="card mt-3">
+            <div class="card-body">
+                {{ form_start(form) }}
+
+                <div class="form-group mb-3">
+                    {{ form_label(form.dateReparation, 'Date de Réparation') }}
+                    {{ form_widget(form.dateReparation, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.dateReparation) }}
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form_label(form.observation, 'Observations') }}
+                    {{ form_widget(form.observation, { 'attr': {'class': 'form-control', 'rows': 4} }) }}
+                    {{ form_errors(form.observation) }}
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">Enregistrer la Réparation</button>
+                    <a href="{{ path('dommage.index') }}" class="btn btn-secondary">Annuler</a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

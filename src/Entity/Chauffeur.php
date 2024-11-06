@@ -59,6 +59,7 @@ class Chauffeur
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups('chauffeur_list')]
     private string $matriculeChauffeur = '';
 
 
@@ -77,9 +78,16 @@ class Chauffeur
     #[ORM\ManyToOne(inversedBy: 'chauffeurs')]
     private ?Parc $parc = null;
 
+    /**
+     * @var Collection<int, Dommage>
+     */
+    #[ORM\OneToMany(targetEntity: Dommage::class, mappedBy: 'chauffeur')]
+    private Collection $dommages;
+
     public function __construct()
     {
         $this->affecters = new ArrayCollection();
+        $this->dommages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -245,6 +253,36 @@ class Chauffeur
     public function setParc(?Parc $parc): static
     {
         $this->parc = $parc;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Dommage>
+     */
+    public function getDommages(): Collection
+    {
+        return $this->dommages;
+    }
+
+    public function addDommage(Dommage $dommage): static
+    {
+        if (!$this->dommages->contains($dommage)) {
+            $this->dommages->add($dommage);
+            $dommage->setChauffeur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDommage(Dommage $dommage): static
+    {
+        if ($this->dommages->removeElement($dommage)) {
+            // set the owning side to null (unless already changed)
+            if ($dommage->getChauffeur() === $this) {
+                $dommage->setChauffeur(null);
+            }
+        }
 
         return $this;
     }

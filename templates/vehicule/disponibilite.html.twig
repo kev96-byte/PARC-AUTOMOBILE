@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card card-content-template">
+        <h5>Vérifiez les véhicules disponibles</h5>
+        {{ form_start(form, {'attr': {'id': 'vehicule-dispo-form'}}) }}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form_row(form.parc) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.dateDebutMission) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.dateFinMission) }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+        {{ form_end(form) }}
+
+        <div id="vehicules-disponibles" class="mt-4">
+            <h3>Véhicules disponibles</h3>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <input type="text" id="searchInput" class="form-control w-25 ms-auto" placeholder="Filtrer ...">
+            </div>
+            <table id="vehicule-table" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Matricule</th>
+                    </tr>
+                </thead>
+                <tbody id="vehicule-list">
+                    <!-- Les lignes seront ajoutées dynamiquement ici -->
+                </tbody>
+            </table>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                let allRows = []; // Tableau pour stocker toutes les lignes
+
+                $('#vehicule-dispo-form').on('submit', function(event) {
+                    event.preventDefault();
+
+                    let parc = $('#vehicule_disponibilite_parc').val();
+                    let dateDebut = $('#vehicule_disponibilite_dateDebutMission').val();
+                    let dateFin = $('#vehicule_disponibilite_dateFinMission').val();
+
+                    $.ajax({
+                        url: '{{ path("vehicules_disponibles_ajax") }}',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            parc: parc,
+                            dateDebutMission: dateDebut,
+                            dateFinMission: dateFin
+                        }),
+                        success: function(response) {
+                            let vehiculeList = $('#vehicule-list');
+                            vehiculeList.empty();
+                            allRows = []; // Réinitialiser le tableau de toutes les lignes
+
+                            if (response.vehicules && response.vehicules.length > 0) {
+                                response.vehicules.forEach(function(vehicule) {
+                                    vehiculeList.append('<tr><td>' + vehicule.matricule + '</td></tr>');
+                                    allRows.push(vehicule.matricule); // Ajouter le matricule au tableau
+                                });
+                            } else {
+                                vehiculeList.append('<tr><td>Aucun véhicule disponible pour cette période.</td></tr>');
+                            }
+                        },
+                        error: function() {
+                            alert("Une erreur s'est produite lors de la récupération des véhicules.");
+                        }
+                    });
+                });
+
+                // Filtrage en utilisant le champ de recherche
+                $('#searchInput').on('input', function() {
+                    let searchTerm = $(this).val().toLowerCase();
+                    let rows = $('#vehicule-list tr');
+
+                    // Filtrer les lignes en fonction du texte recherché
+                    rows.each(function() {
+                        let matricule = $(this).text().toLowerCase();
+                        if (matricule.indexOf(searchTerm) > -1) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</div>
+{% endblock %}

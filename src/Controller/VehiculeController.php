@@ -9,11 +9,13 @@ use App\Entity\Institution;
 use App\Entity\Utilisateur;
 use App\Entity\TypeVehicule;
 use App\Repository\VehiculeRepository;
+use App\Form\VehiculeDisponibiliteType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
@@ -246,7 +248,7 @@ class VehiculeController extends AbstractController
     }
 
 
-    #[Route('/disponibles', name: 'vehicules.disponibles')]
+     #[Route('/disponibles', name: 'vehicules.disponibles')]
     public function disponibles(Request $request, VehiculeRepository $vehiculeRepository): Response
     {
         // Récupérer les valeurs de filtrage depuis la requête
@@ -270,7 +272,7 @@ class VehiculeController extends AbstractController
             'dateDebutPeriode' => $dateDebutPeriode,
             'dateFinPeriode' => $dateFinPeriode,
         ]);
-    }
+    } 
 
 
 
@@ -295,4 +297,35 @@ class VehiculeController extends AbstractController
             ]);
         }
 
+ 
+#[Route('/vehicules-disponibles/periode', name: 'vehicules.disponibles.periode')]
+    public function disponibilite(Request $request): Response
+    {
+        // Créer le formulaire
+        $form = $this->createForm(VehiculeDisponibiliteType::class);
+        
+        // Rendu du formulaire et de la vue
+        return $this->render('vehicule/disponibilite.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/vehicules_disponibles_ajax/disponibilite', name: 'vehicules_disponibles_ajax', methods: ['POST'])]
+    public function ajaxDisponibilite(Request $request, VehiculeRepository $vehiculeRepository): Response
+    {
+        // Récupérer les données
+        $data = json_decode($request->getContent(), true);
+        $dateDebut = new \DateTime($data['dateDebutMission']);
+        $dateFin = new \DateTime($data['dateFinMission']);
+        $parcId = $data['parc'];
+
+        // Obtenir les véhicules disponibles
+        $vehicules = $vehiculeRepository->findVehiculesDisponibles($dateDebut, $dateFin, $parcId);
+        dump($vehicules);
+        // Retourner la réponse JSON avec le groupe de sérialisation
+        return $this->json(['vehicules' => $vehicules], 200, [], [
+            AbstractNormalizer::GROUPS => ['vehicule_list']
+        ]);
+    }
+    
 }

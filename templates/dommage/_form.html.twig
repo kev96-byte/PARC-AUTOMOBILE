@@ -1,0 +1,26 @@
+{{ form_start(form) }}
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.vehicule) }}</div>
+    <div class="col-sm-6">{{ form_row(form.chauffeur) }}</div>
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.typeDommage) }}</div>
+    <div class="col-sm-6">{{ form_row(form.dateDommage) }}</div>
+</div>
+
+<div class="form-group row mb-3">    
+    <div class="col-sm-12">{{ form_row(form.description) }}</div>    
+</div>
+
+{# Affichez le champ caché uniquement en mode 'edit' #}
+{% if mode == 'edit' %}
+    {{ form_row(form.vehicule_initial_id) }}
+{% endif %}
+
+<div class="d-flex justify-content-end">
+    {{ form_widget(form.save, {'label': (mode == 'add' ? 'Ajouter' : 'Modifier')}) }}
+</div>
+
+{{ form_end(form) }}

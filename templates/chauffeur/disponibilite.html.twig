@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card card-content-template">
+        <h5>Vérifiez les chauffeurs disponibles</h5>
+        {{ form_start(form, {'attr': {'id': 'chauffeur-dispo-form'}}) }}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form_row(form.parc) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.dateDebutMission) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.dateFinMission) }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+        {{ form_end(form) }}
+
+        <div id="chauffeurs-disponibles" class="mt-4">
+            <h3>Chauffeurs disponibles</h3>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <input type="text" id="searchInput" class="form-control w-25 ms-auto" placeholder="Filtrer ...">
+            </div>
+            <table id="chauffeur-table" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Matricule</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom(s)</th>
+                    </tr>
+                </thead>
+                <tbody id="chauffeur-list">
+                    <!-- Les lignes seront ajoutées dynamiquement ici -->
+                </tbody>
+            </table>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                let allRows = []; // Tableau pour stocker toutes les lignes
+
+                $('#chauffeur-dispo-form').on('submit', function(event) {
+                    event.preventDefault();
+
+                    let parc = $('#chauffeur_disponibilite_parc').val();
+                    let dateDebut = $('#chauffeur_disponibilite_dateDebutMission').val();
+                    let dateFin = $('#chauffeur_disponibilite_dateFinMission').val();
+
+                    $.ajax({
+                        url: '{{ path("chauffeurs_disponibles_ajax") }}',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            parc: parc,
+                            dateDebutMission: dateDebut,
+                            dateFinMission: dateFin
+                        }),
+                        success: function(response) {
+                            let chauffeurList = $('#chauffeur-list');
+                            chauffeurList.empty();
+                            allRows = []; // Réinitialiser le tableau de toutes les lignes
+
+                            if (response.chauffeurs && response.chauffeurs.length > 0) {
+                                response.chauffeurs.forEach(function(chauffeur) {
+                                    chauffeurList.append('<tr><td>' + chauffeur.matriculeChauffeur + '</td><td>' + chauffeur.nomChauffeur + '</td><td>' + chauffeur.prenomChauffeur + '</td></tr>');
+                                    allRows.push({
+                                        matricule: chauffeur.matriculeChauffeur,
+                                        nom: chauffeur.nomChauffeur,
+                                        prenom: chauffeur.prenomChauffeur
+                                    }); // Ajouter un objet chauffeur au tableau
+                                });
+                            } else {
+                                chauffeurList.append('<tr><td colspan="3">Aucun chauffeur disponible pour cette période.</td></tr>');
+                            }
+                        },
+                        error: function() {
+                            alert("Une erreur s'est produite lors de la récupération des chauffeurs.");
+                        }
+                    });
+                });
+
+                // Filtrage en utilisant le champ de recherche
+                $('#searchInput').on('input', function() {
+                    let searchTerm = $(this).val().toLowerCase();
+                    let rows = $('#chauffeur-list tr');
+
+                    // Filtrer les lignes en fonction du texte recherché
+                    rows.each(function() {
+                        let matricule = $(this).find('td:first').text().toLowerCase(); // Recherche par matricule
+                        let nom = $(this).find('td:nth-child(2)').text().toLowerCase(); // Recherche par nom
+                        let prenom = $(this).find('td:nth-child(3)').text().toLowerCase(); // Recherche par prénom
+                        if (matricule.indexOf(searchTerm) > -1 || nom.indexOf(searchTerm) > -1 || prenom.indexOf(searchTerm) > -1) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</div>
+{% endblock %}

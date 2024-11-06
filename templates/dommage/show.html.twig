@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card" style="min-height: 547px;">
+        <h5>Détails Dommage</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('dommage.index') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped" width="100%" cellspacing="0">
+            <tbody>
+                <tr>
+                    <th>Véhicule</th>
+                    <td>{{ dommage.vehicule.matricule }}</td>                    
+                </tr>
+
+                <tr>
+                    <th>Chauffeur</th>
+                    <td>
+                        {% if dommage.chauffeur %}
+                            {{ dommage.chauffeur.nomChauffeur }} {{ dommage.chauffeur.prenomChauffeur }}
+                        {% else %}
+                            Aucun chauffeur associé
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Type de dommage</th>
+                    <td>{{ dommage.typeDommage }}</td>
+                </tr>
+                <tr>
+                    <th>Date dommage</th>
+                    <td>{{ dommage.dateDommage ? dommage.dateDommage|date('d/m/Y H:i') : 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ dommage.description }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

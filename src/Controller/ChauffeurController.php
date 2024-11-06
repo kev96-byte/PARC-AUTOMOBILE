@@ -7,11 +7,13 @@ use App\Entity\Institution;
 use App\Form\ChauffeurType;
 use App\Repository\AffecterRepository;
 use App\Repository\ChauffeurRepository;
+use App\Form\ChauffeurDisponibiliteType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
@@ -166,6 +168,36 @@ class ChauffeurController extends AbstractController
 
             ]);
         }
+
+    #[Route('/chauffeurs-disponibles/periode', name: 'chauffeurs.disponibles.periode')]
+    public function disponibilite(Request $request): Response
+    {
+        // Créer le formulaire
+        $form = $this->createForm(ChauffeurDisponibiliteType::class);
+        
+        // Rendu du formulaire et de la vue
+        return $this->render('chauffeur/disponibilite.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/chauffeurs_disponibles_ajax/disponibilite', name: 'chauffeurs_disponibles_ajax', methods: ['POST'])]
+    public function ajaxDisponibilite(Request $request, ChauffeurRepository $chauffeurRepository): Response
+    {
+        // Récupérer les données
+        $data = json_decode($request->getContent(), true);
+        $dateDebut = new \DateTime($data['dateDebutMission']);
+        $dateFin = new \DateTime($data['dateFinMission']);
+        $parcId = $data['parc'];
+
+        // Obtenir les véhicules disponibles
+        $chauffeurs = $chauffeurRepository->findChauffeursDisponibles($dateDebut, $dateFin, $parcId);
+        dump($chauffeurs);
+        // Retourner la réponse JSON avec le groupe de sérialisation
+        return $this->json(['chauffeurs' => $chauffeurs], 200, [], [
+            AbstractNormalizer::GROUPS => ['chauffeur_list']
+        ]);
+    }
 }
 
 

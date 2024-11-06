@@ -1,0 +1,55 @@
+{# templates/dommage/vehicules_repares.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="col-12 card-body">    
+    <div class="card card-content-template">
+        <div class="my-2">
+            <a href="javascript:history.back()">
+                <button class="p-button p-component p-button-success mr-2">
+                    <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                    <span class="p-button-label p-c">Retour à la liste</span>
+                    <span class="p-ink"></span>
+                </button>
+            </a>
+        </div>
+        <h5>Liste des véhicules réparés</h5>
+        
+        <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Véhicule</th>
+                    <th>Chauffeur</th>
+                    <th>Type de Dommage</th>
+                    <th>Description</th>
+                    <th>Date de l'incident</th>
+                    <th>Date de réparation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dommage in dommages %}
+                    <tr>
+                        <td>{{ dommage.vehicule.matricule }}</td>
+                        <td>
+                            {% if dommage.chauffeur %}
+                                {{ dommage.chauffeur.nomChauffeur }} {{ dommage.chauffeur.prenomChauffeur }}
+                            {% else %}
+                                Aucun
+                            {% endif %}
+                        </td>
+                        <td>{{ dommage.typeDommage }}</td>
+                        <td>{{ dommage.description | slice(0, 50) ~ '...' }}</td>
+                        <td>{{ dommage.dateDommage ? dommage.dateDommage|date('d/m/Y H:i') : 'N/A' }}</td>
+                        <td>{{ dommage.dateReparation ? dommage.dateReparation|date('d/m/Y H:i') : 'N/A' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucun véhicule réparé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -212,7 +213,15 @@ class Vehicule
     private ?string $porteeVehicule = null;
 
     #[ORM\ManyToOne(inversedBy: 'vehicule')]
+    // Supposons que la relation avec le parc crée un cercle
+    #[Ignore]
     private ?Parc $parc = null;
+
+    /**
+     * @var Collection<int, Dommage>
+     */
+    #[ORM\OneToMany(targetEntity: Dommage::class, mappedBy: 'vehicule')]
+    private Collection $dommages;
 
     public function __construct()
     {
@@ -220,6 +229,7 @@ class Vehicule
         $this->assurances = new ArrayCollection();
         $this->visites = new ArrayCollection();
         $this->vidanges = new ArrayCollection();
+        $this->dommages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -979,5 +989,44 @@ class Vehicule
         $this->parc = $parc;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Dommage>
+     */
+    public function getDommages(): Collection
+    {
+        return $this->dommages;
+    }
+
+    public function addDommage(Dommage $dommage): static
+    {
+        if (!$this->dommages->contains($dommage)) {
+            $this->dommages->add($dommage);
+            $dommage->setVehicule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDommage(Dommage $dommage): static
+    {
+        if ($this->dommages->removeElement($dommage)) {
+            // set the owning side to null (unless already changed)
+            if ($dommage->getVehicule() === $this) {
+                $dommage->setVehicule(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'nom' => $this->getMatricule(),
+            // Ajoutez uniquement les propriétés nécessaires pour éviter les références circulaires
+        ];
     }
 }

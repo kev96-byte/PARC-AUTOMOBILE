@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block mycontent %}
+<div class="col-12 card-body">
+    <div class="card card-content-template">
+        <h5>Dommages causés par les chauffeurs</h5>
+        <div class="p-toolbar p-component mb-4" role="toolbar">
+            <div class="p-toolbar-group-left">
+                <div class="my-2">
+                    <a href="{{ path('dommage.create') }}">
+                        <button class="p-button p-component p-button-success mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                            <span class="p-button-label p-c">Nouveau</span>
+                            <span class="p-ink"></span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-striped" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    {# <th>Matricule</th> #}
+                    <th>Nom du Chauffeur</th>
+                    <th>Prénom du Chauffeur</th>
+                    <th>Véhicule endommagé</th>
+                    <th>Description du dommage</th>
+                    <th>Date du dommage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dommage in dommages %}
+                    <tr>
+                        {# <td>{{ dommage.chauffeur.matriculeChauffeur }}</td> #}
+                        <td>{{ dommage.chauffeur.nomChauffeur }}</td>
+                        <td>{{ dommage.chauffeur.prenomChauffeur }}</td>
+                        <td>{{ dommage.vehicule.matricule }} {# ou tout autre champ du véhicule, comme immatriculation #}</td>
+                        <td>{{ dommage.description }}</td>
+                        <td>{{ dommage.dateDommage ? dommage.dateDommage|date('d/m/Y') : 'N/A' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucun dommage trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

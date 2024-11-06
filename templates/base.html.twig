@@ -127,6 +127,13 @@
                                         </li>
 
                                         <li class="" role="none">
+                                            <a class="p-ripple {{ current_route starts with 'vehicule/vehicules-disponibles/periode' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="véhicules.disponibles" data-turbo-frame="my-content" role="menuitem" href="{{ path('vehicules.disponibles.periode') }}">
+                                                <img src="{{ asset('img/icons/voitures.svg') }}" alt="home" style="width: 1.2em;">
+                                                <span>Vérifiez les véhicules disponibles</span><span class="p-ink"></span>
+                                            </a>
+                                        </li>
+
+                                        <li class="" role="none">
                                             <a class="p-ripple {{ current_route starts with 'assurance' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="assurance" role="menuitem" href="{{ path('assurance.index') }}">
                                                 <img src="{{ asset('img/icons/document-de-conformite.svg') }}" alt="home" style="width: 1.2em;">
                                                 <span>Assurance</span><span class="p-ink"></span>
@@ -157,9 +164,35 @@
                                             </a>
                                         </li>
 
+                                        <li class="" role="none">
+                                            <a class="p-ripple {{ current_route starts with 'chauffeur/chauffeurs-disponibles/periode' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="Cva" role="menuitem" href="{{ path('chauffeurs.disponibles.periode') }}">
+                                                <img src="{{ asset('img/icons/homme-chauffeur.svg') }}" alt="cva" style="width: 1.2em;">
+                                                <span>Vérifiez les chauffeurs disponibles</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+
                                     </ul>
                                 </li>
 
+                                <li class="layout-menuitem-category" role="none">
+                                    <div class="layout-menuitem-root-text" aria-label="Gestion des dommages">Gestion des dommages</div>
+                                    <ul role="menu">
+                                        <li class="" role="none">
+                                            <a class="p-ripple {{ current_route starts with 'dommage' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="dommage" role="menuitem" href="{{ path('dommage.index') }}">                                                 
+                                                <img src="{{ asset('img/icons/homme-chauffeur.svg') }}" alt="cva" style="width: 1.2em;">
+                                                <span>Dommages</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+
+                                            <a class="p-ripple {{ current_route starts with '/dommages/affichage' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="liste dommage" role="menuitem" href="{{ path('dommages.liste') }}">                                                 
+                                                <img src="{{ asset('img/icons/homme-chauffeur.svg') }}" alt="cva" style="width: 1.2em;">
+                                                <span>Dommages causés par les chauffeurs</span>
+                                                <span class="p-ink"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
 
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des Cva">Gestion du parc</div>
@@ -517,7 +550,6 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-
                                         <tr>
                                             <td class="text-uppercase">Retour de mission</td>
                                             <td class="text-uppercase">{{ nombreMissionsAFinaliser() }}</td>

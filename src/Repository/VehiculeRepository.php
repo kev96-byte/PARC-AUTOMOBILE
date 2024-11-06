@@ -84,6 +84,19 @@ class VehiculeRepository extends ServiceEntityRepository
     }
 
 
+    public function findVehiculesDisponiblesList(\DateTime $dateDebut, \DateTime $dateFin, int $parcId): array
+    {
+        return $this->createQueryBuilder('v')
+            ->where('v.parc = :parcId')
+            ->andWhere('v.dateDebutMission >= :dateDebut OR v.dateFinMission <= :dateFin')
+            ->setParameter('parcId', $parcId)
+            ->setParameter('dateDebut', $dateDebut)
+            ->setParameter('dateFin', $dateFin)
+            ->getQuery()
+            ->getResult();
+    }
+
+
     public function findAvailableVehicles2(): array
     {
         return $this->createQueryBuilder('v')
