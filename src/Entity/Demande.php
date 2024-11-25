@@ -65,10 +65,10 @@ class Demande
     private array $lieuMission;
 
     #[ORM\Column(name: "vehicules", type: "json")]
-    private array $vehicules = [];
+    private ?array $vehicules = [];
 
     #[ORM\Column(name: "chauffeurs", type: "json")]
-    private array $chauffeurs = [];
+    private ?array $chauffeurs = [];
 
 
 
