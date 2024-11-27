@@ -30,6 +30,9 @@ class DommageType extends AbstractType
                         ->setParameter('etat', 'En service');
                 },
                 'placeholder' => 'Sélectionnez un véhicule',
+                'attr'=>[
+                    'class'=>'form-control',
+                ]
             ])
             ->add('chauffeur', EntityType::class, [
                 'class' => Chauffeur::class,
@@ -38,7 +41,10 @@ class DommageType extends AbstractType
                 },
                 'label' => 'Chauffeur (si présent)',
                 'required' => false,
-                'placeholder' => 'Aucun conducteur'
+                'placeholder' => 'Aucun conducteur',
+                'attr'=>[
+                    'class'=>'form-control',
+                ]
             ])
             ->add('typeDommage', ChoiceType::class, [
                 'choices' => [
@@ -81,6 +87,10 @@ class DommageType extends AbstractType
                 ],
                 'label' => 'Type de Dommage',
                 'placeholder' => 'Sélectionnez un type de dommage',
+                'attr'=>[
+                    'class'=>'form-control selectpicker',
+                    'data-live-search'=>true
+                ]
             ])
             
             ->add('description', TextareaType::class, [

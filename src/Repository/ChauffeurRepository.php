@@ -19,9 +19,9 @@ class ChauffeurRepository extends ServiceEntityRepository
     public function findAvailableChauffeurs(): array
     {
         return $this->createQueryBuilder('c')
-            ->where('c.etatChauffeur = :etat')
+            ->where('c.disponibilite = :diponibilite')
             ->andWhere('c.deleteAt IS NULL')
-            ->setParameter('etat', 'En service')
+            ->setParameter('disponibilite', 'Disponible')
             ->getQuery()
             ->getResult();
     }
@@ -102,6 +102,16 @@ class ChauffeurRepository extends ServiceEntityRepository
             ->andWhere('c.etatChauffeur = :etat')
             ->andWhere('c.deleteAt IS NULL')
             ->setParameter('etat', 'En service');
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function countAvailableChauffeursDisponible(): int
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->andWhere('c.disponibilite = :disponibilite')
+            ->andWhere('c.deleteAt IS NULL')
+            ->setParameter('disponibilite', 'Disponible');
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 

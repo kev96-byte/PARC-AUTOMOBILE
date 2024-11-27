@@ -54,37 +54,51 @@
                         <td>{{ dommage.description | slice(0, 50) ~ '...' }}</td> {# Affiche les 50 premiers caractères de la description #}
                         <td>{{ dommage.dateDommage ? dommage.dateDommage|date('d/m/Y H:i') : 'N/A' }}</td>
                         <td>
-                            <div class="button-group open">
+                            <div class="d-flex">
+                                <a href="{{ path('dommage.show', {'id': dommage.id}) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/details.svg') }}" alt="Modifier" style="width: 1.3em;" />
+                                </a> 
+                                <a href="{{ path('dommage.edit', {'id': dommage.id}) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/edit.svg') }}" alt="Modifier" style="width: 1.3em;" />
+                                </a>
+                                <a href="#" class="text-decoration-none" onclick="showDeletionModal(this);" data-id="{{ dommage.id }}" data-token="{{ csrf_token('delete' ~ dommage.id) }}">
+                                    <img src="{{ asset('img/icons/trash.svg') }}" alt="Modifier" style="width: 1.3em;" />
+                                </a>   
+                            </div>
+                            {# <div class="button-group open">
                                 <button class="btn btn-xs btn-default dropdown-toggle" title="Cliquez ici pour effectuer une action" type="button" data-toggle="dropdown" aria-expanded="true">
                                     <i class="fa fa-ellipsis-h" style="color: #777;"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    <li class="p-2">
+                                <ul class="dropdown-menu dropdown-menu-right"> #}
+                                    {# <li class="p-2">
                                         <a href="{{ path('dommage.show', {'id': dommage.id}) }}" class="text-decoration-none">
+                                            <img src="{{ asset('img/icons/details.svg') }}" alt="Modifier" style="width: 1.3em;" />
                                             <button class="btn btn-sm btn-circle rounded-circle" style="color: white; background-color: #22C552; width: 30px; height: 30px;">
                                                 <i class="fas fa-low-vision"></i>
                                             </button>
                                             <span style="color: #777;">&nbsp; Voir détails</span>
                                         </a> 
-                                    </li>
-                                    <li class="p-2">
+                                    </li> #}
+                                    {# <li class="p-2">
                                         <a href="{{ path('dommage.edit', {'id': dommage.id}) }}" class="text-decoration-none">
+                                            <img src="{{ asset('img/icons/edit.svg') }}" alt="Modifier" style="width: 1.3em;" />
                                             <button class="btn btn-sm btn-circle rounded-circle" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
                                                 <i class="fa fa-pen"></i>
                                             </button>
                                             <span style="color: #777;">&nbsp; Modifier</span>
                                         </a>    
-                                    </li>
-                                    <li class="p-2">
+                                    </li> #}
+                                    {# <li class="p-2">
                                         <a href="#" class="text-decoration-none" onclick="showDeletionModal(this);" data-id="{{ dommage.id }}" data-token="{{ csrf_token('delete' ~ dommage.id) }}">
+                                            <img src="{{ asset('img/icons/trash.svg') }}" alt="Modifier" style="width: 1.3em;" />
                                             <button type="button" class="btn btn-sm btn-circle rounded-circle" style="color: white; background-color: hsl(0, 92%, 50%); width: 30px; height: 30px;">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                             <span style="color: #777;">&nbsp; Supprimer</span>
                                         </a>
-                                    </li>
-                                </ul>
-                            </div>
+                                    </li> #}
+                                {# </ul> #}
+                            {# </div> #}
                         </td>
                         <td>
                             {% if dommage.repare %}
@@ -133,9 +147,9 @@
 </div>
 
 <script>
-    function showDeletionModal(button) {
-        var dommageId = button.getAttribute('data-id');
-        var csrfToken = button.getAttribute('data-token');
+    function showDeletionModal(element) {
+        var dommageId = element.getAttribute('data-id');
+        var csrfToken = element.getAttribute('data-token');
 
         document.getElementById('modal_token').value = csrfToken;
         document.getElementById('modal_dommage_id').value = dommageId;

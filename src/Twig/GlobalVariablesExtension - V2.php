@@ -94,8 +94,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
     public function getNombreChauffeursDisponibles(): int
     {
-        return $this->chauffeurRepository->countAvailableChauffeurs();
+        return $this->chauffeurRepository->countAvailableChauffeursDisponible();
     }
+
 
 
 
@@ -212,6 +213,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
     {
         return $this->chauffeurRepository->count(['deleteAt' =>null]);
     }
+
+    
 
     public function getNombreDemandesForPointFocalApprouvees(): ?int
     {

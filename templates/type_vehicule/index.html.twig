@@ -32,16 +32,18 @@
                         <td>
                             <div class="flex justify-content-end">
                                 <a href="{{ path('TypeVehicule.edit', {'id': type_vehicule.id}) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                <img src="{{asset('img/icons/edit.svg') }}" class="mr-3" alt="edit" style="width: 1.3em"/>
+                                    {# <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
                                         <i class="fa fa-pen"></i>
-                                    </button>
+                                    </button> #}
                                 </a>
 
                                 <form method="post" action="{{ path('TypeVehicule.delete', {'id': type_vehicule.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce type de matériel roulant ?');">
                                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ type_vehicule.id) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
+                                    <img src="{{asset('img/icons/trash.svg') }}" class="mr-3" alt="trash" style="width: 1.3em"/>
+                                    {# <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;">
                                         <i class="fa fa-trash"></i>
-                                    </button>
+                                    </button> #}
                                 </form>
                             </div>
                         </td>        

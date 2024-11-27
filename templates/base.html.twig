@@ -43,11 +43,6 @@
                             <i class="fa fa-bars" id="toggleSidebar" onclick="toggleResponsiveSidebar()"></i>
                         </button>
 
-
-
-
-
-
                         {% for type, messages in app.session.flashbag.all %}
                             {% for message in messages %}
                                 <div class="flash-message flash-{{ type }}">
@@ -56,8 +51,6 @@
                                 </div>
                             {% endfor %}
                         {% endfor %}
-
-
 
                         <ul class="layout-topbar-menu lg:flex origin-top ">
                             {% if get_user() %}
@@ -71,7 +64,7 @@
                                 </li>
                             {% endif %}
 
-                            <li class="d-flex align-items-center">
+                            {# <li class="d-flex align-items-center">
                                 <a href="{{ path('app_logout') }}">
                                     <button class="p-button p-component p-button-rounded p-button-danger mr-2 p-button-icon-only">
                                         <span class="p-button-icon p-c fa fa-power-off"></span>
@@ -80,20 +73,10 @@
                                     </button>
                                 </a>
 
-                            </li>
+                            </li> #}
                         </ul>
                     </div>
-{#                    {% for type, messages in app.session.flashbag.all %}#}
-{#                        {% for message in messages %}#}
-{#                            <div class="alert alert-{{ type }} d-flex align-items-center" style="position: absolute; bottom: 0; z-index: 1000" role="alert">#}
-{#                                <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>#}
-{#                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>#}
-{#                                <div>#}
-{#                                    {{ message }}#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        {% endfor %}#}
-{#                    {% endfor %}#}
+
                     <div class="layout-sidebar">
                         {% set current_route = app.request.attributes.get('_route') %}
                         <div class="layout-menu-container">
@@ -185,11 +168,11 @@
                                                 <span class="p-ink"></span>
                                             </a>
 
-                                            <a class="p-ripple {{ current_route starts with '/dommages/affichage' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="liste dommage" role="menuitem" href="{{ path('dommages.liste') }}">                                                 
+                                            {# <a class="p-ripple {{ current_route starts with '/dommages/affichage' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="liste dommage" role="menuitem" href="{{ path('dommages.liste') }}">                                                 
                                                 <img src="{{ asset('img/icons/homme-chauffeur.svg') }}" alt="cva" style="width: 1.2em;">
                                                 <span>Dommages causés par les chauffeurs</span>
                                                 <span class="p-ink"></span>
-                                            </a>
+                                            </a> #}
                                         </li>
                                     </ul>
                                 </li>
@@ -207,7 +190,6 @@
                                     </ul>
                                 </li>
                             {% endif %}
-
 
              
                                 <li class="layout-menuitem-category" role="none">
@@ -261,13 +243,7 @@
                                                 <span class="p-ink"></span>
                                             </a>
                                         </li>
-{#                                      <li class="" role="none">
-                                            <a class="p-ripple" aria-label="Demandes validées" role="menuitem" href="{{ path('demande.cancel') }}">
-                                                <img src="{{ asset('img/icons/document-accepte.svg') }}" alt="home" style="width: 1.2em;">
-                                                <span>Demandes annulées</span>
-                                                <span class="p-ink"></span>
-                                            </a>
-                                        </li> #}
+
 
                                     </ul>
 
@@ -346,7 +322,7 @@
                             </ul>
                         {% endif %}
 
-                            <ul class="layout-menu d-lg-none d-md-block">
+                            <ul class="layout-menu">
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Deconnexion">Deconnexion</div>
                                     <ul role="menu">
@@ -369,9 +345,9 @@
 
                                 {% block mycontent %}
                                 <div class="row">
-                                    <div class="card" style="background: #0a3764">
+                                    <div class="card w-100" style="background: #0a3764">
                                         <div class="card-body" >
-                                            <h4 class="col-lg-10 pl-0 text-white fw-bold">Bienvenue sur la plateforme de gestion de parc automobile du Ministère de la santé</h4>
+                                            <h4 class="pl-0 text-white fw-bold">Bienvenue sur la plateforme de gestion de parc automobile du Ministère de la santé</h4>
                                             <a href="#" class="p-compoent p-button p-button-secondary fw-bold mt-2">Télécharger le didactiel</a>
                                         </div>
                                     </div>

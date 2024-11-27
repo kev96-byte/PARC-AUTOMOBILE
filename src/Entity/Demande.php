@@ -323,7 +323,7 @@ class Demande
 
     public function getVehicules(): array
     {
-        return $this->vehicules;
+        return $this->vehicules ?? [];
     }
     
 
@@ -337,7 +337,7 @@ class Demande
 
     public function getChauffeurs(): array
     {
-        return $this->chauffeurs;
+        return $this->chauffeurs ?? [];
     }
     
 

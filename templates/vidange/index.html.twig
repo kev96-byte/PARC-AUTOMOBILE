@@ -35,21 +35,17 @@
                         <td>{{ vidange.valeurCompteurKilometrage }}</td>
                         <td>
                             <div class="flex justify-content-end">
-                                <a href="{{ path('vidange.edit', {'id': vidange.id}) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
+                                <a href="{{ path('vidange.edit', {'id': vidange.id}) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/edit.svg') }}" alt="Modifier" style="width: 1.3em;" />
                                 </a>
 
-                                <a href="{{ asset('img/Vidanges/' ~ vidange.pieceVidange) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: var(--primary-color);">
-                                        <i class="fa fa-download"></i>
-                                    </button>
+                                <a href="{{ asset('img/Vidanges/' ~ vidange.pieceVidange) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/download.svg') }}" alt="Modifier" style="width: 1.3em;" />
                                 </a>
 
-                                <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #EF4444;" data-id="{{ vidange.id }}" data-token="{{ csrf_token('delete' ~ vidange.id) }}" onclick="showDeletionModal(this)">
-                                    <i class="fa fa-trash"></i>
-                                </button>      
+                                <a href="" data-id="{{ vidange.id }}" class="text-decoration-none" data-token="{{ csrf_token('delete' ~ vidange.id) }}" onclick="showDeletionModal(this)">
+                                    <img src="{{ asset('img/icons/trash.svg') }}" alt="Modifier" style="width: 1.3em;" />
+                                </a>      
                             </div>
                         </td>
                     </tr>
@@ -94,9 +90,9 @@
 
 
 <script>
-    function showDeletionModal(button) {
-        var vidangeId = button.getAttribute('data-id');
-        var csrfToken = button.getAttribute('data-token');
+    function showDeletionModal(element) {
+        var vidangeId = element.getAttribute('data-id');
+        var csrfToken = element.getAttribute('data-token');
 
         // Mettre à jour les champs cachés du formulaire dans le modal
         document.getElementById('modal_token').value = csrfToken;

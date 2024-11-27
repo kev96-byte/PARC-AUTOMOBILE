@@ -11,9 +11,10 @@
             <div class="p-toolbar-group-left">
                 <div class="my-2">
                     <a href="javascript:history.back()">
-                        <button class="p-button p-component p-button-success mr-2">
-                            <span class="p-button-icon p-c p-button-icon-left fa fa-plus"></span>
+                        <button class="p-button p-component p-button-outlined mr-2">
+                            <span class="p-button-icon p-c p-button-icon-left fa fa-arrow-left"></span>
                             <span class="p-button-label p-c">Retour à la liste</span>
+                            <span class="p-ink"></span>
                         </button>
                     </a>
                 </div>
@@ -30,7 +31,7 @@
                 </tr>
                 <tr>
                     <th>Date Demande</th>
-                    <td>{{ demande.dateDemande|format_date('m/d/Y H:i:s') }}</td>
+                    <td>{{ demande.dateDemande|format_date('d/m/Y H:i:s') }}</td>
                 </tr>
                 <tr>
                     <th>Référence note de service</th>
@@ -42,18 +43,18 @@
                 </tr>
                 <tr>
                     <th>Date début mission</th>
-                    <td>{{ demande.dateDebutMission|date("m/d/Y") }}</td>
+                    <td>{{ demande.dateDebutMission|date("d/m/Y") }}</td>
                 </tr>
                 <tr>
                     <th>Date fin mission</th>
-                    <td>{{ demande.dateFinMission|date("m/d/Y") }}</td>
+                    <td>{{ demande.dateFinMission|date("d/m/Y") }}</td>
                 </tr>
 
                 {# Date annulation si applicable #}
                 {% if demande.statut == 'Annulé' %}
                     <tr>
                         <th>Date annulation mission</th>
-                        <td>{{ demande.cancellationDate|date("m/d/Y") }}</td>
+                        <td>{{ demande.cancellationDate|date("d/m/Y") }}</td>
                     </tr>
                 {% endif %}
 
@@ -137,11 +138,11 @@
                     <th>Statut demande</th>
                     <td>
                         <span class="badge {% if demande.statut == 'Initial' %}bg-secondary
-                            {% elseif demande.statut == 'Approuvé' %}bg-primary
-                            {% elseif demande.statut == 'Validé' %}bg-success
-                            {% elseif demande.statut == 'Traité' %}bg-primary
-                            {% elseif demande.statut == 'Rejeté' %}bg-warning
-                            {% else %}bg-warning{% endif %}">
+                            {% elseif demande.statut == 'Approuvé' %}badge badge-primary
+                            {% elseif demande.statut == 'Validé' %}badge badge-success
+                            {% elseif demande.statut == 'Traité' %}badge badge-info
+                            {% elseif demande.statut == 'Rejeté' %}badge badge-danger
+                            {% else %}badge badge-warning{% endif %}">
                             {{ demande.statut }}
                         </span>
                     </td>
@@ -245,15 +246,68 @@
             </tbody>
         </table>
     </div>
+    
+    {% if demande.statut == 'Validé' or demande.statut == 'Traité' and details is not empty %}
+        <div class="card">
+            <tr>
+                <td colspan="2">
+                    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+                        <hr class="my-4 border-primary">
+                    </div>
+                    <div class="table-responsive">
+                        <h5><b>Véhicule (s) et chauffeur(s) affecté(s)</b></h5>
+                        <table class="table table-bordered table-striped " id="dataTable" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <th>Matricule</th>
+                                <th>Voir véhicule</th>
+                                <th>Nom et prénom chauffeur</th>
+                                <th>Voir chauffeur</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for detail in details %}
+
+                                <tr>
+                                    <td>{{ detail.matricule }}</td>
+
+                                    <td>                            
+                                        <a target="_blank" href="{{ asset('img/Vehicules/' ~ detail.photoVehicule) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                        </a>  
+                                    </td>
+
+
+                                    <td>{{ detail.nomChauffeur }} {{ detail.prenomChauffeur }}</td>
+                                    <td>
+                                        <a target="_blank" href="{{ asset('img/Chauffeurs/' ~ detail.photoChauffeur) }}">
+                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                                <i class="fa fa-download"></i>
+                                            </button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </td>
+            </tr>
+        </div>
+    {% endif %}
+    
 </div>
 
-{# Modals #}
-{% include 'demande/_modal_reject.html.twig' %}
-{% include 'demande/_modal_approve.html.twig' %}
-{% include 'demande/_modal_cancel.html.twig' %}
-{% include 'demande/_modal_validate.html.twig' %}
-{% include 'demande/_modal_request_cancellation.html.twig' %}
-{% include 'demande/_modal_confirmation_cancellation.html.twig'%}
+    {# Modals #}
+    {% include 'demande/_modal_reject.html.twig' %}
+    {% include 'demande/_modal_approve.html.twig' %}
+    {% include 'demande/_modal_cancel.html.twig' %}
+    {% include 'demande/_modal_validate.html.twig' %}
+    {% include 'demande/_modal_request_cancellation.html.twig' %}
+    {% include 'demande/_modal_confirmation_cancellation.html.twig'%}
 {% endblock %}
 
 {% block javascripts %}

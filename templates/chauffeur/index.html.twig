@@ -28,7 +28,6 @@
                         <th>Prenom(s)</th>
                         <th>Institution</th>
                         <th>Statut Chauffeur</th>
-                        <th>Disponibilité</th>
                         <th data-sortable="false" style="text-align: center;">Actions</th>
                     </tr>
                 </thead>
@@ -39,25 +38,19 @@
                         <td>{{ chauffeur.nomChauffeur }}</td>
                         <td>{{ chauffeur.prenomChauffeur }}</td>
                         <td>{{ chauffeur.institution.libelleInstitution }}</td>
-                        <td>{{ chauffeur.etatChauffeur }}</td>
-                        <td>{{ chauffeur.disponibilite }}</td>
+                        <td>{{ chauffeur.etatChauffeur }}</td>n
                         <td>
                             <div class="d-flex">
-                                        <a href="{{ path('chauffeur.show', {'id': chauffeur.id}) }}">
-                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552; width: 30px; height: 30px;">
-                                                <i class="fa fa-low-vision"></i>
-                                            </button>
-                                        </a>
-                                        <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}">
-                                            <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B; width: 30px; height: 30px;">
-                                                <i class="fa fa-pen"></i>
-                                            </button>
-                                        </a>
-                                        <a href="#" onclick="showDeletionModal(this);" data-id="{{ chauffeur.id }}" data-token="{{ csrf_token('delete' ~ chauffeur.id) }}" style="text-decoration: none;">
-                                            <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; width: 30px; height: 30px; background-color: hsl(0, 92%, 50%);">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </a>
+                                <a href="{{ path('chauffeur.show', {'id': chauffeur.id}) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/details.svg') }}" alt="Modifier" style="width: 1.3em;" />
+                                    
+                                </a>
+                                <a href="{{ path('chauffeur.edit', {'id': chauffeur.id}) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/edit.svg') }}" alt="Modifier" style="width: 1.3em;" />
+                                </a>
+                                <a href="" class="text-decoration-none" onclick="showDeletionModal(this)" data-id="{{ chauffeur.id }}" data-token="{{ csrf_token('delete' ~ chauffeur.id) }}" style="text-decoration: none;">
+                                    <img src="{{ asset('img/icons/trash.svg') }}" alt="Modifier" style="width: 1.3em;" />
+                                </a>
                             </div>
                         </td>
                     </tr>
@@ -73,9 +66,9 @@
 </div>
 
 <script>
-function showDeletionModal(button) {
-    var chauffeurId = button.getAttribute('data-id');
-    var csrfToken = button.getAttribute('data-token');
+function showDeletionModal(element) {
+    var chauffeurId = element.getAttribute('data-id');
+    var csrfToken = element.getAttribute('data-token');
 
     // Mettre à jour les champs cachés du formulaire dans le modal
     document.getElementById('modal_token').value = csrfToken;

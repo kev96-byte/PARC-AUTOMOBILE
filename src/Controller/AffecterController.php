@@ -89,6 +89,8 @@ class AffecterController extends AbstractController
             if (!$demande) {
                 throw $this->createNotFoundException('Demande not found for ID ' . $demandeId);
             }
+
+
             $dataDebutMission = $demande ? $demande->getDateDebutMission() : null;
             $dateFinMission = $demande ? $demande->getDateFinMission() : null;
             $affecter->setDemande($demande);

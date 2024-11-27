@@ -35,21 +35,17 @@
                         <td>{{ visite.dateFinVisite ? visite.dateFinVisite|date('d-m-Y') : '' }}</td>
                         <td>
                             <div class="flex justify-content-end">
-                                <a href="{{ path('visite.edit', {'id': visite.id}) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
+                                <a href="{{ path('visite.edit', {'id': visite.id}) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/edit.svg') }}" alt="Modifier" style="width: 1.3em;" />
                                 </a>
 
-                                <a href="{{ asset('img/Visites/' ~ visite.pieceVisite) }}">
-                                    <button class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: var(--primary-color);">
-                                        <i class="fa fa-download"></i>
-                                    </button>
+                                <a href="{{ asset('img/Visites/' ~ visite.pieceVisite) }}" class="text-decoration-none mr-3">
+                                    <img src="{{ asset('img/icons/download.svg') }}" alt="télécharger" style="width: 1.3em;" />
                                 </a>
 
-                                <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #EF4444;" data-id="{{ visite.id }}" data-token="{{ csrf_token('delete' ~ visite.id) }}" onclick="showDeletionModal(this)">
-                                    <i class="fa fa-trash"></i>
-                                </button>      
+                                <a  class="text-decoration-none" data-id="{{ visite.id }}" data-token="{{ csrf_token('delete' ~ visite.id) }}" onclick="showDeletionModal(this)">
+                                    <img src="{{ asset('img/icons/download.svg') }}" alt="trash" style="width: 1.3em;" />
+                                </a>      
                             </div>
                         </td>
                     </tr>
@@ -94,9 +90,9 @@
 
 
 <script>
-    function showDeletionModal(button) {
-        var visiteId = button.getAttribute('data-id');
-        var csrfToken = button.getAttribute('data-token');
+    function showDeletionModal(element) {
+        var visiteId = element.getAttribute('data-id');
+        var csrfToken = element.getAttribute('data-token');
 
         // Mettre à jour les champs cachés du formulaire dans le modal
         document.getElementById('modal_token').value = csrfToken;

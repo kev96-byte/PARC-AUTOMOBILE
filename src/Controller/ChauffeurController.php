@@ -148,7 +148,7 @@ class ChauffeurController extends AbstractController
     #[Route('/chauffeurs/disponibles', name: 'chauffeurs.disponibles')]
     public function disponibles(Request $request, ChauffeurRepository $chauffeurRepository): Response
     {
-        // Requête pour récupérer les véhicules disponibles avec filtres
+       
         $chauffeurs = $chauffeurRepository->findAvailableChauffeurs();
 
         return $this->render('chauffeur/index.html.twig', [

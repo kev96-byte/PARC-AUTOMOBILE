@@ -483,7 +483,7 @@ class DemandeController extends AbstractController
     
         // Vérification des conditions
         if ($demande->getAffecters()->count() > 0 &&
-            ($demande->getStatut() === 'Traité') &&
+            ($demande->getStatut() === 'Traité'|| $demande->getStatut() === 'Validé') &&
             $demande->getDateTraitement() !== null)
         {
             $details = $entityManager->getRepository(Affecter::class)->findBy(['demande' => $demande]);
