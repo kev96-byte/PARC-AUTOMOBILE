@@ -7,6 +7,14 @@
             <h5 class="mb-0">Affectation de véhicules et chauffeurs à la demande N° : {{ numdemande }}</h5>
         </div>
         <div class="card-body">
+            {# Messages Flash #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
             <!-- Premier bloc : Liste des véhicules et chauffeurs demandés -->
             {% if vehiculesDemandes is not empty and chauffeursDemandes is not empty %}
             <div class="card mb-4">
@@ -44,6 +52,11 @@
                     <h6 class="mb-0">{{ is_edit ? 'Modifier le véhicule et le chauffeur' : 'Ajouter un véhicule et un chauffeur' }}</h6>
                 </div>
                 <div class="card-body">
+                    {% if is_disabled %}
+                        <div class="alert alert-warning">
+                            Le nombre maximum de véhicules affectés a été atteint.
+                        </div>
+                    {% else %}
                     {{ form_start(form) }}
                         <div class="mb-3">
                             {{ form_row(form.vehicule) }}
@@ -55,6 +68,7 @@
                             {{ is_edit ? 'Modifier' : 'Ajouter' }}
                         </button>
                     {{ form_end(form) }}
+                    {% endif %}
                 </div>
             </div>
 
@@ -74,9 +88,9 @@
                         <td>{{ affecter.chauffeur.nomChauffeur }} {{ affecter.chauffeur.prenomChauffeur }}</td>
                         <td>
                             <div class="d-flex justify-content-end">
-                                <a href="{{ path('affecter.edit', {'id': affecter.id}) }}" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
+                                {# <a href="{{ path('affecter.edit', {'id': affecter.id}) }}" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #22C552;">
                                     <i class="fa fa-pen"></i>
-                                </a>
+                                </a> #}
                                 {% if affecter.statut is null %}
                                     <button type="button" class="btn btn-sm btn-circle rounded-circle mr-2" style="color: white; background-color: #f59e0B;" data-id="{{ affecter.id }}" data-token="{{ csrf_token('delete' ~ affecter.id) }}" onclick="showDeletionModal(this)">
                                         <i class="fa fa-trash"></i>
@@ -157,7 +171,7 @@ document.getElementById('confirmValidationButton').addEventListener('click', fun
             $('#confirmModal').modal('hide');
             
             // Rediriger vers la route 'demande.validates' après la validation réussie
-            window.location.href = '{{ path("demande.traitees") }}';
+            window.location.href = '{{ path("demande.index") }}';
         }
     })
     .catch(error => {

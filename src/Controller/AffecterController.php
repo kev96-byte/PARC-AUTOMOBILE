@@ -28,14 +28,27 @@ class AffecterController extends AbstractController
   
 
     #[Route('/create/{demandeId}', name: 'affecter.create', methods: ['GET', 'POST'])]
-    public function create(Request $request, VehiculeRepository $vehiculeRepository, ChauffeurRepository $chauffeurRepository, DemandeRepository $demandeRepository, EntityManagerInterface $entityManager, int $demandeId): Response
+    public function create(Request $request, VehiculeRepository $vehiculeRepository, ChauffeurRepository $chauffeurRepository, DemandeRepository $demandeRepository,AffecterRepository $affecterRepository, EntityManagerInterface $entityManager, int $demandeId): Response
     {
+        $mode = "add";
         $demande = $demandeRepository->find($demandeId);
         $numDemande = $demande->getNumDemande();
 
         if (!$demande) {
             throw $this->createNotFoundException('Demande non trouvée');
         }
+
+        $numDemande = $demande->getNumDemande();
+        $nbreVehicules = $demande->getNbreVehicules();
+
+        $affecters = $affecterRepository->findBy([
+            'deleteAt' => null,
+            'demande' => $demandeId
+        ]);
+
+        $currentAffectationsCount = count($affecters);
+        // Déterminer si le formulaire doit être désactivé
+        $is_disabled = $currentAffectationsCount >= $nbreVehicules;
 
 
         $chauffeursDemandes = [];    
@@ -71,6 +84,17 @@ class AffecterController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $currentAffectationsCount = $affecterRepository->count([
+                'deleteAt' => null,
+                'demande' => $demandeId
+            ]);
+
+            if ($currentAffectationsCount >= $nbreVehicules) {
+                $this->addFlash('error', 'Nombre maximum de véhicules affectés atteint.');
+                return $this->redirectToRoute('affecter.create', ['demandeId' => $demandeId]);
+            }
+
             // Récupérer les données du formulaire soumises
             $formData = $form->getData();
 
@@ -91,21 +115,22 @@ class AffecterController extends AbstractController
             }
 
 
-            $dataDebutMission = $demande ? $demande->getDateDebutMission() : null;
-            $dateFinMission = $demande ? $demande->getDateFinMission() : null;
+            // $dataDebutMission = $demande ? $demande->getDateDebutMission() : null;
+            // $dateFinMission = $demande ? $demande->getDateFinMission() : null;
             $affecter->setDemande($demande);
-            $affecter->setDateDebutMission($dataDebutMission);
-            $affecter->setDateFinMission($dateFinMission);
+            $affecter->setDateDebutMission($demande->getDateDebutMission());
+            $affecter->setDateFinMission($demande->getDateFinMission());
             $affecter->setVehicule($vehicule);
             $affecter->setChauffeur($chauffeur);  
             $entityManager->persist($affecter);
             $entityManager->flush();
 
-    
+            $this->addFlash('success', 'Affectation créée avec succès.');
             return $this->redirectToRoute('affecter.create', ['demandeId' => $demandeId]);
         }
     
         return $this->render('affecter/index.html.twig', [
+            'mode' => $mode,
             'form' => $form->createView(),
             'numdemande' => $numDemande,
             'affecters' => $affecters,
@@ -113,6 +138,9 @@ class AffecterController extends AbstractController
             'chauffeursDemandes' => $chauffeursDemandes, // Passez la liste des objets Chauffeur demandés au template
             'vehiculesDemandes' => $vehiculesDemandes, // Passez la liste des objets Véhicules demandés au template
             'is_edit' => false, // Mode création
+            'is_disabled' => $is_disabled, // Indicateur de désactivation
+            'nbreVehicules' => $nbreVehicules, // Nombre de véhicules demandé
+            'currentAffectationsCount' => $currentAffectationsCount, // Nombre actuel d'affectations
         ]);
     }
     
