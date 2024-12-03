@@ -36,7 +36,7 @@ class AffecterType extends AbstractType
         $dateDebutMission = $demande->getDateDebutMission();
         $dateFinMission = $demande->getDateFinMission();
         $nbreVehicules = $demande->getNbreVehicules();
-        $parc = $demande->getStructure()->getParc();
+        $parc = $demande->getParc();
 
         
         // Récupère les véhicules filtrés

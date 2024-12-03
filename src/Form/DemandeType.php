@@ -2,20 +2,25 @@
 
 namespace App\Form;
 
+use App\Entity\Parc;
 use App\Entity\Commune;
 use App\Entity\Demande;
 use App\Entity\Vehicule;
 use App\Entity\Chauffeur;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+use App\Entity\User;
 
 class DemandeType extends AbstractType
 {
@@ -37,7 +42,33 @@ class DemandeType extends AbstractType
             $chauffeurChoices = $this->entityManager->getRepository(Chauffeur::class)->findActiveChauffeursFormatted();         
         }
 
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            throw new \LogicException('L\'utilisateur n\'est pas connecté.');
+        }
+
+        $structure = $user->getStructure(); 
+
+        $parc = $structure->getParc();
+             
+
         $builder
+        ->add('parc', EntityType::class, [
+            'class' => Parc::class,
+            'choice_label' => 'nomParc', // Affichage du nom du parc
+            'placeholder' => $structure->getParc()->getNomParc(),
+            'query_builder' => function (EntityRepository $er) {
+                return $er->createQueryBuilder('p')
+                    ->where('p.deleteAt IS NULL'); // Filtrer les parcs dont deleteAt est null
+            },
+            'data' => $structure->getParc(), // Définit la valeur par défaut avec le parc de la structure de l'utilisateur
+            'attr' => [
+                'class' => 'form-control selectpicker',
+                'data-live-search' => 'true',
+                
+            ],
+        ])
+
             ->add('dateDebutMission', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
@@ -138,7 +169,7 @@ class DemandeType extends AbstractType
 
                 ])
             ;
-
+        
 
         }
 

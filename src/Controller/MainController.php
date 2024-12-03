@@ -22,8 +22,7 @@ class MainController extends AbstractController
     {
            $vehicules = $vehiculeRepository->findAllVehiculesInMission();
 
-           $user = $this->getUser();
-           dump($user);
+           $user = $this->getUser();           
            if (!$user) {
                return $this->redirectToRoute('app_login');
            }

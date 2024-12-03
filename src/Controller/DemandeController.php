@@ -80,51 +80,26 @@ class DemandeController extends AbstractController
             $structure = $user->getStructure();  // Récupération de la structure de l'utilisateur connecté 
             $demandes = $demandeRepository->findApprobateurDemandesEnAttente($structure);   // Récupération des demandes associées à cette structure
 
-        } elseif (in_array('ROLE_CHEF_PARC', $roles, true) && (!in_array('ROLE_ADMIN', $roles, true)) ) {
-            $structuresFinales = []; // Initialisation du tableau pour accumuler les structures
-            $parcs = $parcRepository->findByChefParc($user->getId());
+        } elseif (in_array('ROLE_CHEF_PARC', $roles, true) && (!in_array('ROLE_ADMIN', $roles, true)) ) {            
+            $parcs = $parcRepository->findByChefParc($user->getId()); //Pour trouver le parc de l'utilisateur connecté
 
-            if (!empty($parcs)) {
-                // Récupérer toutes les structures associées aux parcs
-                foreach ($parcs as $parc) {
-                    $structuresParc = $structureRepository->findStructuresByParc($parc);
-                    $structuresFinales = array_merge($structuresFinales, $structuresParc);
-                }
-            }
-
-            // Récupérer toutes les demandes associées aux structures finales
             $demandes = [];
-            if (!empty($structuresFinales)) {
-                foreach ($structuresFinales as $structure) {
-                    if ($structure) {
-                        $structuresDemandes = $demandeRepository->findChefParcDemandesEnAttente($structure);
-                        $demandes = array_merge($demandes, $structuresDemandes);
-                    }
-                }
-            }  
-        } elseif (in_array('ROLE_VALIDATEUR', $roles, true) && (!in_array('ROLE_ADMIN', $roles, true)) ) {
-            $structuresFinales = []; // Initialisation du tableau pour accumuler les structures
-            $parcs = $parcRepository->findByValidateur($user->getId());
-            dump($parcs);
-            if (!empty($parcs)) {
-                // Récupérer toutes les structures associées aux parcs
+            if (!empty($parcs)) {                
                 foreach ($parcs as $parc) {
-                    $structuresParc = $structureRepository->findStructuresByParc($parc);
-                    $structuresFinales = array_merge($structuresFinales, $structuresParc);
+                    $parcDemandes = $demandeRepository->findChefParcDemandesEnAttente($parc);
+                    $demandes = array_merge($demandes, $parcDemandes);
                 }
             }
             
-
-            // Récupérer toutes les demandes associées aux structures finales
+        } elseif (in_array('ROLE_VALIDATEUR', $roles, true) && (!in_array('ROLE_ADMIN', $roles, true)) ) {            
+            $parcs = $parcRepository->findByValidateur($user->getId());
             $demandes = [];
-            if (!empty($structuresFinales)) {
-                foreach ($structuresFinales as $structure) {
-                    if ($structure) {
-                        $structuresDemandes = $demandeRepository->findValidateurDemandesEnAttente($structure);
-                        $demandes = array_merge($demandes, $structuresDemandes);
-                    }
+            if (!empty($parcs)) {                
+                foreach ($parcs as $parc) {
+                    $parcDemandes = $demandeRepository->findValidateurDemandesEnAttente($parc);
+                    $demandes = array_merge($demandes, $parcDemandes);
                 }
-            }  
+            }                     
 
         } else {
             $institution = $user->getInstitution();

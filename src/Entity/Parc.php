@@ -61,12 +61,19 @@ class Parc
     #[ORM\ManyToOne(inversedBy: 'ParcsValidateurs')]
     private ?User $validateurParc = null;
 
+    /**
+     * @var Collection<int, Demande>
+     */
+    #[ORM\OneToMany(targetEntity: Demande::class, mappedBy: 'parc')]
+    private Collection $demandes;
+
 
 
     public function __construct()
     {
         $this->structure = new ArrayCollection();
         $this->vehicule = new ArrayCollection();
+        $this->demandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -214,6 +221,36 @@ class Parc
     public function setValidateurParc(?User $validateurParc): static
     {
         $this->validateurParc = $validateurParc;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Demande>
+     */
+    public function getDemandes(): Collection
+    {
+        return $this->demandes;
+    }
+
+    public function addDemande(Demande $demande): static
+    {
+        if (!$this->demandes->contains($demande)) {
+            $this->demandes->add($demande);
+            $demande->setParc($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDemande(Demande $demande): static
+    {
+        if ($this->demandes->removeElement($demande)) {
+            // set the owning side to null (unless already changed)
+            if ($demande->getParc() === $this) {
+                $demande->setParc(null);
+            }
+        }
 
         return $this;
     }

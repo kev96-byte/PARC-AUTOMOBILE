@@ -321,7 +321,7 @@ class VehiculeController extends AbstractController
 
         // Obtenir les véhicules disponibles
         $vehicules = $vehiculeRepository->findVehiculesDisponibles($dateDebut, $dateFin, $parcId);
-        dump($vehicules);
+        
         // Retourner la réponse JSON avec le groupe de sérialisation
         return $this->json(['vehicules' => $vehicules], 200, [], [
             AbstractNormalizer::GROUPS => ['vehicule_list']

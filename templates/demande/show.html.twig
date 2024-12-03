@@ -78,6 +78,11 @@
                     <td>{{ demande.nbreVehicules }}</td>
                 </tr>
 
+                <tr>
+                    <th>Parc</th>
+                    <td>{{ demande.parc.nomParc }}</td>
+                </tr>
+
                 {# Véhicules et chauffeurs si assignés #}
                 {% if demande.vehicules is not empty %}
                     <tr>

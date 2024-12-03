@@ -86,7 +86,6 @@ class InstitutionController extends AbstractController
             $file = $form->get('logoInstitution')->getData();
             if ($file) {
                 $filename = '_logo_' . $institution->getId() . '.' . $file->guessExtension();
-                dump ($filename) ;
                 try {
                     $file->move(
                         $this->getParameter('kernel.project_dir').'/public/img/Logos',

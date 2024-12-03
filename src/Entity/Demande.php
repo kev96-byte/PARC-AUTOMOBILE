@@ -165,6 +165,9 @@ class Demande
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $canceled_request = null;
 
+    #[ORM\ManyToOne(inversedBy: 'demandes')]
+    private ?Parc $parc = null;
+
 
     public function getId(): ?int
     {
@@ -701,6 +704,18 @@ public function getCanceledRequest(): ?string
 public function setCanceledRequest(?string $canceled_request): static
 {
     $this->canceled_request = $canceled_request;
+
+    return $this;
+}
+
+public function getParc(): ?Parc
+{
+    return $this->parc;
+}
+
+public function setParc(?Parc $parc): static
+{
+    $this->parc = $parc;
 
     return $this;
 }

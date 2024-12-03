@@ -92,7 +92,7 @@
                                         </li>
                                     </ul>
                                 </li>
-                            {% if is_granted('ROLE_CHEF_PARC') and is_granted('ROLE_VALIDATEUR') or is_granted('ROLE_CABINET') %}
+                            {% if (is_granted('ROLE_CHEF_PARC') or is_granted('ROLE_VALIDATEUR')) %}
                                 <li class="layout-menuitem-category" role="none">
                                     <div class="layout-menuitem-root-text" aria-label="Gestion des matériels roulants">Gestion des matériels roulants</div>
                                     <ul role="menu">
@@ -167,12 +167,6 @@
                                                 <span>Dommages</span>
                                                 <span class="p-ink"></span>
                                             </a>
-
-                                            {# <a class="p-ripple {{ current_route starts with '/dommages/affichage' ? 'router-link-active router-link-exact-active' : '' }}" aria-label="liste dommage" role="menuitem" href="{{ path('dommages.liste') }}">                                                 
-                                                <img src="{{ asset('img/icons/homme-chauffeur.svg') }}" alt="cva" style="width: 1.2em;">
-                                                <span>Dommages causés par les chauffeurs</span>
-                                                <span class="p-ink"></span>
-                                            </a> #}
                                         </li>
                                     </ul>
                                 </li>

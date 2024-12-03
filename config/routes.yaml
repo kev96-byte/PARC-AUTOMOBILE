@@ -25,3 +25,19 @@ api_available_vehicles_and_drivers:
 base_view:
     path: /base-view
     controller: App\Controller\DemandeController::renderBaseView
+
+home:
+    path: /
+    controller: App\Controller\HomeController::index
+
+# Route pour gérer les erreurs 404
+error404:
+    path: /error404
+    controller: App\Controller\ErrorController::show
+
+# Ajoutez cette ligne pour gérer toutes les autres routes non définies
+app.swagger_ui:
+    path: /{any}
+    controller: App\Controller\ErrorController::show
+    requirements:
+        any: .*

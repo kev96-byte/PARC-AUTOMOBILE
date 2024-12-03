@@ -319,31 +319,34 @@ class DemandeRepository extends ServiceEntityRepository
     }
 
 
-    public function findChefParcDemandesEnAttente($structure)
+    public function findChefParcDemandesEnAttente($parc)
     {
+        if (!$parc) {
+            throw new \InvalidArgumentException('Le parc est invalide.');
+        }
+
         return $this->createQueryBuilder('d')
-            ->where('d.structure = :structure')
+            ->where('d.parc = :parc')
             ->andWhere('d.statut = :statut')
             ->andWhere('d.dateFinMission >= :today')
             ->andWhere('d.deleteAt IS NULL')
-            ->setParameter('structure', $structure)
+            ->setParameter('parc', $parc)
             ->setParameter('statut', 'Approuvé')
-            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->setParameter('today', new \DateTimeImmutable('today'))
             ->getQuery()
             ->getResult();
     }
 
-
-    public function findValidateurDemandesEnAttente($structure)
+    public function findValidateurDemandesEnAttente($parc)
     {
         return $this->createQueryBuilder('d')
-            ->where('d.structure = :structure')
+            ->where('d.parc = :parc')
             ->andWhere('d.statut = :statut')
             ->andWhere('d.dateFinMission >= :today')
             ->andWhere('d.deleteAt IS NULL')
-            ->setParameter('structure', $structure)
+            ->setParameter('parc', $parc)
             ->setParameter('statut', 'Traité')
-            ->setParameter('today', (new \DateTimeImmutable('today'))->format('Y-m-d'))
+            ->setParameter('today', new \DateTimeImmutable('today'))
             ->getQuery()
             ->getResult();
     }

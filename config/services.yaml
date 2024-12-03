@@ -78,3 +78,10 @@ services:
 
     App\Validator\ParticipantsVehiclesConstraint:
         tags: ['validator.constraint_validator']
+
+    App\Controller\ErrorController:
+        tags: ['controller.service_arguments']
+
+    App\EventListener\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }

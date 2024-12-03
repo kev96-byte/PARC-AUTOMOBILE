@@ -192,7 +192,6 @@ class ChauffeurController extends AbstractController
 
         // Obtenir les véhicules disponibles
         $chauffeurs = $chauffeurRepository->findChauffeursDisponibles($dateDebut, $dateFin, $parcId);
-        dump($chauffeurs);
         // Retourner la réponse JSON avec le groupe de sérialisation
         return $this->json(['chauffeurs' => $chauffeurs], 200, [], [
             AbstractNormalizer::GROUPS => ['chauffeur_list']

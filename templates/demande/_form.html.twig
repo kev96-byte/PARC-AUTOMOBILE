@@ -6,17 +6,18 @@
 </div>
 
 <div class="form-group row mb-3">
-    <div class="col-sm-6">{{ form_row(form.dateDebutMission) }}</div>
-    <div class="col-sm-6">{{ form_row(form.dateFinMission) }}</div>
-</div>
-
-<div class="form-group row mb-3">
     <div class="col-sm-6">{{ form_row(form.nbreParticipants) }}</div>
     <div class="col-sm-6">{{ form_row(form.nbreVehicules) }}</div>
 </div>
 
 <div class="form-group row mb-3">
-    <div class="col-sm-12">{{ form_row(form.lieuMission) }}</div>
+    <div class="col-sm-6">{{ form_row(form.lieuMission) }}</div>
+    <div class="col-sm-6">{{ form_row(form.parc) }}</div>    
+</div>
+
+<div class="form-group row mb-3">
+    <div class="col-sm-6">{{ form_row(form.dateDebutMission) }}</div>
+    <div class="col-sm-6">{{ form_row(form.dateFinMission) }}</div>
 </div>
 
 {% if is_granted('ROLE_POINT_FOCAL_AVANCE') and form.vehicules is defined and form.chauffeurs is defined %}
