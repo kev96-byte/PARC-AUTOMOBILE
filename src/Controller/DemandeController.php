@@ -327,7 +327,6 @@ class DemandeController extends AbstractController
             $demande->getDateTraitement() !== null)
         {
             $details = $entityManager->getRepository(Affecter::class)->findBy(['demandeId' => $demande]);
-            dump($details);
 
             $data = [];
             foreach ($details as $detail) {
