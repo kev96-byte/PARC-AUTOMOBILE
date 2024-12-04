@@ -88,7 +88,6 @@ class ChauffeurController extends AbstractController
             $file = $form->get('photoChauffeur')->getData();
             if ($file) {
                 $filename = '_chauffeur_' . $chauffeur->getMatriculeChauffeur() . '.' . $file->guessExtension();
-                dump ($filename) ;
                 try {
                     $file->move(
                         $this->getParameter('kernel.project_dir').'/public/img/Chauffeurs',
